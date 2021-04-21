@@ -1,0 +1,24 @@
+Author: Luca Boccassi <bluca@debian.org>
+Description: remove networked references from Sphinx mapping
+ it causes the docs build to be non reproducible. python3-doc ships
+ a local database so it can be used instead, but other packages do
+ not, therefore we cannot upstream this patch.
+Forwarded: no
+--- a/doc/sphinx/conf.py
++++ b/doc/sphinx/conf.py
+@@ -60,15 +60,6 @@
+ intersphinx_mapping = {
+     # Dependencies
+     'python': ('https://docs.python.org/3.8', ('/usr/share/doc/python3-doc/html/objects.inv', None)),
+-    'msrestazure': ('http://msrestazure.readthedocs.io/en/latest/', None),
+-    'msrest': ('http://msrest.readthedocs.io/en/latest/', None),
+-    'requests': ('https://requests.kennethreitz.org/en/master/', None),
+-    'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
+-    'trio': ('https://trio.readthedocs.io/en/stable/', None),
+-    'msal': ('https://msal-python.readthedocs.io/en/latest/', None),
+-    # Azure packages
+-    'azure-core': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/', None),
+-    'azure-identity': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/latest/', None),
+ }
+ 
+ autodoc_member_order = 'groupwise'

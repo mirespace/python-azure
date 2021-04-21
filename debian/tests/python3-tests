@@ -1,0 +1,197 @@
+#!/bin/bash
+
+set -eu
+set -o pipefail
+
+CURDIR=$(pwd)
+PYVERSIONS=$(py3versions -r 2>/dev/null)
+
+SUCCESSFUL_TESTS=()
+FAILED_TESTS=()
+SKIPPED_TESTS=()
+
+mkdir -p "$AUTOPKGTEST_TMP/pylib"
+cp -r tools/azure-sdk-tools/devtools_testutils "$AUTOPKGTEST_TMP/pylib"
+cp -r tools/azure-sdk-tools/packaging_tools "$AUTOPKGTEST_TMP/pylib"
+cp -r tools/azure-sdk-tools/testutils "$AUTOPKGTEST_TMP/pylib"
+cp -r tools/azure-devtools/src/azure_devtools "$AUTOPKGTEST_TMP/pylib"
+
+SETUP_PY_FILES=($(find sdk -name setup.py -type f | grep -v -e nspkg \
+	-e opencensus -e opentelemetry -e sdk/cosmos/azure-cosmos \
+	-e azure-eventhub-checkpointstoreblob-aio \
+	-e azure-servicemanagement-legacy -e azure-eventhub \
+	))
+
+cp sdk/conftest.py "${AUTOPKGTEST_TMP}/"
+cd "$AUTOPKGTEST_TMP"
+for setup_py in "${SETUP_PY_FILES[@]}"; do
+    module="$(dirname "${setup_py}")"
+    if ! [ -d "$CURDIR/$module/tests" ]; then
+        continue
+    fi
+
+    if [ "$module" = "azure-mgmt-media" ]; then
+        echo "Skipping tests for $module; known to be all skipped upstream"
+        continue
+    fi
+
+    for pyver in $PYVERSIONS; do
+        echo "Testing $module for $pyver"
+        test_name="${module}_${pyver}"
+        rm -rf "$AUTOPKGTEST_TMP/tests"
+        cp -r "$CURDIR/$module/tests" "$AUTOPKGTEST_TMP"
+        # Sometimes the conftest.py (which sets up fixtures) is in the module directory
+        if [ ! -r "$AUTOPKGTEST_TMP/tests/conftest.py" ] && [ -r "$CURDIR/$module/conftest.py" ]; then
+            cp "$CURDIR/$module/conftest.py" "$AUTOPKGTEST_TMP/tests/"
+        fi
+        if PYTHONPATH="$AUTOPKGTEST_TMP/pylib" "$pyver" -m pytest --ignore=pylib \
+                --deselect=tests/test_append_blob_async.py::StorageAppendBlobTestAsync::test_append_block_from_url_with_source_if_modified_async \
+                --deselect=tests/test_append_blob_async.py::StorageAppendBlobTestAsync::test_append_block_from_url_with_source_if_none_match_async \
+                --deselect=tests/test_blob_access_conditions_async.py::StorageBlobAccessConditionsTestAsync::test_get_blob_metadata_with_if_modified_fail \
+                --deselect=tests/test_blob_access_conditions_async.py::StorageBlobAccessConditionsTestAsync::test_get_blob_metadata_with_if_none_match_fail \
+                --deselect=tests/test_blob_access_conditions_async.py::StorageBlobAccessConditionsTestAsync::test_get_blob_properties_with_if_modified_fail \
+                --deselect=tests/test_blob_access_conditions_async.py::StorageBlobAccessConditionsTestAsync::test_get_blob_properties_with_if_none_match_fail \
+                --deselect=tests/test_blob_access_conditions_async.py::StorageBlobAccessConditionsTestAsync::test_get_blob_with_if_modified_fail \
+                --deselect=tests/test_blob_access_conditions_async.py::StorageBlobAccessConditionsTestAsync::test_get_blob_with_if_none_match_fail \
+                --deselect=tests/test_blob_access_conditions_async.py::StorageBlobAccessConditionsTestAsync::test_get_page_ranges_iter_if_none_match_fail \
+                --deselect=tests/test_blob_access_conditions_async.py::StorageBlobAccessConditionsTestAsync::test_get_page_ranges_iter_with_if_modified_fail \
+                --deselect=tests/test_cli_mgmt_compute.py::MgmtComputeTest::test_compute \
+                --deselect=tests/test_page_blob_async.py::StoragePageBlobTestAsync::test_upload_pages_from_url_with_source_if_modified \
+                --deselect=tests/test_page_blob_async.py::StoragePageBlobTestAsync::test_upload_pages_from_url_with_source_if_none_match \
+                --deselect=tests/test_file_api_version_async.py::AsyncStorageClientTest::test_old_api_copy_file_succeeds_async \
+                --deselect=tests/test_file_client_async.py::StorageFileClientTest::test_update_range_with_md5_async \
+                --deselect=tests/test_file_client_async.py::StorageFileClientTest::test_user_agent_append_async\
+                --deselect=tests/test_file_client_async.py::StorageFileClientTest::test_user_agent_custom_async \
+                --deselect=tests/test_file_client_async.py::StorageFileClientTest::test_user_agent_default_async \
+                --deselect=tests/test_blob_api_version_async.py::StorageClientTest::test_old_api_get_page_ranges_succeeds_async \
+                --deselect=tests/test_blob_client_async.py::StorageClientTestAsync::test_request_callback_signed_header_async \
+                --deselect=tests/test_blob_client_async.py::StorageClientTestAsync::test_response_callback_async \
+                --deselect=tests/test_blob_client_async.py::StorageClientTestAsync::test_user_agent_append_async \
+                --deselect=tests/test_blob_client_async.py::StorageClientTestAsync::test_user_agent_custom_async \
+                --deselect=tests/test_blob_client_async.py::StorageClientTestAsync::test_user_agent_default_async \
+                --deselect=tests/test_queue_client_async.py::StorageQueueClientTestAsync::test_request_callback_signed_header \
+                --deselect=tests/test_queue_client_async.py::StorageQueueClientTestAsync::test_response_callback \
+                --deselect=tests/test_queue_client_async.py::StorageQueueClientTestAsync::test_user_agent_append \
+                --deselect=tests/test_queue_client_async.py::StorageQueueClientTestAsync::test_user_agent_custom \
+                --deselect=tests/test_queue_client_async.py::StorageQueueClientTestAsync::test_user_agent_default \
+                --deselect=tests/test_mgmt_async.py::TestManagementAsync::test_get_form_recognizer_client \
+                --deselect=tests/test_receipt.py::TestManagementAsync::test_get_form_recognizer_client \
+                --deselect=tests/test_receipt.py::TestReceiptFromStream::test_authentication_successful_key \
+                --deselect=tests/test_receipt.py::TestReceiptFromStream::test_passing_enum_content_type \
+                --deselect=tests/test_receipt.py::TestReceiptFromStream::test_receipt_jpg \
+                --deselect=tests/test_receipt.py::TestReceiptFromStream::test_receipt_jpg_include_text_content \
+                --deselect=tests/test_receipt.py::TestReceiptFromStream::test_receipt_png \
+                --deselect=tests/test_receipt.py::TestReceiptFromStream::test_receipt_stream_transform_jpg \
+                --deselect=tests/test_receipt.py::TestReceiptFromStream::test_receipt_stream_transform_png \
+                --deselect=tests/test_receipt_async.py::TestReceiptFromStreamAsync::test_authentication_successful_key \
+                --deselect=tests/test_receipt_async.py::TestReceiptFromStreamAsync::test_passing_enum_content_type \
+                --deselect=tests/test_receipt_async.py::TestReceiptFromStreamAsync::test_receipt_jpg \
+                --deselect=tests/test_receipt_async.py::TestReceiptFromStreamAsync::test_receipt_jpg_include_text_content \
+                --deselect=tests/test_receipt_async.py::TestReceiptFromStreamAsync::test_receipt_png \
+                --deselect=tests/test_receipt_async.py::TestReceiptFromStreamAsync::test_receipt_stream_transform_jpg \
+                --deselect=tests/test_receipt_async.py::TestReceiptFromStreamAsync::test_receipt_stream_transform_png \
+                --deselect=tests/test_receipt_from_url.py::TestReceiptFromUrl::test_receipt_url_auth_successful_key \
+                --deselect=tests/test_receipt_from_url.py::TestReceiptFromUrl::test_receipt_url_include_text_content \
+                --deselect=tests/test_receipt_from_url.py::TestReceiptFromUrl::test_receipt_url_jpg \
+                --deselect=tests/test_receipt_from_url.py::TestReceiptFromUrl::test_receipt_url_png \
+                --deselect=tests/test_receipt_from_url.py::TestReceiptFromUrl::test_receipt_url_transform_jpg \
+                --deselect=tests/test_receipt_from_url.py::TestReceiptFromUrl::test_receipt_url_transform_png \
+                --deselect=tests/test_receipt_from_url_async.py::TestReceiptFromUrlAsync::test_receipt_url_auth_successful_key \
+                --deselect=tests/test_receipt_from_url_async.py::TestReceiptFromUrlAsync::test_receipt_url_include_text_content \
+                --deselect=tests/test_receipt_from_url_async.py::TestReceiptFromUrlAsync::test_receipt_url_jpg \
+                --deselect=tests/test_receipt_from_url_async.py::TestReceiptFromUrlAsync::test_receipt_url_png \
+                --deselect=tests/test_receipt_from_url_async.py::TestReceiptFromUrlAsync::test_receipt_url_transform_jpg \
+                --deselect=tests/test_receipt_from_url_async.py::TestReceiptFromUrlAsync::test_receipt_url_transform_png \
+                --deselect=tests/test_mgmt_batch.py::MgmtBatchTest::test_mgmt_batch_account_advanced \
+                --deselect=tests/test_mgmt_resource_managed_application.py::MgmtResourceLinksTest::test_application \
+                --deselect=tests/test_basic_transport.py::test_multipart_send_with_one_changeset \
+                --deselect=tests/test_basic_transport.py::test_multipart_send_with_multiple_changesets \
+                --deselect=tests/test_basic_transport.py::test_multipart_send_with_combination_changeset_first \
+                --deselect=tests/test_basic_transport.py::test_multipart_send_with_combination_changeset_last \
+                --deselect=tests/test_basic_transport.py::test_multipart_send_with_combination_changeset_middle \
+                --deselect=tests/azure_core_asynctests/test_basic_transport.py::test_multipart_send_with_one_changeset \
+                --deselect=tests/azure_core_asynctests/test_basic_transport.py::test_multipart_send_with_multiple_changesets \
+                --deselect=tests/azure_core_asynctests/test_basic_transport.py::test_multipart_send_with_combination_changeset_first \
+                --deselect=tests/azure_core_asynctests/test_basic_transport.py::test_multipart_send_with_combination_changeset_last \
+                --deselect=tests/azure_core_asynctests/test_basic_transport.py::test_multipart_send_with_combination_changeset_middle \
+                --deselect=tests/test_policies.py::test_register_rp_policy \
+                --deselect=tests/test_policies.py::test_register_failed_policy \
+                --deselect=tests/test_mgmt_compute_vmss.py::MgmtComputeTest::test_compute_vmss_base_2 \
+                --deselect=tests/test_mgmt_compute_vmss.py::MgmtComputeTest::test_compute_vmss_perform_maintenance \
+                --deselect=tests/test_mgmt_compute_vmss.py::MgmtComputeTest::test_compute_vmss_rolling_upgrades \
+                --deselect=tests/test_change_feed.py::StorageChangeFeedTest::test_change_feed_does_not_fail_on_empty_event_stream \
+                --deselect=tests/test_change_feed.py::StorageChangeFeedTest::test_get_change_feed_events_with_continuation_token \
+                --deselect=tests/test_change_feed.py::StorageChangeFeedTest::test_read_change_feed_tail_where_3_shards_have_data \
+                --deselect=tests/test_change_feed.py::StorageChangeFeedTest::test_read_change_feed_tail_where_only_1_shard_has_data \
+                --ignore=tests/test_certificates_client.py \
+                --ignore=tests/test_certificates_client_async.py \
+                --ignore=tests/test_examples_certificates.py \
+                --ignore=tests/test_examples_certificates_async.py \
+                --ignore=tests/test_merge_certificate.py \
+                --ignore=tests/test_merge_certificate_async.py \
+                --ignore=tests/test_samples_secrets.py \
+                --ignore=tests/test_samples_secrets_async.py \
+                --ignore=tests/test_secrets_async.py \
+                --ignore=tests/test_secrets_client.py \
+                --ignore=tests/test_crypto_client.py \
+                --ignore=tests/test_crypto_client_async.py \
+                --ignore=tests/test_examples_crypto.py \
+                --ignore=tests/test_examples_crypto_async.py \
+                --ignore=tests/test_examples_crypto.py \
+                --ignore=tests/test_examples_crypto_async.py \
+                --ignore=tests/test_key_client.py \
+                --ignore=tests/test_keys_async.py \
+                --ignore=tests/test_samples_keys.py \
+                --ignore=tests/test_samples_keys_async.py \
+                --ignore=tests/test_cli_mgmt_appplatform.py \
+                --ignore=tests/test_directory_async.py \
+                --ignore=tests/test_file_service_properties_async.py \
+                --ignore=tests/test_get_file_async.py \
+                --ignore=tests/test_handle_async.py \
+                --ignore=tests/test_share_async.py \
+                --ignore=tests/test_file_async.py \
+                --ignore=tests/test_append_blob_async.py \
+                --ignore=tests/test_blob_access_conditions_async.py \
+                --ignore=tests/test_blob_encryption_async.py \
+                --ignore=tests/test_blob_service_properties_async.py \
+                --ignore=tests/test_blob_service_stats_async.py \
+                --ignore=tests/test_blob_storage_account_async.py \
+                --ignore=tests/test_block_blob_async.py \
+                --ignore=tests/test_block_blob_sync_copy_async.py \
+                --ignore=tests/test_common_blob_async.py \
+                --ignore=tests/test_container_async.py \
+                --ignore=tests/test_cpk_async.py \
+                --ignore=tests/test_cpk_n_async.py \
+                --ignore=tests/test_get_blob_async.py \
+                --ignore=tests/test_logging_async.py \
+                --ignore=tests/test_page_blob_async.py \
+                --ignore=tests/test_retry_async.py \
+                --ignore=tests/test_queue_async.py \
+                --ignore=tests/test_queue_encodings_async.py \
+                --ignore=tests/test_queue_encryption_async.py \
+                --ignore=tests/test_queue_service_properties_async.py \
+                --ignore=tests/test_queue_service_stats_async.py \
+                --ignore=tests/test_cli_mgmt_web.py \
+                --ignore=tests/test_avro_serializer.py \
+                --ignore=tests/test_cli_mgmt_network_base.py \
+                --ignore=tests/test_cli_mgmt_network_firewall.py \
+                . 2>&1 | tee -a "${AUTOPKGTEST_TMP}/$(basename "${test_name}").log"; then
+            SUCCESSFUL_TESTS+=("$test_name")
+        elif [ $? = 5 ]; then
+            # Some tests are skipped entirely, so pytest exits with 5 for "no tests collected"
+            SKIPPED_TESTS+=("$test_name(exit=${?})")
+        else
+            FAILED_TESTS+=("$test_name(exit=${?})")
+            exit 1
+        fi
+        rm -r "$AUTOPKGTEST_TMP/tests"
+    done
+done
+
+echo "Successful tests:" "${SUCCESSFUL_TESTS[@]}"
+echo "Skipped tests:" "${SKIPPED_TESTS[@]}"
+echo "Failed tests:" "${FAILED_TESTS[@]}"
+
+if [ ${#FAILED_TESTS[@]} -gt 0 ]; then
+    exit 1
+fi
