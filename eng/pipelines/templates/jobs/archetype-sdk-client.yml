@@ -1,0 +1,193 @@
+parameters:
+  ServiceDirectory: ''
+  Artifacts: []
+  TestPipeline: false
+  BeforePublishSteps: []
+  TestMarkArgument: ''
+  BuildTargetingString: 'azure-*'
+  TestTimeoutInMinutes: 0
+  ToxEnvParallel: '--tenvparallel'
+  InjectedPackages: ''
+  BuildDocs: true
+  SkipPythonVersion: ''
+  TestMatrix:
+    Linux_Python27:
+      OSVmImage: 'ubuntu-18.04'
+      PythonVersion: '2.7'
+      CoverageArg: ''
+      RunForPR: true
+    Linux_Python35:
+      OSVmImage: 'ubuntu-18.04'
+      PythonVersion: '3.5'
+      CoverageArg: ''
+      RunForPR: false
+    Linux_Python38:
+      OSVmImage: 'ubuntu-18.04'
+      PythonVersion: '3.8'
+      CoverageArg: ''
+      RunForPR: true
+    Windows_Python35:
+      OSVmImage: 'windows-2019'
+      PythonVersion: '3.5'
+      CoverageArg: ''
+      RunForPR: true
+    MacOS_Python27:
+      OSVmImage: 'macOS-10.15'
+      PythonVersion: '2.7'
+      CoverageArg: ''
+      RunForPR: false
+    Linux_pypy3:
+      OSVmImage: 'ubuntu-18.04'
+      PythonVersion: 'pypy3'
+      CoverageArg: '--disablecov'
+      RunForPR: false
+    Linux_Python39:
+      OSVmImage: 'ubuntu-18.04'
+      PythonVersion: '3.9'
+      CoverageArg: ''
+      RunForPR: true
+  AdditionalTestMatrix: []
+  DevFeedName: 'public/azure-sdk-for-python'
+
+jobs:
+  - job: 'Build'
+    variables:
+    - template: ../variables/globals.yml
+
+    pool:
+      vmImage: 'ubuntu-18.04'
+
+    steps:
+    - template: ../steps/build-artifacts.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+
+  - job: 'Analyze'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-18.04'
+
+    steps:
+    - template: /eng/common/pipelines/templates/steps/verify-links.yml
+      parameters:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: ''
+          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: sdk/${{ parameters.ServiceDirectory }}
+        CheckLinkGuidance: $true
+
+    - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        Artifacts: ${{ parameters.Artifacts }}
+
+  - job: 'Test'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+    variables:
+    - template: ../variables/globals.yml
+    - name: InjectedPackages
+      value: ${{ parameters.InjectedPackages }}
+    
+    dependsOn:
+       - 'Build'
+
+    strategy:
+      matrix:
+        ${{ each matrixEntry in parameters.TestMatrix }}:
+          ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+            # Skip python version if any specific service has opted out
+            ${{ if ne(parameters.SkipPythonVersion, matrixEntry.value.PythonVersion) }}:
+              ${{ matrixEntry.key }}:
+                ${{ insert }}: ${{ matrixEntry.value }}
+
+        ${{ each matrixEntry in parameters.AdditionalTestMatrix }}:
+          ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+            ${{ matrixEntry.key }}:
+              ${{ insert }}: ${{ matrixEntry.value }}
+
+        
+    pool:
+      vmImage: '$(OSVmImage)'
+
+    steps:
+    - ${{if eq(parameters.TestPipeline, 'true')}}:
+      - task: PowerShell@2
+        displayName: Prep template pipeline for release
+        condition: succeeded()
+        inputs:
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          filePath: eng/scripts/SetTestPipelineVersion.ps1
+          arguments: '-BuildID $(Build.BuildId)'
+
+    - pwsh: |
+        $toxenvvar = "whl,sdist"
+        if ('$(System.TeamProject)' -eq 'internal') {
+          $toxenvvar = "whl,sdist,depends,latestdependency,mindependency"
+        }
+
+        # ensure that the variable is unset. if it isn't, use the value discovered there
+        if ('$(Run.ToxCustomEnvs)' -ne ('$' + '(Run.ToxCustomEnvs)'))
+        {
+          $toxenvvar = '$(Run.ToxCustomEnvs)'
+        }
+        
+        echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
+      displayName: "Set Tox Environment"
+
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSVmImage: $(OSVmImage)
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: $(toxenv)
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: $(InjectedPackages)
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
+
+          - template: ../steps/set-dev-build.yml
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+  - job: 'RunRegression'
+    condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
+    displayName: 'Run Regression'
+    timeoutInMinutes: 120
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-18.04'
+
+    steps:
+    - template: ../steps/test_regression.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}

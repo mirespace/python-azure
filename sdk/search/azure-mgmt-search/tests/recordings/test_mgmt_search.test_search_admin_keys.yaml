@@ -1,0 +1,152 @@
+interactions:
+- request:
+    body: '{"location": "westus", "sku": {"name": "free"}, "properties": {"replicaCount":
+      1, "partitionCount": 1, "hostingMode": "Default"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '129'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_admin_keys3f6f0ff0/providers/Microsoft.Search/searchServices/ptvstestquerykeys?api-version=2020-08-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_admin_keys3f6f0ff0/providers/Microsoft.Search/searchServices/ptvstestquerykeys","name":"ptvstestquerykeys","type":"Microsoft.Search/searchServices","location":"West
+        US","properties":{"replicaCount":1,"partitionCount":1,"status":"running","statusDetails":"","provisioningState":"succeeded","hostingMode":"Default","publicNetworkAccess":"Enabled","networkRuleSet":{"ipRules":[],"bypass":"None"},"privateEndpointConnections":[],"sharedPrivateLinkResources":[]},"sku":{"name":"free"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '583'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 09:28:39 GMT
+      elapsed-time:
+      - '317'
+      etag:
+      - W/"datetime'2020-10-27T09%3A28%3A40.3310359Z'"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - cacf6092-1836-11eb-8280-0242ac110007
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_admin_keys3f6f0ff0/providers/Microsoft.Search/searchServices/ptvstestquerykeys/listAdminKeys?api-version=2020-08-01
+  response:
+    body:
+      string: '{"primaryKey":"808D983DDDEAE322A7110E4D1001DFA5","secondaryKey":"8F5BCD895E6569DA478350DC388ED991"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '99'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 09:28:40 GMT
+      elapsed-time:
+      - '131'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - cc6fd7a6-1836-11eb-8280-0242ac110007
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_admin_keys3f6f0ff0/providers/Microsoft.Search/searchServices/ptvstestquerykeys/regenerateAdminKey/primary?api-version=2020-08-01
+  response:
+    body:
+      string: '{"primaryKey":"2E013FD2099C8076974CD75D2F02BA25","secondaryKey":"8F5BCD895E6569DA478350DC388ED991"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '99'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 09:28:41 GMT
+      elapsed-time:
+      - '405'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - ccb19c72-1836-11eb-8280-0242ac110007
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,60 @@
+interactions:
+- request:
+    body: '{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query": "project
+      id, location | limit 10", "facets": [{"expression": "location", "options": {"sortOrder":
+      "desc", "$top": 1}}, {"expression": "nonExistingColumn", "options": {"sortOrder":
+      "desc", "$top": 1}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '270'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-resourcegraph/unknown Python/3.6.9 (Linux-4.19.128-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
+  response:
+    body:
+      string: '{"totalRecords":10,"count":10,"data":{"columns":[{"name":"id","type":"string"},{"name":"location","type":"string"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojxu/providers/Microsoft.Compute/galleries/xiaojxug1","westus2"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojxu/providers/Microsoft.Compute/galleries/xiaojxug1/images/d1","westus2"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acctestRG-ibt-10191/providers/Microsoft.ManagedIdentity/userAssignedIdentities/acctestIBT10191Identity","westus2"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/feng-cli-rg/providers/microsoft.insights/actiongroups/Application
+        Insights Smart Detection","global"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/storage-v2rt-repro/providers/Microsoft.Storage/storageAccounts/storagesfrepro12","centralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.AlertsManagement/actionRules/rule2","global"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_virtual_routerkavia6zlpypv4eb4df4yt6fqkczgl6f3oh6ceynvxvde4omwl7jk/providers/Microsoft.Network/virtualRouters/vrouter1","westcentralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fy/providers/Microsoft.Network/networkInterfaces/vm1VMNic","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/QIANWENS/providers/Microsoft.Network/networkInterfaces/prod-9bef63c3-4937-49ef-bfd6-55609d35142e-cluster-nic-2","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/storage-v2rt-repro/providers/Microsoft.Storage/storageAccounts/storagesfrepro6","centralus"]]},"facets":[{"expression":"location","totalRecords":6,"count":1,"data":{"columns":[{"name":"location","type":"string"},{"name":"count","type":"integer"}],"rows":[["westus2",3]]},"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
+        valid columns in facet expression."},{"code":"InvalidColumnNames","message":"Invalid
+        column names: [nonExistingColumn]."}],"resultType":"FacetError"}],"resultTruncated":"false"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '2240'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 07:38:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-tenant-resource-requests:
+      - '12'
+      x-ms-user-quota-remaining:
+      - '12'
+      x-ms-user-quota-resets-after:
+      - 00:00:05
+    status:
+      code: 200
+      message: OK
+version: 1

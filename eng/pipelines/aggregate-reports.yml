@@ -1,0 +1,43 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - eng/pipelines/aggregate-reports.yml
+
+jobs:
+- job: 'ValidateDependencies'
+  variables:
+  - template: ./templates/variables/globals.yml
+
+  pool:
+    vmImage: 'windows-2019'
+
+  steps:
+  - template: /eng/pipelines/templates/steps/analyze_dependency.yml
+
+  - task: AzureFileCopy@2
+    displayName: 'Upload dependency report'
+    condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
+    inputs:
+      sourcePath: '$(Build.ArtifactStagingDirectory)/reports'
+      azureSubscription: 'Azure SDK Artifacts'
+      destination: AzureBlob
+      storage: azuresdkartifacts
+      containerName: 'azure-sdk-for-python'
+      blobPrefix: dependencies
+
+  - task: PowerShell@2
+    displayName: "Verify Repository Resource Refs"
+    inputs:
+      pwsh: true
+      workingDirectory: $(Build.SourcesDirectory)
+      filePath: eng/common/scripts/Verify-Resource-Ref.ps1
+
+  - template: ../common/pipelines/templates/steps/verify-links.yml
+    parameters:
+      Directory: ""
+      CheckLinkGuidance: $true

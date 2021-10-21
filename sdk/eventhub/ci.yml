@@ -1,0 +1,44 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - master
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/eventhub/
+    - sdk/core/
+    - tools/
+    - eng/
+
+pr:
+  branches:
+    include:
+    - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/eventhub/
+    - sdk/core/
+    - tools/
+    - eng/
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: eventhub
+    Artifacts:
+    - name: azure_eventhub
+      safeName: azureeventhub
+    - name: azure_eventhub_checkpointstoreblob_aio
+      safeName: azureeventhubcheckpointstoreblobaio
+    - name: azure_eventhub_checkpointstoreblob
+      safeName: azureeventhubcheckpointstoreblob
+    - name: azure_mgmt_eventhub
+      safeName: azuremgmteventhub

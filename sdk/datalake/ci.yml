@@ -1,0 +1,34 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - master
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/datalake/
+
+pr:
+  branches:
+    include:
+    - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/datalake/
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: datalake
+    Artifacts:
+    - name: azure_mgmt_datalake_analytics
+      safeName: azuremgmtdatalakeanalytics
+    - name: azure_mgmt_datalake_store
+      safeName: azuremgmtdatalakestore

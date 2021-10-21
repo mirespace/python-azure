@@ -1,0 +1,13 @@
+parameters:
+  BuildTargetingString: 'azure-*'
+  ServiceDirectory: ''
+
+steps:
+  - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
+
+  - task: PythonScript@0
+    condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'))
+    displayName: "Update package versions for dev build"
+    inputs:
+      scriptPath: 'eng/versioning/version_set_dev.py'
+      arguments: '"${{ parameters.BuildTargetingString }}" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"'

@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: '{"feedbackType": "Anomaly", "metricId": "metric_id", "dimensionFilter":
+      {"dimension": {"dimension_name": "Los Angeles"}}, "startTime": "2020-08-05T00:00:00.000Z",
+      "endTime": "2020-10-21T00:00:00.000Z", "value": {"anomalyValue": "NotAnomaly"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '259'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: ba1897c2-60c3-4e92-9fbb-dc49dac0faac
+      content-length: '0'
+      date: Mon, 26 Oct 2020 17:54:06 GMT
+      location: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/cb4c6de5-2b57-49f6-bef6-0feb907ed46c
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '308'
+      x-request-id: ba1897c2-60c3-4e92-9fbb-dc49dac0faac
+    status:
+      code: 201
+      message: Created
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/feedback/metric
+version: 1

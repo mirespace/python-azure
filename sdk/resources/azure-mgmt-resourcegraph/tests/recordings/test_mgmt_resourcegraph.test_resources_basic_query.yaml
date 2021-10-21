@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: '{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query": "project
+      id, tags, properties | limit 2"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '110'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-resourcegraph/unknown Python/3.6.9 (Linux-4.19.128-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
+  response:
+    body:
+      string: '{"totalRecords":2,"count":2,"data":{"columns":[{"name":"id","type":"string"},{"name":"tags","type":"object"},{"name":"properties","type":"object"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojxu/providers/Microsoft.Compute/galleries/xiaojxug1/images/d1/versions/1.0.0",{},{"provisioningState":"Failed","storageProfile":{},"publishingProfile":{"storageAccountType":"Standard_LRS","source":{"managedImage":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Compute/images/img1"}},"replicaCount":1,"excludeFromLatest":false,"targetRegions":[{"name":"West
+        US 2","storageAccountType":"Standard_LRS","regionalReplicaCount":1}],"publishedDate":"2020-10-19T07:29:37.4350000Z"}}],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acctestRG-ibt-10193/providers/Microsoft.ManagedIdentity/userAssignedIdentities/acctestIBT10193Identity",{},{"tenantId":"00000000-0000-0000-0000-000000000000","clientId":"c56b3537-934b-4c90-976d-235dd4f737b9","principalId":"751db488-4340-4c73-b5fc-18fff1947927"}]]},"facets":[],"resultTruncated":"false"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1131'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 07:38:43 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-tenant-resource-requests:
+      - '14'
+      x-ms-user-quota-remaining:
+      - '14'
+      x-ms-user-quota-resets-after:
+      - 00:00:05
+    status:
+      code: 200
+      message: OK
+version: 1

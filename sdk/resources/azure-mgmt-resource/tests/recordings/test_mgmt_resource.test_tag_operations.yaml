@@ -1,0 +1,371 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz?api-version=2020-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz","tagName":"tagxyz","count":{"type":"Total","value":0},"values":[]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '142'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Sep 2020 07:47:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1?api-version=2020-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '148'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Sep 2020 07:47:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames?api-version=2020-06-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/exampleTag","tagName":"exampleTag","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/exampleTag/tagValues/exampleValue","tagValue":"exampleValue","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage","tagName":"ms-resource-usage","count":{"type":"Total","value":2},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/ms-resource-usage/tagValues/azure-cloud-shell","tagValue":"azure-cloud-shell","count":{"type":"Total","value":2}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1","tagName":"tag1","count":{"type":"Total","value":7},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":4}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/Red","tagValue":"Red","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2","tagName":"tag2","count":{"type":"Total","value":7},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2/tagValues/value2","tagValue":"value2","count":{"type":"Total","value":4}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag2/tagValues/White","tagValue":"White","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/test","tagName":"test","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/test/tagValues/test1","tagValue":"test1","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Migrate
+        Project","tagName":"Migrate Project","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Migrate
+        Project/tagValues/testmigrate","tagValue":"testmigrate","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Creator","tagName":"Creator","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/Creator/tagValues/Automatically
+        added by NRMS Azure Policy","tagValue":"Automatically added by NRMS Azure
+        Policy","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Info","tagName":"NRMS-Info","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Info/tagValues/http://aka.ms/nrms","tagValue":"http://aka.ms/nrms","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Version","tagName":"NRMS-Version","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/NRMS-Version/tagValues/2019-03-20","tagValue":"2019-03-20","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key1","tagName":"key1","count":{"type":"Total","value":9},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":9}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key2","tagName":"key2","count":{"type":"Total","value":6},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/key2/tagValues/value2","tagValue":"value2","count":{"type":"Total","value":6}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagkey","tagName":"tagkey","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagkey/tagValues/lianwtesttags2","tagValue":"lianwtesttags2","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz","tagName":"tagxyz","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/environment","tagName":"environment","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/environment/tagValues/Terraform
+        Devops Test","tagValue":"Terraform Devops Test","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter","tagName":"DeleteAfter","count":{"type":"Total","value":8},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter/tagValues/2020-08-15T07:02:26.327834","tagValue":"2020-08-15T07:02:26.327834","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter/tagValues/2020-09-16T09:14:35","tagValue":"2020-09-16T09:14:35","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter/tagValues/2020-09-17T02:52:26","tagValue":"2020-09-17T02:52:26","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter/tagValues/2020-09-17T04:25:53","tagValue":"2020-09-17T04:25:53","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter/tagValues/2020-09-02T08:47:56.593193","tagValue":"2020-09-02T08:47:56.593193","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter/tagValues/2020-09-18T07:29:38","tagValue":"2020-09-18T07:29:38","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter/tagValues/2020-09-18T07:37:32","tagValue":"2020-09-18T07:37:32","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/DeleteAfter/tagValues/2020-09-18T07:40:54","tagValue":"2020-09-18T07:40:54","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/product","tagName":"product","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/product/tagValues/azurecli","tagValue":"azurecli","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/cause","tagName":"cause","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/cause/tagValues/automation","tagValue":"automation","count":{"type":"Total","value":3}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date","tagName":"date","count":{"type":"Total","value":3},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-08-07T03:31:29Z","tagValue":"2020-08-07T03:31:29Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-08-07T06:12:37Z","tagValue":"2020-08-07T06:12:37Z","count":{"type":"Total","value":1}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/date/tagValues/2020-08-14T05:19:35Z","tagValue":"2020-08-14T05:19:35Z","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/What
+        Is Cleanup Service","tagName":"What Is Cleanup Service","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/What
+        Is Cleanup Service/tagValues/https://aka.ms/WhatIsCleanupService","tagValue":"https://aka.ms/WhatIsCleanupService","count":{"type":"Total","value":1}}]}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '7923'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Sep 2020 07:47:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz/tagValues/value1?api-version=2020-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 17 Sep 2020 07:47:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tagxyz?api-version=2020-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 17 Sep 2020 07:47:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"tags": {"tagKey1": "tagValue1", "tagKey2": "tagValue2"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '74'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/tags/default?api-version=2020-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/tags/default","name":"default","type":"Microsoft.Resources/tags","properties":{"tags":{"tagKey1":"tagValue1","tagKey2":"tagValue2"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '222'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Sep 2020 07:47:57 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/tags/default?api-version=2020-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/tags/default","name":"default","type":"Microsoft.Resources/tags","properties":{"tags":{"tagKey1":"tagValue1","tagKey2":"tagValue2"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '222'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Sep 2020 07:47:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"operation": "Delete", "properties": {"tags": {"tagKey1": "tagValue1"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '73'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/tags/default?api-version=2020-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/tags/default","name":"default","type":"Microsoft.Resources/tags","properties":{"tags":{"tagKey2":"tagValue2"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '200'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Sep 2020 07:47:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/tags/default?api-version=2020-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 17 Sep 2020 07:47:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14997'
+    status:
+      code: 200
+      message: OK
+version: 1

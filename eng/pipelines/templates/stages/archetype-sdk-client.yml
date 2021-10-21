@@ -1,0 +1,68 @@
+parameters:
+- name: Artifacts
+  type: object
+  default: []
+- name: TestPipeline
+  type: boolean
+  default: false
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+- name: ToxEnvParallel
+  type: string
+  default: --tenvparallel
+- name: InjectedPackages
+  type: string
+  default: ''
+- name: BuildDocs
+  type: boolean
+  default: true
+- name: TargetDocRepoOwner
+  type: string
+  default: MicrosoftDocs
+- name: TargetDocRepoName
+  type: string
+  default: azure-docs-sdk-python
+- name: SkipPythonVersion
+  type: string
+  default: ''
+- name: AdditionalTestMatrix
+  type: object
+  default: []
+- name: DevFeedName
+  type: string
+  default: public/azure-sdk-for-python
+- name: BuildTargetingString
+  type: string
+  default: azure-*
+  
+
+stages:
+  - stage: Build
+    jobs:
+    - template: ../jobs/archetype-sdk-client.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        Artifacts: ${{ parameters.Artifacts }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+        SkipPythonVersion: ${{ parameters.SkipPythonVersion }}
+        AdditionalTestMatrix: ${{ parameters.AdditionalTestMatrix }}
+        DevFeedName: ${{ parameters.DevFeedName }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
+  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - template: archetype-python-release.yml
+      parameters:
+        DependsOn: Build
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        Artifacts: ${{ parameters.Artifacts }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        ArtifactName: packages
+        DocArtifact: documentation
+        TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
+        TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
+        DevFeedName: ${{ parameters.DevFeedName }}

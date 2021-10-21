@@ -1,0 +1,36 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - master
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/iothub/
+
+pr:
+  branches:
+    include:
+    - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/iothub/
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: iothub
+    Artifacts:
+    - name: azure_mgmt_iothub
+      safeName: azuremgmtiothub
+    - name: azure_mgmt_iothubprovisioningservices
+      safeName: azuremgmtiothubprovisioningservices
+    - name: azure_mgmt_iotcentral
+      safeName: azuremgmtiotcentral

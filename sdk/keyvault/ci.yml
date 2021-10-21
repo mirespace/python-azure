@@ -1,0 +1,48 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - master
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/keyvault/
+    - sdk/core/
+    - tools/
+    - eng/
+
+pr:
+  branches:
+    include:
+    - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/keyvault/
+    - sdk/core/
+    - tools/
+    - eng/
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: keyvault
+    Artifacts:
+    - name: azure_keyvault_administration
+      safename: azurekeyvaultadministration
+    - name: azure_keyvault_certificates
+      safeName: azurekeyvaultcertificates
+    - name: azure_keyvault_keys
+      safeName: azurekeyvaultkeys
+    - name: azure_keyvault_secrets
+      safeName: azurekeyvaultsecrets
+    - name: azure_mgmt_keyvault
+      safeName: azuremgmtkeyvault
+    - name: azure_keyvault
+      safeName: azurekeyvault

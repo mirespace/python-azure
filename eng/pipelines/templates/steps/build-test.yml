@@ -1,0 +1,68 @@
+parameters:
+  AdditionalTestArgs: ''
+  TestMarkArgument: ''
+  EnvVars: {}
+  ServiceDirectory: ''
+  PythonVersion: ''
+  OSVmImage: ''
+  BeforeTestSteps: []
+  AfterTestSteps: []
+  CoverageArg: ''
+  BuildTargetingString: 'azure-*'
+  ToxTestEnv: ""
+  RunCoverage: ne(variables['CoverageArg'], '--disablecov')
+  ToxEnvParallel: ''
+  InjectedPackages: ''
+  DevFeedName: 'public/azure-sdk-for-python'
+
+steps:
+  - pwsh: |
+      gci -r $(Build.ArtifactStagingDirectory)
+
+  - template: /eng/pipelines/templates/steps/use-python-version.yml
+    parameters:
+      versionSpec: '${{ parameters.PythonVersion }}'
+
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+
+  - script: |
+      python -m pip install pip==20.1
+      pip install -r eng/ci_tools.txt
+      pip --version
+      pip freeze
+    displayName: 'Prep Environment'
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: ../steps/auth-dev-feed.yml
+      parameters: 
+        DevFeedName: ${{ parameters.DevFeedName }}
+
+  - ${{ parameters.BeforeTestSteps }}
+
+  - task: PythonScript@0
+    displayName: 'Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        ${{ parameters.AdditionalTestArgs }}
+        ${{ parameters.CoverageArg }}
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="${{ parameters.ToxTestEnv }}"
+        --injected-packages="${{ parameters.InjectedPackages }}"
+        ${{ parameters.ToxEnvParallel }}
+    env: ${{ parameters.EnvVars }}
+
+  - ${{ parameters.AfterTestSteps }}
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFiles: '**/*test*.xml'
+      testRunTitle: '$(OSName) Python ${{ parameters.PythonVersion }}'
+      failTaskOnFailedTests: true
+
+  - template: publish-coverage.yml
+    parameters:
+      RunCoverage: ${{ parameters.RunCoverage }}

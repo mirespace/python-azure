@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"feedbackType": "Period", "metricId": "metric_id", "dimensionFilter":
+      {"dimension": {"dimension_name": "Los Angeles"}}, "value": {"periodType": "AssignValue",
+      "periodValue": 2}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '195'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 09c24c5f-6a8b-4062-9dbc-0c27e167c66c
+      content-length:
+      - '0'
+      date:
+      - Mon, 26 Oct 2020 17:37:19 GMT
+      location:
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/df0e503e-690a-4acc-b664-7021d715cf04
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '5764'
+      x-request-id:
+      - 09c24c5f-6a8b-4062-9dbc-0c27e167c66c
+    status:
+      code: 201
+      message: Created
+version: 1

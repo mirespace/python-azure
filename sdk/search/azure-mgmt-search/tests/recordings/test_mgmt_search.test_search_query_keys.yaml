@@ -1,0 +1,195 @@
+interactions:
+- request:
+    body: '{"location": "westus", "sku": {"name": "standard"}, "properties": {"replicaCount":
+      1, "partitionCount": 1, "hostingMode": "Default"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '133'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy?api-version=2020-08-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy","name":"ptvstestquerykeysxxy","type":"Microsoft.Search/searchServices","location":"West
+        US","properties":{"replicaCount":1,"partitionCount":1,"status":"running","statusDetails":"","provisioningState":"succeeded","hostingMode":"Default","publicNetworkAccess":"Enabled","networkRuleSet":{"ipRules":[],"bypass":"None"},"privateEndpointConnections":[],"sharedPrivateLinkResources":[]},"sku":{"name":"standard"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '593'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 09:40:56 GMT
+      elapsed-time:
+      - '2998'
+      etag:
+      - W/"datetime'2020-10-27T09%3A40%3A55.0590301Z'"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - 7c76eaf8-1838-11eb-9153-0242ac110007
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy/createQueryKey/testkey?api-version=2020-08-01
+  response:
+    body:
+      string: '{"name":"testkey","key":"2E46BA4FC84B8DCC2039F4BA329B4B73"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '59'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 09:40:57 GMT
+      elapsed-time:
+      - '173'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - 8341630e-1838-11eb-9153-0242ac110007
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy/listQueryKeys?api-version=2020-08-01
+  response:
+    body:
+      string: '{"value":[{"name":null,"key":"69684B14BE2E6358027B2B0FC97B2158"},{"name":"testkey","key":"2E46BA4FC84B8DCC2039F4BA329B4B73"}],"nextLink":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '142'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 09:40:57 GMT
+      elapsed-time:
+      - '185'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - 838a7bf2-1838-11eb-9153-0242ac110007
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-search/8.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_query_keys40e9101d/providers/Microsoft.Search/searchServices/ptvstestquerykeysxxy/deleteQueryKey/testkey?api-version=2020-08-01
+  response:
+    body:
+      string: '{"error":{"code":"Unknown","message":"This API key does not exist for
+        service ''ptvstestquerykeysxxy''. RequestId: 83d510ae-1838-11eb-9153-0242ac110007","target":null,"details":null}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-language:
+      - en
+      content-length:
+      - '181'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 09:40:58 GMT
+      elapsed-time:
+      - '177'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - 83d510ae-1838-11eb-9153-0242ac110007
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 404
+      message: Not Found
+version: 1

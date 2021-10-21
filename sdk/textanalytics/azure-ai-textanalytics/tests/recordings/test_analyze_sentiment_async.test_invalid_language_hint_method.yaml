@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "This should fail because we''re passing
+      in an invalid language hint", "language": "notalanguage"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '134'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: de,en,es,fr,hi,it,ja,ko,nl,no,pt-BR,pt-PT,tr,zh-Hans,zh-Hant"}}}],"modelVersion":"2020-04-01"}'
+    headers:
+      apim-request-id: 0d96894d-0af3-43ee-8ae4-d271f23bb779
+      content-type: application/json; charset=utf-8
+      date: Thu, 19 Nov 2020 21:29:50 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+version: 1
