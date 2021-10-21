@@ -9,9 +9,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/tenants?api-version=2019-11-01
+    uri: https://management.azure.com/tenants?api-version=2021-01-01
   response:
     body:
       string: '{"value":[{"id":"/tenants/00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","tenantCategory":"Home"}]}'
@@ -23,7 +24,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 09:04:48 GMT
+      - Fri, 03 Sep 2021 01:44:47 GMT
       expires:
       - '-1'
       pragma:

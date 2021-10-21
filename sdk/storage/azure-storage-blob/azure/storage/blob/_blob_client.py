@@ -4,12 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines,no-self-use
-
+from functools import partial
 from io import BytesIO
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TYPE_CHECKING
-)
+    TYPE_CHECKING,
+    TypeVar, Type)
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -17,25 +18,25 @@ except ImportError:
     from urllib2 import quote, unquote  # type: ignore
 
 import six
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from ._shared import encode_base64
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
-from ._generated import AzureBlobStorage, VERSION
+from ._generated import AzureBlobStorage
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
     BlockLookupList,
     AppendPositionAccessConditions,
     SequenceNumberAccessConditions,
-    StorageErrorException,
     QueryRequest,
     CpkInfo)
 from ._serialize import (
@@ -47,13 +48,15 @@ from ._serialize import (
     serialize_blob_tags,
     serialize_query_format, get_access_conditions
 )
-from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream, parse_tags
+from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream, parse_tags, \
+    deserialize_pipeline_response_into_cls
 from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob, _any_conditions)
-from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
+from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
+    DelimitedJsonDialect, DelimitedTextDialect
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient
 
@@ -71,9 +74,15 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
 
+ClassType = TypeVar("ClassType")
+
 
 class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
+
+    For more optional configuration, please click
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+    #optional-configuration>`_.
 
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the blob,
@@ -88,12 +97,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         or the response returned from :func:`create_snapshot`.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -162,10 +173,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
+        # This parameter is used for the hierarchy traversal. Give precedence to credential.
+        self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -191,7 +204,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
-        # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
+        # type: (Type[ClassType], str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> ClassType
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -201,9 +214,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
@@ -227,7 +242,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             path_blob = parsed_url.path.lstrip('/').split('/', 1)
         elif "localhost" in parsed_url.netloc or "127.0.0.1" in parsed_url.netloc:
             path_blob = parsed_url.path.lstrip('/').split('/', 2)
-            account_path += path_blob[0]
+            account_path += '/' + path_blob[0]
         else:
             # for customized url. blob name that has directory info cannot be parsed.
             path_blob = parsed_url.path.lstrip('/').split('/')
@@ -259,13 +274,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             container_name,  # type: str
             blob_name,  # type: str
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> BlobClient
+        ):  # type: (...) -> ClassType
         """Create BlobClient from a Connection String.
 
         :param str conn_str:
@@ -280,7 +296,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :returns: A Blob client.
@@ -316,7 +333,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         try:
             return self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
@@ -379,7 +396,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             kwargs['blob_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -393,6 +410,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         kwargs['blob_settings'] = self._config
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
+
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
             kwargs['data'] = data
@@ -411,6 +429,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         tier = kwargs.pop('standard_blob_tier', None)
         overwrite = kwargs.pop('overwrite', False)
         content_settings = kwargs.pop('content_settings', None)
+        source_authorization = kwargs.pop('source_authorization', None)
         if content_settings:
             kwargs['blob_http_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -429,6 +448,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
+            'copy_source_authorization': source_authorization,
             'content_length': 0,
             'copy_source_blob_properties': kwargs.pop('include_source_blob_properties', True),
             'source_content_md5': kwargs.pop('source_content_md5', None),
@@ -537,13 +557,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
             **kwargs)
         try:
             return self._client.block_blob.put_blob_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -629,6 +652,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
@@ -730,7 +767,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (Optional[int], Optional[int], **Any) -> StorageStreamDownloader
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
-        a stream.
+        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
@@ -818,16 +855,28 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (str, **Any) -> Dict[str, Any]
         delimiter = '\n'
         input_format = kwargs.pop('blob_format', None)
-        if input_format:
+        if input_format == QuickQueryDialect.DelimitedJson:
+            input_format = DelimitedJsonDialect()
+        if input_format == QuickQueryDialect.DelimitedText:
+            input_format = DelimitedTextDialect()
+        input_parquet_format = input_format == "ParquetDialect"
+        if input_format and not input_parquet_format:
             try:
                 delimiter = input_format.lineterminator
             except AttributeError:
                 try:
                     delimiter = input_format.delimiter
                 except AttributeError:
-                    raise ValueError("The Type of blob_format can only be DelimitedTextDialect or DelimitedJsonDialect")
+                    raise ValueError("The Type of blob_format can only be DelimitedTextDialect or "
+                                     "DelimitedJsonDialect or ParquetDialect")
         output_format = kwargs.pop('output_format', None)
+        if output_format == QuickQueryDialect.DelimitedJson:
+            output_format = DelimitedJsonDialect()
+        if output_format == QuickQueryDialect.DelimitedText:
+            output_format = DelimitedTextDialect()
         if output_format:
+            if output_format == "ParquetDialect":
+                raise ValueError("ParquetDialect is invalid as an output format.")
             try:
                 delimiter = output_format.lineterminator
             except AttributeError:
@@ -836,7 +885,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 except AttributeError:
                     pass
         else:
-            output_format = input_format
+            output_format = input_format if not input_parquet_format else None
         query_request = QueryRequest(
             expression=query_expression,
             input_serialization=serialize_query_format(input_format),
@@ -880,14 +929,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword blob_format:
             Optional. Defines the serialization of the data currently stored in the blob. The default is to
             treat the blob data as CSV data formatted in the default dialect. This can be overridden with
-            a custom DelimitedTextDialect, or alternatively a DelimitedJsonDialect.
+            a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
         :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or ~azure.storage.blob.QuickQueryDialect or str
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
-            as it is represented in the blob. By providing an output format, the blob data will be reformatted
-            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
-        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect, ~azure.storage.blob.DelimitedJsonDialect
-            or list[~azure.storage.blob.ArrowDialect]
+            as it is represented in the blob (Parquet formats default to DelimitedTextDialect).
+            By providing an output format, the blob data will be reformatted according to that profile.
+            This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
+        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or list[~azure.storage.blob.ArrowDialect] or ~azure.storage.blob.QuickQueryDialect or str
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -940,7 +993,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options, delimiter = self._quick_query_options(query_expression, **kwargs)
         try:
             headers, raw_response_body = self._client.blob.query(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return BlobQueryReader(
             name=self.blob_name,
@@ -953,8 +1006,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             error_cls=error_cls)
 
     @staticmethod
-    def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Any]
+    def _generic_delete_blob_options(delete_snapshots=None, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         if delete_snapshots:
@@ -968,17 +1021,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
-    def _delete_blob_options(self, delete_snapshots=False, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Any]
+    def _delete_blob_options(self, delete_snapshots=None, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         if self.snapshot and delete_snapshots:
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
         options['snapshot'] = self.snapshot
         options['version_id'] = kwargs.pop('version_id', None)
+        options['blob_delete_type'] = kwargs.pop('blob_delete_type', None)
         return options
 
     @distributed_trace
-    def delete_blob(self, delete_snapshots=False, **kwargs):
+    def delete_blob(self, delete_snapshots=None, **kwargs):
         # type: (str, **Any) -> None
         """Marks the specified blob for deletion.
 
@@ -1048,7 +1102,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
         try:
             self._client.blob.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -1074,7 +1128,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         try:
             self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace()
@@ -1084,10 +1138,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
 
-        :param str version_id:
+        :kwarg str version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to check if it exists.
-        :param int timeout:
+        :kwarg int timeout:
             The timeout parameter is expressed in seconds.
         :returns: boolean
         """
@@ -1096,7 +1150,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 snapshot=self.snapshot,
                 **kwargs)
             return True
-        except StorageErrorException as error:
+        # Encrypted with CPK
+        except ResourceExistsError:
+            return True
+        except HttpResponseError as error:
             try:
                 process_storage_error(error)
             except ResourceNotFoundError:
@@ -1172,6 +1229,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         try:
+            cls_method = kwargs.pop('cls', None)
+            if cls_method:
+                kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
                 version_id=kwargs.pop('version_id', None),
@@ -1181,7 +1241,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
                 cpk_info=cpk_info,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
         if isinstance(blob_props, BlobProperties):
@@ -1198,7 +1258,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -1257,7 +1317,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
             return self._client.blob.set_http_headers(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _set_blob_metadata_options(self, metadata=None, **kwargs):
@@ -1343,8 +1403,66 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
             return self._client.blob.set_metadata(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def set_immutability_policy(self, immutability_policy, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+        """The Set Immutability Policy operation sets the immutability policy on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :param ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
+        kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
+        return self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
+
+    @distributed_trace
+    def delete_immutability_policy(self, **kwargs):
+        # type: (**Any) -> None
+        """The Delete Immutability Policy operation deletes the immutability policy on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        self._client.blob.delete_immutability_policy(**kwargs)
+
+    @distributed_trace
+    def set_legal_hold(self, legal_hold, **kwargs):
+        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
+        """The Set Legal Hold operation sets a legal hold on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :param bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, Union[str, datetime, bool]]
+        """
+
+        return self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)
 
     def _create_page_blob_options(  # type: ignore
             self, size,  # type: int
@@ -1366,7 +1484,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -1380,6 +1498,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+
+        immutability_policy = kwargs.pop('immutability_policy', None)
+        if immutability_policy:
+            kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
+            kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
 
         if premium_page_blob_tier:
             try:
@@ -1447,6 +1570,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1490,7 +1625,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.page_blob.create(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _create_append_blob_options(self, content_settings=None, metadata=None, **kwargs):
@@ -1507,7 +1642,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -1520,6 +1655,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+
+        immutability_policy = kwargs.pop('immutability_policy', None)
+        if immutability_policy:
+            kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
+            kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
+
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
 
         options = {
@@ -1561,6 +1702,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1602,7 +1755,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.append_blob.create(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _create_snapshot_options(self, metadata=None, **kwargs):
@@ -1703,7 +1856,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
             return self._client.blob.create_snapshot(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _start_copy_from_url_options(self, source_url, metadata=None, incremental_copy=False, **kwargs):
@@ -1718,13 +1871,25 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 headers['x-ms-source-lease-id'] = source_lease
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
-
-        if kwargs.get('requires_sync'):
-            headers['x-ms-requires-sync'] = str(kwargs.pop('requires_sync'))
-
+        requires_sync = kwargs.pop('requires_sync', None)
+        source_authorization = kwargs.pop('source_authorization', None)
+        if source_authorization and incremental_copy:
+            raise ValueError("Source authorization tokens are not applicable for incremental copying.")
+        if requires_sync is True:
+            headers['x-ms-requires-sync'] = str(requires_sync)
+            if source_authorization:
+                headers['x-ms-copy-source-authorization'] = source_authorization
+        else:
+            if source_authorization:
+                raise ValueError("Source authorization tokens are only applicable for synchronous copy operations.")
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
+
+        immutability_policy = kwargs.pop('immutability_policy', None)
+        if immutability_policy:
+            kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
+            kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
 
         options = {
             'copy_source': source_url,
@@ -1813,6 +1978,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             .. versionadded:: 12.4.0
 
         :paramtype tags: dict(str, str)
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1878,8 +2055,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string. This option is only available when `incremental_copy` is
+            set to False and `requires_sync` is set to True.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: dict[str, str or ~datetime.datetime]
+        :rtype: dict[str, Union[str, ~datetime.datetime]]
 
         .. admonition:: Example:
 
@@ -1899,7 +2080,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if incremental_copy:
                 return self._client.page_blob.copy_incremental(**options)
             return self._client.blob.start_copy_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _abort_copy_options(self, copy_id, **kwargs):
@@ -1945,7 +2126,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._abort_copy_options(copy_id, **kwargs)
         try:
             self._client.blob.abort_copy_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -2057,7 +2238,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _stage_block_options(
@@ -2160,7 +2341,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.block_blob.stage_block(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _stage_block_from_url_options(
@@ -2172,6 +2353,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
+        source_authorization = kwargs.pop('source_authorization', None)
         if source_length is not None and source_offset is None:
             raise ValueError("Source offset value must not be None if length is set.")
         if source_length is not None:
@@ -2191,6 +2373,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         options = {
+            'copy_source_authorization': source_authorization,
             'block_id': block_id,
             'content_length': 0,
             'source_url': source_url,
@@ -2207,7 +2390,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def stage_block_from_url(
-            self, block_id,  # type: str
+            self, block_id,  # type: Union[str, int]
             source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]
@@ -2248,6 +2431,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         :returns: Blob property dict.
         :rtype: dict[str, Any]
         """
@@ -2260,7 +2446,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.block_blob.stage_block_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _get_block_list_result(self, blocks):
@@ -2307,7 +2493,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return self._get_block_list_result(blocks)
 
@@ -2340,7 +2526,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -2355,6 +2541,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+
+        immutability_policy = kwargs.pop('immutability_policy', None)
+        if immutability_policy:
+            kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
+            kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
 
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
@@ -2409,6 +2600,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -2466,7 +2669,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.block_blob.commit_block_list(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -2506,7 +2709,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _set_blob_tags_options(self, tags=None, **kwargs):
@@ -2565,7 +2768,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._set_blob_tags_options(tags=tags, **kwargs)
         try:
             return self._client.blob.set_tags(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _get_blob_tags_options(self, **kwargs):
@@ -2609,7 +2812,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         try:
             _, tags = self._client.blob.get_tags(**options)
             return parse_tags(tags) # pylint: disable=protected-access
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _get_page_ranges_options( # type: ignore
@@ -2718,7 +2921,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 ranges = self._client.page_blob.get_page_ranges_diff(**options)
             else:
                 ranges = self._client.page_blob.get_page_ranges(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -2791,7 +2994,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             ranges = self._client.page_blob.get_page_ranges_diff(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -2859,7 +3062,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
             return self._client.page_blob.update_sequence_number(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _resize_blob_options(self, size, **kwargs):
@@ -2936,7 +3139,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._resize_blob_options(size, **kwargs)
         try:
             return self._client.page_blob.resize(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _upload_page_options( # type: ignore
@@ -3081,7 +3284,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.page_blob.upload_pages(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _upload_pages_from_url_options(  # type: ignore
@@ -3113,6 +3316,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
+        source_authorization = kwargs.pop('source_authorization', None)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
@@ -3127,6 +3331,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
+            'copy_source_authorization': source_authorization,
             'source_url': source_url,
             'content_length': 0,
             'source_range': source_range,
@@ -3241,6 +3446,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_pages_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -3251,7 +3459,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         )
         try:
             return self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _clear_page_options(self, offset, length, **kwargs):
@@ -3356,7 +3564,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._clear_page_options(offset, length, **kwargs)
         try:
             return self._client.page_blob.clear_pages(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _append_block_options( # type: ignore
@@ -3500,7 +3708,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         )
         try:
             return self._client.append_blob.append_block(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _append_block_from_url_options(  # type: ignore
@@ -3533,6 +3741,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 max_size=maxsize_condition,
                 append_position=appendpos_condition
             )
+        source_authorization = kwargs.pop('source_authorization', None)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
@@ -3546,6 +3755,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
+            'copy_source_authorization': source_authorization,
             'source_url': copy_source_url,
             'content_length': 0,
             'source_range': source_range,
@@ -3652,6 +3862,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._append_block_from_url_options(
             copy_source_url=self._encode_source_url(copy_source_url),
@@ -3661,7 +3874,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         )
         try:
             return self._client.append_blob.append_block_from_url(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _seal_append_blob_options(self, **kwargs):
@@ -3729,5 +3942,39 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._seal_append_blob_options(**kwargs)
         try:
             return self._client.append_blob.seal(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
+        # type: (...) -> ContainerClient
+        """Get a client to interact with the blob's parent container.
+
+        The container need not already exist. Defaults to current blob's credentials.
+
+        :returns: A ContainerClient.
+        :rtype: ~azure.storage.blob.ContainerClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_containers.py
+                :start-after: [START get_container_client_from_blob_client]
+                :end-before: [END get_container_client_from_blob_client]
+                :language: python
+                :dedent: 8
+                :caption: Get container client from blob object.
+        """
+        from ._container_client import ContainerClient
+        if not isinstance(self._pipeline._transport, TransportWrapper): # pylint: disable = protected-access
+            _pipeline = Pipeline(
+                transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+                policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            )
+        else:
+            _pipeline = self._pipeline   # pylint: disable = protected-access
+        return ContainerClient(
+            "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
+            credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)

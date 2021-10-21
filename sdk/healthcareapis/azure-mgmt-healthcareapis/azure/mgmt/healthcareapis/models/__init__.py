@@ -8,24 +8,54 @@
 
 try:
     from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import DicomService
+    from ._models_py3 import DicomServiceAuthenticationConfiguration
+    from ._models_py3 import DicomServiceCollection
+    from ._models_py3 import DicomServicePatchResource
+    from ._models_py3 import Error
     from ._models_py3 import ErrorDetails
     from ._models_py3 import ErrorDetailsInternal
-    from ._models_py3 import Operation
+    from ._models_py3 import FhirService
+    from ._models_py3 import FhirServiceAccessPolicyEntry
+    from ._models_py3 import FhirServiceAcrConfiguration
+    from ._models_py3 import FhirServiceAuthenticationConfiguration
+    from ._models_py3 import FhirServiceCollection
+    from ._models_py3 import FhirServiceCorsConfiguration
+    from ._models_py3 import FhirServiceExportConfiguration
+    from ._models_py3 import FhirServicePatchResource
+    from ._models_py3 import IotConnector
+    from ._models_py3 import IotConnectorCollection
+    from ._models_py3 import IotConnectorPatchResource
+    from ._models_py3 import IotDestinationProperties
+    from ._models_py3 import IotEventHubIngestionEndpointConfiguration
+    from ._models_py3 import IotFhirDestination
+    from ._models_py3 import IotFhirDestinationCollection
+    from ._models_py3 import IotFhirDestinationProperties
+    from ._models_py3 import IotMappingProperties
+    from ._models_py3 import ListOperations
+    from ._models_py3 import LocationBasedResource
+    from ._models_py3 import OperationDetail
     from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
     from ._models_py3 import OperationResultsDescription
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateEndpointConnectionDescription
+    from ._models_py3 import PrivateEndpointConnectionListResultDescription
     from ._models_py3 import PrivateLinkResource
-    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkResourceDescription
+    from ._models_py3 import PrivateLinkResourceListResultDescription
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceCore
+    from ._models_py3 import ResourceTags
     from ._models_py3 import ServiceAccessPolicyEntry
+    from ._models_py3 import ServiceAcrConfigurationInfo
     from ._models_py3 import ServiceAuthenticationConfigurationInfo
     from ._models_py3 import ServiceCorsConfigurationInfo
     from ._models_py3 import ServiceCosmosDbConfigurationInfo
     from ._models_py3 import ServiceExportConfigurationInfo
+    from ._models_py3 import ServiceManagedIdentity
+    from ._models_py3 import ServiceManagedIdentityIdentity
     from ._models_py3 import ServicesDescription
     from ._models_py3 import ServicesDescriptionListResult
     from ._models_py3 import ServicesNameAvailabilityInfo
@@ -33,26 +63,62 @@ try:
     from ._models_py3 import ServicesProperties
     from ._models_py3 import ServicesResource
     from ._models_py3 import ServicesResourceIdentity
+    from ._models_py3 import SystemData
+    from ._models_py3 import TaggedResource
+    from ._models_py3 import Workspace
+    from ._models_py3 import WorkspaceList
+    from ._models_py3 import WorkspacePatchResource
+    from ._models_py3 import WorkspaceProperties
 except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityParameters  # type: ignore
+    from ._models import DicomService  # type: ignore
+    from ._models import DicomServiceAuthenticationConfiguration  # type: ignore
+    from ._models import DicomServiceCollection  # type: ignore
+    from ._models import DicomServicePatchResource  # type: ignore
+    from ._models import Error  # type: ignore
     from ._models import ErrorDetails  # type: ignore
     from ._models import ErrorDetailsInternal  # type: ignore
-    from ._models import Operation  # type: ignore
+    from ._models import FhirService  # type: ignore
+    from ._models import FhirServiceAccessPolicyEntry  # type: ignore
+    from ._models import FhirServiceAcrConfiguration  # type: ignore
+    from ._models import FhirServiceAuthenticationConfiguration  # type: ignore
+    from ._models import FhirServiceCollection  # type: ignore
+    from ._models import FhirServiceCorsConfiguration  # type: ignore
+    from ._models import FhirServiceExportConfiguration  # type: ignore
+    from ._models import FhirServicePatchResource  # type: ignore
+    from ._models import IotConnector  # type: ignore
+    from ._models import IotConnectorCollection  # type: ignore
+    from ._models import IotConnectorPatchResource  # type: ignore
+    from ._models import IotDestinationProperties  # type: ignore
+    from ._models import IotEventHubIngestionEndpointConfiguration  # type: ignore
+    from ._models import IotFhirDestination  # type: ignore
+    from ._models import IotFhirDestinationCollection  # type: ignore
+    from ._models import IotFhirDestinationProperties  # type: ignore
+    from ._models import IotMappingProperties  # type: ignore
+    from ._models import ListOperations  # type: ignore
+    from ._models import LocationBasedResource  # type: ignore
+    from ._models import OperationDetail  # type: ignore
     from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
     from ._models import OperationResultsDescription  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
-    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateEndpointConnectionDescription  # type: ignore
+    from ._models import PrivateEndpointConnectionListResultDescription  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
-    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkResourceDescription  # type: ignore
+    from ._models import PrivateLinkResourceListResultDescription  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import ResourceCore  # type: ignore
+    from ._models import ResourceTags  # type: ignore
     from ._models import ServiceAccessPolicyEntry  # type: ignore
+    from ._models import ServiceAcrConfigurationInfo  # type: ignore
     from ._models import ServiceAuthenticationConfigurationInfo  # type: ignore
     from ._models import ServiceCorsConfigurationInfo  # type: ignore
     from ._models import ServiceCosmosDbConfigurationInfo  # type: ignore
     from ._models import ServiceExportConfigurationInfo  # type: ignore
+    from ._models import ServiceManagedIdentity  # type: ignore
+    from ._models import ServiceManagedIdentityIdentity  # type: ignore
     from ._models import ServicesDescription  # type: ignore
     from ._models import ServicesDescriptionListResult  # type: ignore
     from ._models import ServicesNameAvailabilityInfo  # type: ignore
@@ -60,8 +126,18 @@ except (SyntaxError, ImportError):
     from ._models import ServicesProperties  # type: ignore
     from ._models import ServicesResource  # type: ignore
     from ._models import ServicesResourceIdentity  # type: ignore
+    from ._models import SystemData  # type: ignore
+    from ._models import TaggedResource  # type: ignore
+    from ._models import Workspace  # type: ignore
+    from ._models import WorkspaceList  # type: ignore
+    from ._models import WorkspacePatchResource  # type: ignore
+    from ._models import WorkspaceProperties  # type: ignore
 
 from ._healthcare_apis_management_client_enums import (
+    ActionType,
+    CreatedByType,
+    FhirServiceKind,
+    IotIdentityResolutionType,
     Kind,
     ManagedServiceIdentityType,
     OperationResultStatus,
@@ -74,24 +150,54 @@ from ._healthcare_apis_management_client_enums import (
 
 __all__ = [
     'CheckNameAvailabilityParameters',
+    'DicomService',
+    'DicomServiceAuthenticationConfiguration',
+    'DicomServiceCollection',
+    'DicomServicePatchResource',
+    'Error',
     'ErrorDetails',
     'ErrorDetailsInternal',
-    'Operation',
+    'FhirService',
+    'FhirServiceAccessPolicyEntry',
+    'FhirServiceAcrConfiguration',
+    'FhirServiceAuthenticationConfiguration',
+    'FhirServiceCollection',
+    'FhirServiceCorsConfiguration',
+    'FhirServiceExportConfiguration',
+    'FhirServicePatchResource',
+    'IotConnector',
+    'IotConnectorCollection',
+    'IotConnectorPatchResource',
+    'IotDestinationProperties',
+    'IotEventHubIngestionEndpointConfiguration',
+    'IotFhirDestination',
+    'IotFhirDestinationCollection',
+    'IotFhirDestinationProperties',
+    'IotMappingProperties',
+    'ListOperations',
+    'LocationBasedResource',
+    'OperationDetail',
     'OperationDisplay',
-    'OperationListResult',
     'OperationResultsDescription',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
-    'PrivateEndpointConnectionListResult',
+    'PrivateEndpointConnectionDescription',
+    'PrivateEndpointConnectionListResultDescription',
     'PrivateLinkResource',
-    'PrivateLinkResourceListResult',
+    'PrivateLinkResourceDescription',
+    'PrivateLinkResourceListResultDescription',
     'PrivateLinkServiceConnectionState',
     'Resource',
+    'ResourceCore',
+    'ResourceTags',
     'ServiceAccessPolicyEntry',
+    'ServiceAcrConfigurationInfo',
     'ServiceAuthenticationConfigurationInfo',
     'ServiceCorsConfigurationInfo',
     'ServiceCosmosDbConfigurationInfo',
     'ServiceExportConfigurationInfo',
+    'ServiceManagedIdentity',
+    'ServiceManagedIdentityIdentity',
     'ServicesDescription',
     'ServicesDescriptionListResult',
     'ServicesNameAvailabilityInfo',
@@ -99,6 +205,16 @@ __all__ = [
     'ServicesProperties',
     'ServicesResource',
     'ServicesResourceIdentity',
+    'SystemData',
+    'TaggedResource',
+    'Workspace',
+    'WorkspaceList',
+    'WorkspacePatchResource',
+    'WorkspaceProperties',
+    'ActionType',
+    'CreatedByType',
+    'FhirServiceKind',
+    'IotIdentityResolutionType',
     'Kind',
     'ManagedServiceIdentityType',
     'OperationResultStatus',

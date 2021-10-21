@@ -1,5 +1,5 @@
 # Instructions for CODEOWNERS file format and automatic build failure notifications:
-# https://github.com/Azure/azure-sdk/blob/master/docs/policies/opensource.md#codeowners
+# https://github.com/Azure/azure-sdk/blob/main/docs/policies/opensource.md#codeowners
 
 ###########
 # SDK
@@ -17,35 +17,43 @@
 # Service team
 ####
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @chlowell @mccoyp @schaabs
+/sdk/identity/                                                       @chlowell @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @yunhaoling @KieranBrantnerMagee
+/sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @tasherif-msft @kasobol-msft
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @xiafu-msft @tasherif-msft @kasobol-msft
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99
+/sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
 
-/sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
-/sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
+/sdk/applicationinsights/azure-applicationinsights/                  @divyajay @geneh @alongafni
+/sdk/loganalytics/azure-loganalytics/                                @divyajay @geneh @alongafni
+
+/sdk/attestation/azure-security-attestation                          @larryosterman @anilba06 @Azure/azure-sdk-write-attestation
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
 # PRLabel: %Communication
-/sdk/communication/                                                  @RezaJooyandeh @turalf @ankitarorabit @Azure/azure-sdk-communication-code-reviewers
+/sdk/communication/                                                  @acsdevx-msft
+/sdk/communication/azure-communication-phonenumbers/                 @RoyHerrod @danielav7 @whisper6284 @AlonsoMondal
+/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @schaabs @chlowell @mccoyp
+/sdk/keyvault/                                                       @schaabs @chlowell @mccoyp @YalinLi0312
 
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
 
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/opentelemetry-exporter-azuremonitor                     @rakshith91 @lmazuel @hectorhdzg @lzchen
+/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen
+
+# PRLabel: %Monitor - Log
+/sdk/monitor/azure-monitor-query                                     @rakshith91
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -58,7 +66,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @southpolesteve @zfoster
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh 
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -66,10 +74,13 @@
 /sdk/datadatamigration/                                              @vchske
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @lmazuel @rakshith91 @KieranBrantnerMagee
+/sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
+
+# PRLabel: %Models repository
+/sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
@@ -81,7 +92,7 @@
 /sdk/schemaregistry/                                                 @yunhaoling
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99 @rakshith91
+/sdk/search/                                                         @tjprescott
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -90,10 +101,10 @@
 /sql/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @yunhaoling @KieranBrantnerMagee
+/sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @aim-for-better @idear1203
+/sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @Azure/azure-sdk-eng
@@ -102,24 +113,37 @@
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
 
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
 
+# PRLabel: %Cognitive - Translator
+/sdk/translation/                                                    @kristapratico @mohamedshabanofficial
+
 # PRLabel: %Tables
-/sdk/tables/                                                         @seankane-msft
+/sdk/tables/                                                         @annatisch @YalinLi0312
+
+# PRLabel: %Media
+/sdk/media/                                                          @naiteeks @bennage @giakas
+
+# PRLabel: %Container Registry
+/sdk/containerregistry/                                              @YalinLi0312
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
-/**/*mgmt*/     @msyyc @jsntcy @changlong-liu
+/**/*mgmt*/                                                          @RAY-316 @msyyc
 
 
 ###########
 # Eng Sys
 ###########
-/eng/           @weshaggard @scbedd @mitchdenny @danieljurek
-/**/tests.yml   @danieljurek
-/**/ci.yml      @mitchdenny
+/eng/                                                                @weshaggard @scbedd @danieljurek
+/**/tests.yml                                                        @benbp
+/**/ci.yml                                                           @scbedd
+
+# Add owners for notifications for specific pipelines
+/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312

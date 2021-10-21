@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class FileSharesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,16 +48,16 @@ class FileSharesOperations:
         skip_token: Optional[str] = None,
         maxpagesize: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.FileShareItems"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.FileShareItems"]:
         """Lists all shares.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param skip_token: Optional. Continuation token for the list operation.
         :type skip_token: str
@@ -72,7 +72,7 @@ class FileSharesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storage.v2019_04_01.models.FileShareItems]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileShareItems"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileShareItems"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -140,9 +140,9 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        file_share: "models.FileShare",
-        **kwargs
-    ) -> "models.FileShare":
+        file_share: "_models.FileShare",
+        **kwargs: Any
+    ) -> "_models.FileShare":
         """Creates a new share under the specified account as described by request body. The share
         resource includes metadata and properties for that share. It does not include a list of the
         files contained by the share.
@@ -151,8 +151,8 @@ class FileSharesOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and
@@ -166,7 +166,7 @@ class FileSharesOperations:
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileShare"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileShare"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -222,9 +222,9 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        file_share: "models.FileShare",
-        **kwargs
-    ) -> "models.FileShare":
+        file_share: "_models.FileShare",
+        **kwargs: Any
+    ) -> "_models.FileShare":
         """Updates share properties as specified in request body. Properties not mentioned in the request
         will not be changed. Update fails if the specified share does not already exist.
 
@@ -232,8 +232,8 @@ class FileSharesOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and
@@ -247,7 +247,7 @@ class FileSharesOperations:
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileShare"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileShare"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -299,16 +299,16 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        **kwargs
-    ) -> "models.FileShare":
+        **kwargs: Any
+    ) -> "_models.FileShare":
         """Gets properties of a specified share.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and
@@ -320,7 +320,7 @@ class FileSharesOperations:
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileShare"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileShare"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -367,7 +367,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specified share under its account.
 
@@ -375,8 +375,8 @@ class FileSharesOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and

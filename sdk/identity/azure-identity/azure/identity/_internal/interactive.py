@@ -11,7 +11,6 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
-import msal
 import six
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -21,6 +20,11 @@ from .._auth_record import AuthenticationRecord
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import wrap_exceptions
+
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
@@ -80,7 +84,7 @@ def _build_auth_record(response):
         six.raise_from(auth_error, ex)
 
 
-class InteractiveCredential(MsalCredential):
+class InteractiveCredential(MsalCredential, ABC):
     def __init__(self, **kwargs):
         self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
         self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
@@ -103,13 +107,18 @@ class InteractiveCredential(MsalCredential):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+          claims challenge following an authorization failure
+        :keyword str tenant_id: optional tenant to include in the token request.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
-          required data, state, or platform support
+            required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason.
+            attribute gives a reason.
         :raises AuthenticationRequiredError: user interaction is necessary to acquire a token, and the credential is
-          configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
+            configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
         """
         if not scopes:
             message = "'get_token' requires at least one scope"
@@ -138,13 +147,17 @@ class InteractiveCredential(MsalCredential):
             result = self._request_token(*scopes, **kwargs)
             if "access_token" not in result:
                 message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
-                raise ClientAuthenticationError(message=message)
+                response = self._client.get_error_response(result)
+                raise ClientAuthenticationError(message=message, response=response)
 
             # this may be the first authentication, or the user may have authenticated a different identity
             self._auth_record = _build_auth_record(result)
         except Exception as ex:  # pylint:disable=broad-except
             _LOGGER.warning(
-                "%s.get_token failed: %s", self.__class__.__name__, ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                "%s.get_token failed: %s",
+                self.__class__.__name__,
+                ex,
+                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise
 
@@ -158,6 +171,8 @@ class InteractiveCredential(MsalCredential):
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
           :func:`AuthenticationRequiredError.scopes`. If provided, successful authentication will cache an access token
           for these scopes.
+        :keyword str claims: additional claims required in the token, such as those provided by
+          :func:`AuthenticationRequiredError.claims`
         :rtype: ~azure.identity.AuthenticationRecord
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
@@ -180,28 +195,23 @@ class InteractiveCredential(MsalCredential):
     def _acquire_token_silent(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         result = None
+        claims = kwargs.get("claims")
         if self._auth_record:
-            app = self._get_app()
+            app = self._get_app(**kwargs)
             for account in app.get_accounts(username=self._auth_record.username):
                 if account.get("home_account_id") != self._auth_record.home_account_id:
                     continue
 
                 now = int(time.time())
-                result = app.acquire_token_silent_with_error(list(scopes), account=account, **kwargs)
+                result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
                     return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
         # if we get this far, result is either None or the content of an AAD error response
         if result:
-            details = result.get("error_description") or result.get("error")
-            raise AuthenticationRequiredError(scopes, error_details=details)
-        raise AuthenticationRequiredError(scopes)
-
-    def _get_app(self):
-        # type: () -> msal.PublicClientApplication
-        if not self._msal_app:
-            self._msal_app = self._create_app(msal.PublicClientApplication)
-        return self._msal_app
+            response = self._client.get_error_response(result)
+            raise AuthenticationRequiredError(scopes, claims=claims, response=response)
+        raise AuthenticationRequiredError(scopes, claims=claims)
 
     @abc.abstractmethod
     def _request_token(self, *scopes, **kwargs):

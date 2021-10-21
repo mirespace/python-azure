@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "autorest_options": {
+      "version": "3.4.5",
+      "use": ["@autorest/python@5.8.4", "@autorest/modelerfour@4.19.2"],
+      "python": "",
+      "python-mode": "update",
+      "sdkrel:python-sdks-folder": "./sdk/.",
+      "multiapi": "",
+      "track2": ""
+    },
+    "advanced_options": {
+      "create_sdk_pull_requests": true,
+      "sdk_generation_pull_request_base": "integration_branch"
+    },
+    "repotag": "azure-sdk-for-python-track2",
+    "version": "0.2.0"
+  }
+}

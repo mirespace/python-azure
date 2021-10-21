@@ -1,7 +1,100 @@
 # Release History
 
-## 2.0.0b5 (Unreleased)
+## 4.6.1 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.6.0 (2021-10-05)
+
+### Features Added
+
+- Added new enum values to `SystemEvents`.
+
+## 4.5.0 (2021-08-10)
+
+### Features Added
+
+- Added a new enum value `Microsoft.ContainerService.NewKubernetesVersionAvailable` to `SystemEvents`.
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return an `EventGridEvent`
+
+## 4.4.0 (2021-07-19)
+
+- Bumped `msrest` dependency to `0.6.21` to align with mgmt package.
+
+### Features Added
+
+- `EventGridPublisherClient` now supports Azure Active Directory (AAD) for authentication.
+
+## 4.3.0 (2021-06-09)
+
+  **New Features**
+  - Added new event names related to blob inventory to the `SystemEventNames` enum.
+
+  **Bug Fixes**
+  - Replaced the `ServiceBusDeadletterMessagesAvailableWithNoListenerEventName` with the right value.
+
+## 4.2.0 (2021-05-12)
+
+  **New Features**
+  - Added new event names to the `SystemEventNames` enum.
+
+## 4.1.1 (2021-04-07)
+
+  **Bug Fixes**
+  - Improved the `repr` on `EventGridEvent` to show more meaningful text.
+
+## 4.1.0 (2021-03-23)
+
+  **New Features**
+  - Added new SystemEventNames `AcsChatThreadParticipantRemovedEventName`, `AcsChatThreadParticipantAddedEventName` and `AcsRecordingFileStatusUpdatedEventName`.
+
+## 4.0.0 (2021-03-09)
+
+  **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure EventGrid. Users migrating from `v1.x` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/migration_guide.md).
+
+  **New Features**
+  - `azure-eventgrid` package now supports `azure.core.messaging.CloudEvent` which honors the CNCF CloudEvent spec.
+  - `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping for system events.
+  - Implements the `EventGridPublisherClient` for the publish flow for EventGrid Events, CloudEvents and Custom schema events.
+
+  **Breaking Changes**
+  - `azure.eventgrid.models` namespace along with all the models in it are now removed.:
+      - JSON documentation on the events is available here: https://docs.microsoft.com/azure/event-grid/system-topics
+      - `azure.eventgrid.SystemEventNames` provides the list of available events name for easy switching.
+  - `azure.eventgrid.event_grid_client.EventGridClient` is now removed in favor of `azure.eventgrid.EventGridPublisherClient`.
+  - `azure.eventgrid.event_grid_client.EventGridClientConfiguration` is now removed.
+
+
+## 2.0.0 (2021-03-09)
+
+  **Disclaimer:** v2.0.0 is functionally equivalent to v4.0.0. Users are advised to use v4.0.0 instead of this.
+
+  **Breaking Changes**
+  - `~azure.eventgrid.CloudEvent` is now removed in favor of `~azure.core.messaging.CloudEvent`.
+  - All the `SystemEventNames` related to Azure Communication Service starting with `ACS****` are renamed to `Acs***` to honor pascal case.
+
+  **Features**
+  - Added support for two new `SystemEvents` - `ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventData` and `ServiceBusActiveMessagesAvailablePeriodicNotificationsEventData`
+
+## 2.0.0b5 (2021-02-10)
+
+  **Breaking Changes**
+  - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
+  - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping.
+  - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
+  - `azure.eventgrid.generate_shared_access_signature` method is now renamed to `generate_sas`.
+  - `EventGridConsumer`is now removed. Please see the samples to see how events can be deserialized.
+  - `CustomEvent` model is removed. Dictionaries must be used to send a custom schema.
+
+  **Bug Fixes**
+  - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.
+  - `EventGridPublisherClient` now appropriately throws a `ValueError` if an invalid credential is passed during initialization.
 
 ## 2.0.0b4 (2020-11-11)
 

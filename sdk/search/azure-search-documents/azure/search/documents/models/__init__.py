@@ -24,12 +24,35 @@
 #
 # --------------------------------------------------------------------------
 
-from .._internal._generated.models import IndexAction, IndexingResult
-from .._internal._search_client import odata
+from .._generated.models import (
+    AnswerResult,
+    AutocompleteMode,
+    CaptionResult,
+    IndexAction,
+    IndexingResult,
+    QueryAnswerType,
+    QueryCaptionType,
+    QueryLanguage,
+    QuerySpellerType,
+    QueryType,
+    ScoringStatistics,
+    SearchMode
+)
+from .._search_client import odata
 
 
 __all__ = (
+    "AnswerResult",
+    "AutocompleteMode",
+    "CaptionResult",
     "IndexAction",
     "IndexingResult",
     "odata",
+    "QueryAnswerType",
+    "QueryCaptionType",
+    "QueryLanguage",
+    "QuerySpellerType",
+    "QueryType",
+    "ScoringStatistics",
+    "SearchMode",
 )

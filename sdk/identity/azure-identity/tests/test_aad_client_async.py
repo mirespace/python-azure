@@ -5,15 +5,17 @@
 import functools
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
-import time
-from azure.core.exceptions import ClientAuthenticationError
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
+from azure.identity._constants import EnvironmentVariables
+from azure.identity._internal import AadClientCertificate
 from azure.identity.aio._internal.aad_client import AadClient
-from azure.core.credentials import AccessToken
 from msal import TokenCache
 import pytest
 
 from helpers import build_aad_response, mock_response
+from helpers_async import get_completed_future
+from test_certificate_credential import PEM_CERT_PATH
 
 pytestmark = pytest.mark.asyncio
 
@@ -211,22 +213,102 @@ async def test_evicts_invalid_refresh_token():
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 0
 
 
-async def test_should_refresh():
-    client = AadClient("test", "test")
-    now = int(time.time())
+async def test_retries_token_requests():
+    """The client should retry token requests"""
 
-    # do not need refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET + 1)
-    should_refresh = client.should_refresh(token)
-    assert not should_refresh
+    message = "can't connect"
+    transport = Mock(send=Mock(side_effect=ServiceRequestError(message)), sleep=get_completed_future)
+    client = AadClient("tenant-id", "client-id", transport=transport)
 
-    # need refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    should_refresh = client.should_refresh(token)
-    assert should_refresh
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_authorization_code("", "", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
 
-    # not exceed cool down time, do not refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
-    should_refresh = client.should_refresh(token)
-    assert not should_refresh
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_client_certificate("", AadClientCertificate(open(PEM_CERT_PATH, "rb").read()))
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_client_secret("", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_jwt_assertion("", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_refresh_token("", "")
+    assert transport.send.call_count > 1
+
+
+async def test_shared_cache():
+    """The client should return only tokens associated with its own client_id"""
+
+    client_id_a = "client-id-a"
+    client_id_b = "client-id-b"
+    scope = "scope"
+    expected_token = "***"
+    tenant_id = "tenant"
+    authority = "https://localhost/" + tenant_id
+
+    cache = TokenCache()
+    cache.add(
+        {
+            "response": build_aad_response(access_token=expected_token),
+            "client_id": client_id_a,
+            "scope": [scope],
+            "token_endpoint": "/".join((authority, tenant_id, "oauth2/v2.0/token")),
+        }
+    )
+
+    common_args = dict(authority=authority, cache=cache, tenant_id=tenant_id)
+    client_a = AadClient(client_id=client_id_a, **common_args)
+    client_b = AadClient(client_id=client_id_b, **common_args)
+
+    # A has a cached token
+    token = client_a.get_cached_access_token([scope])
+    assert token.token == expected_token
+
+    # which B shouldn't return
+    assert client_b.get_cached_access_token([scope]) is None
+
+
+async def test_multitenant_cache():
+    client_id = "client-id"
+    scope = "scope"
+    expected_token = "***"
+    tenant_a = "tenant-a"
+    tenant_b = "tenant-b"
+    tenant_c = "tenant-c"
+    authority = "https://localhost/" + tenant_a
+
+    cache = TokenCache()
+    cache.add(
+        {
+            "response": build_aad_response(access_token=expected_token),
+            "client_id": client_id,
+            "scope": [scope],
+            "token_endpoint": "/".join((authority, tenant_a, "oauth2/v2.0/token")),
+        }
+    )
+
+    common_args = dict(authority=authority, cache=cache, client_id=client_id)
+    client_a = AadClient(tenant_id=tenant_a, **common_args)
+    client_b = AadClient(tenant_id=tenant_b, **common_args)
+
+    # A has a cached token
+    token = client_a.get_cached_access_token([scope])
+    assert token.token == expected_token
+
+    # which B shouldn't return
+    assert client_b.get_cached_access_token([scope]) is None
+
+    # but C allows multitenant auth and should therefore return the token from tenant_a when appropriate
+    client_c = AadClient(tenant_id=tenant_c, **common_args)
+    assert client_c.get_cached_access_token([scope]) is None
+    token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
+    assert token.token == expected_token

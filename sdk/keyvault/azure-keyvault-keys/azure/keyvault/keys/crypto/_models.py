@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from typing import Any, Optional
 
 
 class DecryptResult:
@@ -18,7 +19,7 @@ class DecryptResult:
     """
 
     def __init__(self, key_id, algorithm, plaintext):
-        # type: (str, str, EncryptionAlgorithm, bytes) -> None
+        # type: (Optional[str], EncryptionAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.plaintext = plaintext
@@ -31,13 +32,21 @@ class EncryptResult:
     :param algorithm: The encryption algorithm used
     :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
     :param bytes ciphertext: The encrypted bytes
+    :keyword bytes iv: Initialization vector for symmetric algorithms
+    :keyword bytes authentication_tag: The tag to authenticate when performing decryption with an authenticated
+        algorithm
+    :keyword bytes additional_authenticated_data: Additional data to authenticate but not encrypt/decrypt when using an
+        authenticated algorithm
     """
 
-    def __init__(self, key_id, algorithm, ciphertext):
-        # type: (str, EncryptionAlgorithm, bytes) -> None
+    def __init__(self, key_id, algorithm, ciphertext, **kwargs):
+        # type: (Optional[str], EncryptionAlgorithm, bytes, **Any) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.ciphertext = ciphertext
+        self.iv = kwargs.pop("iv", None)
+        self.tag = kwargs.pop("authentication_tag", None)
+        self.aad = kwargs.pop("additional_authenticated_data", None)
 
 
 class SignResult:
@@ -50,7 +59,7 @@ class SignResult:
     """
 
     def __init__(self, key_id, algorithm, signature):
-        # type: (str, SignatureAlgorithm, bytes) -> None
+        # type: (Optional[str], SignatureAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.signature = signature
@@ -66,10 +75,11 @@ class VerifyResult:
     """
 
     def __init__(self, key_id, is_valid, algorithm):
-        # type: (str, bool, SignatureAlgorithm) -> None
+        # type: (Optional[str], bool, SignatureAlgorithm) -> None
         self.key_id = key_id
         self.is_valid = is_valid
         self.algorithm = algorithm
+
 
 class UnwrapResult:
     """The result of an unwrap key operation.
@@ -81,7 +91,7 @@ class UnwrapResult:
     """
 
     def __init__(self, key_id, algorithm, key):
-        # type: (str, KeyWrapAlgorithm, bytes) -> None
+        # type: (Optional[str], KeyWrapAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.key = key
@@ -97,7 +107,7 @@ class WrapResult:
     """
 
     def __init__(self, key_id, algorithm, encrypted_key):
-        # type: (str, KeyWrapAlgorithm, bytes) -> None
+        # type: (Optional[str], KeyWrapAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.encrypted_key = encrypted_key

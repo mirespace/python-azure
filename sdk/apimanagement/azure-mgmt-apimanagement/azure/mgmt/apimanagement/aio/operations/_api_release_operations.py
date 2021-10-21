@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ApiReleaseOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,8 +49,8 @@ class ApiReleaseOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ApiReleaseCollection"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ApiReleaseCollection"]:
         """Lists all releases of an API. An API release is created when making an API Revision current.
         Releases are also used to rollback to previous revisions. Results will be paged and can be
         constrained by the $top and $skip parameters.
@@ -74,12 +74,12 @@ class ApiReleaseOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ApiReleaseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiReleaseCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiReleaseCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -128,7 +128,7 @@ class ApiReleaseOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -145,7 +145,7 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Returns the etag of an API release.
 
@@ -168,7 +168,7 @@ class ApiReleaseOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -196,7 +196,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -214,8 +214,8 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
-        **kwargs
-    ) -> "models.ApiReleaseContract":
+        **kwargs: Any
+    ) -> "_models.ApiReleaseContract":
         """Returns the details of an API release.
 
         :param resource_group_name: The name of the resource group.
@@ -232,12 +232,12 @@ class ApiReleaseOperations:
         :rtype: ~azure.mgmt.apimanagement.models.ApiReleaseContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiReleaseContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiReleaseContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -265,7 +265,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -284,11 +284,10 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
+        parameters: "_models.ApiReleaseContract",
         if_match: Optional[str] = None,
-        api_release_contract_properties_api_id: Optional[str] = None,
-        notes: Optional[str] = None,
-        **kwargs
-    ) -> "models.ApiReleaseContract":
+        **kwargs: Any
+    ) -> "_models.ApiReleaseContract":
         """Creates a new Release for the API.
 
         :param resource_group_name: The name of the resource group.
@@ -300,26 +299,22 @@ class ApiReleaseOperations:
         :param release_id: Release identifier within an API. Must be unique in the current API
          Management service instance.
         :type release_id: str
+        :param parameters: Create parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract
         :param if_match: ETag of the Entity. Not required when creating an entity, but required when
          updating an entity.
         :type if_match: str
-        :param api_release_contract_properties_api_id: Identifier of the API the release belongs to.
-        :type api_release_contract_properties_api_id: str
-        :param notes: Release Notes.
-        :type notes: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApiReleaseContract, or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.ApiReleaseContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiReleaseContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiReleaseContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.ApiReleaseContract(api_id=api_release_contract_properties_api_id, notes=notes)
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -346,7 +341,7 @@ class ApiReleaseOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ApiReleaseContract')
+        body_content = self._serialize.body(parameters, 'ApiReleaseContract')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -354,7 +349,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -379,10 +374,9 @@ class ApiReleaseOperations:
         api_id: str,
         release_id: str,
         if_match: str,
-        api_release_contract_properties_api_id: Optional[str] = None,
-        notes: Optional[str] = None,
-        **kwargs
-    ) -> "models.ApiReleaseContract":
+        parameters: "_models.ApiReleaseContract",
+        **kwargs: Any
+    ) -> "_models.ApiReleaseContract":
         """Updates the details of the release of the API specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -397,23 +391,19 @@ class ApiReleaseOperations:
         :param if_match: ETag of the Entity. ETag should match the current entity state from the header
          response of the GET request or it should be * for unconditional update.
         :type if_match: str
-        :param api_release_contract_properties_api_id: Identifier of the API the release belongs to.
-        :type api_release_contract_properties_api_id: str
-        :param notes: Release Notes.
-        :type notes: str
+        :param parameters: API Release Update parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApiReleaseContract, or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.ApiReleaseContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiReleaseContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiReleaseContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.ApiReleaseContract(api_id=api_release_contract_properties_api_id, notes=notes)
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -439,7 +429,7 @@ class ApiReleaseOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ApiReleaseContract')
+        body_content = self._serialize.body(parameters, 'ApiReleaseContract')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -447,7 +437,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -467,7 +457,7 @@ class ApiReleaseOperations:
         api_id: str,
         release_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified release in the API.
 
@@ -493,7 +483,7 @@ class ApiReleaseOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -522,7 +512,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

@@ -5,12 +5,14 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Dict, TYPE_CHECKING
-)
+    Union, Optional, Any, Dict, TYPE_CHECKING,
+    AsyncIterator)
 
+from azure.core.pipeline.transport import AsyncHttpResponse
+
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from azure.core.pipeline import AsyncPipeline
@@ -18,16 +20,21 @@ from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import ContainerClient
+from .._serialize import get_api_version
+from .._deserialize import process_storage_error, is_file_path
+from .._generated.models import ListBlobsIncludeItem
 
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
-from ._models import PathPropertiesPaged
 from ._data_lake_lease_async import DataLakeLeaseClient
+from .._deserialize import deserialize_path_properties
 from .._file_system_client import FileSystemClient as FileSystemClientBase
-from .._generated.aio import DataLakeStorageClient
+from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._models import FileSystemProperties, PublicAccess
+from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties, DeletedPathProperties
+from ._list_paths_helper import DeletedPathPropertiesPaged
+
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -55,9 +62,11 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
      :type file_system_name: str
      :param credential:
          The credentials with which to authenticate. This is optional if the
-         account URL already has a SAS token. The value can be a SAS token string, and account
+         account URL already has a SAS token. The value can be a SAS token string,
+         an instance of a AzureSasCredential from azure.core.credentials, an account
          shared access key, or an instance of a TokenCredentials class from azure.identity.
-         If the URL already has a SAS token, specifying an explicit credential will take priority.
+         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -88,7 +97,14 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
-        self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
+                                                                               file_system=file_system_name,
+                                                                               pipeline=self._pipeline)
+        api_version = get_api_version(kwargs)
+        self._client._config.version = api_version  # pylint: disable=protected-access
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
+
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):
@@ -192,6 +208,44 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
                                                              **kwargs)
+
+    @distributed_trace_async
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a file system exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return await self._container_client.exists(**kwargs)
+
+    @distributed_trace_async
+    async def _rename_file_system(self, new_name, **kwargs):
+        # type: (str, **Any) -> FileSystemClient
+        """Renames a filesystem.
+
+        Operation is successful only if the source filesystem exists.
+
+        :param str new_name:
+            The new filesystem name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source filesystem.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        await self._container_client._rename_container(new_name, **kwargs)   # pylint: disable=protected-access
+        renamed_file_system = FileSystemClient(
+                "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
+                credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                key_resolver_function=self.key_resolver_function)
+        return renamed_file_system
 
     @distributed_trace_async
     async def delete_file_system(self, **kwargs):
@@ -383,7 +437,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                         recursive=True,  # type: Optional[bool]
                         max_results=None,  # type: Optional[int]
                         **kwargs):
-        # type: (...) -> ItemPaged[PathProperties]
+        # type: (...) -> AsyncItemPaged[PathProperties]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -419,14 +473,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: List the blobs in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        command = functools.partial(
-            self._client.file_system.list_paths,
+        return self._client.file_system.list_paths(
+            recursive=recursive,
+            max_results=max_results,
             path=path,
             timeout=timeout,
+            cls=deserialize_path_properties,
             **kwargs)
-        return AsyncItemPaged(
-            command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
@@ -663,6 +716,108 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         await file_client.delete_file(**kwargs)
         return file_client
 
+    @distributed_trace_async
+    async def delete_files(self, *files, **kwargs):
+        # type: (...) -> AsyncIterator[AsyncHttpResponse]
+        """Marks the specified files or empty directories for deletion.
+
+        The files/empty directories are later deleted during garbage collection.
+
+        If a delete retention policy is enabled for the service, then this operation soft deletes the
+        files/empty directories and retains the files or snapshots for specified number of days.
+        After specified number of days, files' data is removed from the service during garbage collection.
+        Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
+
+        :param files:
+            The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
+            be supplied, where each value is either the name of the file/directory (str) or
+            FileProperties/DirectoryProperties.
+
+            .. note::
+                When the file/dir type is dict, here's a list of keys, value rules.
+
+                blob name:
+                    key: 'name', value type: str
+                if the file modified or not:
+                    key: 'if_modified_since', 'if_unmodified_since', value type: datetime
+                etag:
+                    key: 'etag', value type: str
+                match the etag or not:
+                    key: 'match_condition', value type: MatchConditions
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
+
+        :type files: list[str], list[dict],
+            or list[Union[~azure.storage.filedatalake.FileProperties, ~azure.storage.filedatalake.DirectoryProperties]
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: An iterator of responses, one for each blob in order
+        :rtype: AsyncIterator[~azure.core.pipeline.transport.AsyncHttpResponse]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START batch_delete_files_or_empty_directories]
+                :end-before: [END batch_delete_files_or_empty_directories]
+                :language: python
+                :dedent: 4
+                :caption: Deleting multiple files or empty directories.
+        """
+        return await self._container_client.delete_blobs(*files, **kwargs)
+
+    @distributed_trace_async
+    async def _undelete_path(self, deleted_path_name, deletion_id, **kwargs):
+        # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
+        """Restores soft-deleted path.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
+        :param str deleted_path_name:
+            Specifies the name of the deleted container to restore.
+        :param str deletion_id:
+            Specifies the version of the deleted container to restore.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
+                or azure.storage.file.datalake.aio.DataLakeFileClient
+        """
+        _, url, undelete_source = self._undelete_path_options(deleted_path_name, deletion_id)
+
+        pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+        path_client = AzureDataLakeStorageRESTAPI(
+            url, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline)
+        try:
+            is_file = await path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)
+            if is_file:
+                return self.get_file_client(deleted_path_name)
+            return self.get_directory_client(deleted_path_name)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
     def _get_root_directory_client(self):
         # type: () -> DataLakeDirectoryClient
         """Get a client to interact with the root directory.
@@ -696,15 +851,16 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
-            directory_name = directory.name
+            directory_name = directory.get('name')
         except AttributeError:
-            directory_name = directory
+            directory_name = str(directory)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
+                                       api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
@@ -737,16 +893,50 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: Getting the file client to interact with a specific file.
         """
         try:
-            file_path = file_path.name
+            file_path = file_path.get('name')
         except AttributeError:
-            pass
+            file_path = str(file_path)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)
+
+    @distributed_trace
+    def list_deleted_paths(self, **kwargs):
+        # type: (Any) -> AsyncItemPaged[DeletedPathProperties]
+        """Returns a generator to list the deleted (file or directory) paths under the specified file system.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
+        :keyword str path_prefix:
+            Filters the results to return only paths under the specified path.
+        :keyword int results_per_page:
+            An optional value that specifies the maximum number of items to return per page.
+            If omitted or greater than 5,000, the response will include up to 5,000 items per page.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of DeletedPathProperties.
+        :rtype:
+            ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
+        """
+        path_prefix = kwargs.pop('path_prefix', None)
+        timeout = kwargs.pop('timeout', None)
+        results_per_page = kwargs.pop('results_per_page', None)
+        command = functools.partial(
+            self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
+            showonly=ListBlobsIncludeItem.deleted,
+            timeout=timeout,
+            **kwargs)
+        return AsyncItemPaged(
+            command, prefix=path_prefix, page_iterator_class=DeletedPathPropertiesPaged,
+            results_per_page=results_per_page, **kwargs)

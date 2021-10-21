@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -32,14 +32,14 @@ class IotHubResourceOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.iothub.models
+    :type models: ~azure.mgmt.iothub.v2017_07_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class IotHubResourceOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotHubDescription"
+        # type: (...) -> "_models.IotHubDescription"
         """Get the non-security related metadata of an IoT hub.
 
         Get the non-security related metadata of an IoT hub.
@@ -64,10 +64,10 @@ class IotHubResourceOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IotHubDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.IotHubDescription
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.IotHubDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -98,7 +98,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IotHubDescription', pipeline_response)
@@ -113,12 +113,12 @@ class IotHubResourceOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        iot_hub_description,  # type: "models.IotHubDescription"
+        iot_hub_description,  # type: "_models.IotHubDescription"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotHubDescription"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescription"]
+        # type: (...) -> "_models.IotHubDescription"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -156,7 +156,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -175,38 +175,40 @@ class IotHubResourceOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        iot_hub_description,  # type: "models.IotHubDescription"
+        iot_hub_description,  # type: "_models.IotHubDescription"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.IotHubDescription"]
+        # type: (...) -> LROPoller["_models.IotHubDescription"]
         """Create or update the metadata of an IoT hub.
 
         Create or update the metadata of an Iot hub. The usual pattern to modify a property is to
         retrieve the IoT hub metadata and security metadata, and then combine them with the modified
-        values in a new body to update the IoT hub.
+        values in a new body to update the IoT hub. If certain properties are missing in the JSON,
+        updating IoT Hub may cause these values to fallback to default, which may lead to unexpected
+        behavior.
 
         :param resource_group_name: The name of the resource group that contains the IoT hub.
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param iot_hub_description: The IoT hub metadata and security metadata.
-        :type iot_hub_description: ~azure.mgmt.iothub.models.IotHubDescription
+        :type iot_hub_description: ~azure.mgmt.iothub.v2017_07_01.models.IotHubDescription
         :param if_match: ETag of the IoT Hub. Do not specify for creating a brand new IoT Hub. Required
          to update an existing IoT Hub.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either IotHubDescription or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.models.IotHubDescription]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2017_07_01.models.IotHubDescription]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -258,12 +260,10 @@ class IotHubResourceOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.IotHubDescription"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.IotHubDescription"]]
+        # type: (...) -> Optional[Union["_models.IotHubDescription", "_models.ErrorDetails"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Union["_models.IotHubDescription", "_models.ErrorDetails"]]]
         error_map = {
-            401: ClientAuthenticationError,
-            409: ResourceExistsError,
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(models.ErrorDetails, response), error_format=ARMErrorFormat),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-07-01"
@@ -290,9 +290,9 @@ class IotHubResourceOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 202, 204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -301,6 +301,9 @@ class IotHubResourceOperations(object):
 
         if response.status_code == 202:
             deserialized = self._deserialize('IotHubDescription', pipeline_response)
+
+        if response.status_code == 404:
+            deserialized = self._deserialize('ErrorDetails', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -314,7 +317,7 @@ class IotHubResourceOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.IotHubDescription"]
+        # type: (...) -> LROPoller[Union["_models.IotHubDescription", "_models.ErrorDetails"]]
         """Delete an IoT hub.
 
         Delete an IoT hub.
@@ -325,16 +328,16 @@ class IotHubResourceOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either IotHubDescription or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.models.IotHubDescription]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2017_07_01.models.IotHubDescription]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.IotHubDescription", "_models.ErrorDetails"]]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -382,17 +385,17 @@ class IotHubResourceOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IotHubDescriptionListResult"]
+        # type: (...) -> Iterable["_models.IotHubDescriptionListResult"]
         """Get all the IoT hubs in a subscription.
 
         Get all the IoT hubs in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IotHubDescriptionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.models.IotHubDescriptionListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2017_07_01.models.IotHubDescriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -437,7 +440,7 @@ class IotHubResourceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -453,7 +456,7 @@ class IotHubResourceOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IotHubDescriptionListResult"]
+        # type: (...) -> Iterable["_models.IotHubDescriptionListResult"]
         """Get all the IoT hubs in a resource group.
 
         Get all the IoT hubs in a resource group.
@@ -462,10 +465,10 @@ class IotHubResourceOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IotHubDescriptionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.models.IotHubDescriptionListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2017_07_01.models.IotHubDescriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubDescriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -511,7 +514,7 @@ class IotHubResourceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -528,7 +531,7 @@ class IotHubResourceOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RegistryStatistics"
+        # type: (...) -> "_models.RegistryStatistics"
         """Get the statistics from an IoT hub.
 
         Get the statistics from an IoT hub.
@@ -539,10 +542,10 @@ class IotHubResourceOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegistryStatistics, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.RegistryStatistics
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.RegistryStatistics
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryStatistics"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryStatistics"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -573,7 +576,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RegistryStatistics', pipeline_response)
@@ -590,7 +593,7 @@ class IotHubResourceOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IotHubSkuDescriptionListResult"]
+        # type: (...) -> Iterable["_models.IotHubSkuDescriptionListResult"]
         """Get the list of valid SKUs for an IoT hub.
 
         Get the list of valid SKUs for an IoT hub.
@@ -601,10 +604,10 @@ class IotHubResourceOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IotHubSkuDescriptionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.models.IotHubSkuDescriptionListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2017_07_01.models.IotHubSkuDescriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubSkuDescriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubSkuDescriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -651,7 +654,7 @@ class IotHubResourceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -669,7 +672,7 @@ class IotHubResourceOperations(object):
         event_hub_endpoint_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.EventHubConsumerGroupsListResult"]
+        # type: (...) -> Iterable["_models.EventHubConsumerGroupsListResult"]
         """Get a list of the consumer groups in the Event Hub-compatible device-to-cloud endpoint in an IoT hub.
 
         Get a list of the consumer groups in the Event Hub-compatible device-to-cloud endpoint in an
@@ -683,10 +686,10 @@ class IotHubResourceOperations(object):
         :type event_hub_endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EventHubConsumerGroupsListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.models.EventHubConsumerGroupsListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2017_07_01.models.EventHubConsumerGroupsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubConsumerGroupsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubConsumerGroupsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -734,7 +737,7 @@ class IotHubResourceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -753,7 +756,7 @@ class IotHubResourceOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EventHubConsumerGroupInfo"
+        # type: (...) -> "_models.EventHubConsumerGroupInfo"
         """Get a consumer group from the Event Hub-compatible device-to-cloud endpoint for an IoT hub.
 
         Get a consumer group from the Event Hub-compatible device-to-cloud endpoint for an IoT hub.
@@ -768,10 +771,10 @@ class IotHubResourceOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EventHubConsumerGroupInfo, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.EventHubConsumerGroupInfo
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.EventHubConsumerGroupInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubConsumerGroupInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubConsumerGroupInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -804,7 +807,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EventHubConsumerGroupInfo', pipeline_response)
@@ -823,7 +826,7 @@ class IotHubResourceOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EventHubConsumerGroupInfo"
+        # type: (...) -> "_models.EventHubConsumerGroupInfo"
         """Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
 
         Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
@@ -838,10 +841,10 @@ class IotHubResourceOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EventHubConsumerGroupInfo, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.EventHubConsumerGroupInfo
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.EventHubConsumerGroupInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubConsumerGroupInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubConsumerGroupInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -874,7 +877,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EventHubConsumerGroupInfo', pipeline_response)
@@ -944,7 +947,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -958,7 +961,7 @@ class IotHubResourceOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobResponseListResult"]
+        # type: (...) -> Iterable["_models.JobResponseListResult"]
         """Get a list of all the jobs in an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
         Get a list of all the jobs in an IoT hub. For more information, see:
@@ -970,10 +973,10 @@ class IotHubResourceOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobResponseListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.models.JobResponseListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2017_07_01.models.JobResponseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobResponseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResponseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1020,7 +1023,7 @@ class IotHubResourceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1038,7 +1041,7 @@ class IotHubResourceOperations(object):
         job_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobResponse"
+        # type: (...) -> "_models.JobResponse"
         """Get the details of a job from an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
         Get the details of a job from an IoT hub. For more information, see:
@@ -1052,10 +1055,10 @@ class IotHubResourceOperations(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.JobResponse
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.JobResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1087,7 +1090,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobResponse', pipeline_response)
@@ -1104,7 +1107,7 @@ class IotHubResourceOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IotHubQuotaMetricInfoListResult"]
+        # type: (...) -> Iterable["_models.IotHubQuotaMetricInfoListResult"]
         """Get the quota metrics for an IoT hub.
 
         Get the quota metrics for an IoT hub.
@@ -1115,10 +1118,10 @@ class IotHubResourceOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IotHubQuotaMetricInfoListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.models.IotHubQuotaMetricInfoListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2017_07_01.models.IotHubQuotaMetricInfoListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubQuotaMetricInfoListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubQuotaMetricInfoListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1165,7 +1168,7 @@ class IotHubResourceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1178,23 +1181,23 @@ class IotHubResourceOperations(object):
 
     def check_name_availability(
         self,
-        operation_inputs,  # type: "models.OperationInputs"
+        operation_inputs,  # type: "_models.OperationInputs"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotHubNameAvailabilityInfo"
+        # type: (...) -> "_models.IotHubNameAvailabilityInfo"
         """Check if an IoT hub name is available.
 
         Check if an IoT hub name is available.
 
         :param operation_inputs: Set the name parameter in the OperationInputs structure to the name of
          the IoT hub to check.
-        :type operation_inputs: ~azure.mgmt.iothub.models.OperationInputs
+        :type operation_inputs: ~azure.mgmt.iothub.v2017_07_01.models.OperationInputs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IotHubNameAvailabilityInfo, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.IotHubNameAvailabilityInfo
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.IotHubNameAvailabilityInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotHubNameAvailabilityInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubNameAvailabilityInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1228,7 +1231,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IotHubNameAvailabilityInfo', pipeline_response)
@@ -1245,7 +1248,7 @@ class IotHubResourceOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SharedAccessSignatureAuthorizationRuleListResult"]
+        # type: (...) -> Iterable["_models.SharedAccessSignatureAuthorizationRuleListResult"]
         """Get the security metadata for an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
         Get the security metadata for an IoT hub. For more information, see:
@@ -1257,10 +1260,10 @@ class IotHubResourceOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SharedAccessSignatureAuthorizationRuleListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRuleListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2017_07_01.models.SharedAccessSignatureAuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessSignatureAuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessSignatureAuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1307,7 +1310,7 @@ class IotHubResourceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1325,7 +1328,7 @@ class IotHubResourceOperations(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SharedAccessSignatureAuthorizationRule"
+        # type: (...) -> "_models.SharedAccessSignatureAuthorizationRule"
         """Get a shared access policy by name from an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
         Get a shared access policy by name from an IoT hub. For more information, see:
@@ -1339,10 +1342,10 @@ class IotHubResourceOperations(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SharedAccessSignatureAuthorizationRule, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.SharedAccessSignatureAuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessSignatureAuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessSignatureAuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1374,7 +1377,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SharedAccessSignatureAuthorizationRule', pipeline_response)
@@ -1389,28 +1392,28 @@ class IotHubResourceOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        export_devices_parameters,  # type: "models.ExportDevicesRequest"
+        export_devices_parameters,  # type: "_models.ExportDevicesRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobResponse"
+        # type: (...) -> "_models.JobResponse"
         """Exports all the device identities in the IoT hub identity registry to an Azure Storage blob container. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
         Exports all the device identities in the IoT hub identity registry to an Azure Storage blob
-        container. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-
-        devguide-identity-registry#import-and-export-device-identities.
+        container. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
         :param resource_group_name: The name of the resource group that contains the IoT hub.
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param export_devices_parameters: The parameters that specify the export devices operation.
-        :type export_devices_parameters: ~azure.mgmt.iothub.models.ExportDevicesRequest
+        :type export_devices_parameters: ~azure.mgmt.iothub.v2017_07_01.models.ExportDevicesRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.JobResponse
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.JobResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1446,7 +1449,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobResponse', pipeline_response)
@@ -1461,28 +1464,28 @@ class IotHubResourceOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        import_devices_parameters,  # type: "models.ImportDevicesRequest"
+        import_devices_parameters,  # type: "_models.ImportDevicesRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobResponse"
+        # type: (...) -> "_models.JobResponse"
         """Import, update, or delete device identities in the IoT hub identity registry from a blob. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
         Import, update, or delete device identities in the IoT hub identity registry from a blob. For
-        more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-
-        registry#import-and-export-device-identities.
+        more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
         :param resource_group_name: The name of the resource group that contains the IoT hub.
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param import_devices_parameters: The parameters that specify the import devices operation.
-        :type import_devices_parameters: ~azure.mgmt.iothub.models.ImportDevicesRequest
+        :type import_devices_parameters: ~azure.mgmt.iothub.v2017_07_01.models.ImportDevicesRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.JobResponse
+        :rtype: ~azure.mgmt.iothub.v2017_07_01.models.JobResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1518,7 +1521,7 @@ class IotHubResourceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobResponse', pipeline_response)

@@ -1,7 +1,81 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.1 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2021-07-06)
+
+### Breaking Changes
+
+- Changed
+  - `DetectionConditionsOperator` -> `DetectionConditionOperator`
+  - `cross_conditions_operator` -> `condition_operator`
+  - `AnomalyAlert.created_on` -> `AnomalyAlert.created_time`
+  - `AnomalyAlert.modified_on` -> `AnomalyAlert.modified_time`
+  - `Anomaly.created_on` -> `Anomaly.created_time`
+  - `admin_emails` has been renamed to `admins` in `NotificationHook`
+  - `admin_emails` has been renamed to `admins` in `DataFeedOptions`
+  - `viewer_emails` has been renamed to `viewers` in `DataFeedOptions`
+
+## 1.0.0b4 (2021-06-07)
+
+**New Features**
+
+- Added `AzureLogAnalyticsDataFeedSource` and `AzureEventHubsDataFeedSource`
+- Update method now returns the updated object
+- Added DatasourceCredentials and DatasourceCredential operations
+- Added authentication type support for data feed
+
+**Breaking Changes**
+
+- Delete methods now take positional only argument as id
+- `update_subscription_key` and `update_api_key` are merged into one method `update_key`
+- Removed `DataFeedOptions` and moved all its properties to the `DataFeed` model
+
+- Deprecated:
+  - `HttpRequestDataFeed`
+  - `ElasticsearchDataFeed`
+
+- Renamed
+  - `AzureApplicationInsightsDataFeed` -> `AzureApplicationInsightsDataFeedSource`
+  - `AzureBlobDataFeed` -> `AzureBlobDataFeedSource`
+  - `AzureCosmosDBDataFeed` -> `AzureCosmosDbDataFeedSource`
+  - `AzureDataExplorerDataFeed` -> `AzureDataExplorerDataFeedSource`
+  - `AzureTableDataFeed` -> `AzureTableDataFeedSource`
+  - `InfluxDBDataFeed` -> `InfluxDbDataFeedSource`
+  - `MySqlDataFeed` -> `MySqlDataFeedSource`
+  - `PostgreSqlDataFeed` -> `PostgreSqlDataFeedSource`
+  - `SQLServerDataFeed` -> `SqlServerDataFeedSource`
+  - `MongoDBDataFeed` -> `MongoDbDataFeedSource`
+  - `AzureDataLakeStorageGen2DataFeed` -> `AzureDataLakeStorageGen2DataFeedSource`
+
+**Dependency Updates**
+
+- Bump `msrest` requirement from `0.6.12` to `0.6.21`
+
+## 1.0.0b3 (2021-02-09)
+
+**New Features**
+
+- AAD support authentication    #15922
+- `MetricsAdvisorKeyCredential` support for rotating the subscription and api keys to update long-lived clients
+  
+**Breaking Changes**
+
+- `list_dimension_values` has been renamed to `list_anomaly_dimension_values`
+- update methods now return None
+- Updated DataFeed.metric_ids to be a dict rather than a list
+
+**Hotfixes**
+
+- Bump `six` requirement from `1.6` to 1.11.0`
 
 ## 1.0.0b2 (2020-11-10)
 
@@ -48,4 +122,3 @@
 ## 1.0.0b1 (2020-10-07)
 
 First preview release
-

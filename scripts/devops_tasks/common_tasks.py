@@ -19,7 +19,8 @@ import ast
 import textwrap
 import io
 import re
-import pdb
+import fnmatch
+import platform
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -29,9 +30,9 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
 
-
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
+NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -42,6 +43,8 @@ OMITTED_CI_PACKAGES = [
     "azure",
     "azure-mgmt",
     "azure-storage",
+    "azure-monitor",
+    "azure-mgmt-regionmove"
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
@@ -60,6 +63,10 @@ REGRESSION_EXCLUDED_PACKAGES = [
 MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
+
+TEST_COMPATIBILITY_MAP = {
+    "azure-core-tracing-opentelemetry": "<3.10"
+}
 
 omit_regression = (
     lambda x: "nspkg" not in x
@@ -191,6 +198,10 @@ def parse_setup_requires(setup_path):
     return python_requires
 
 
+def get_name_from_specifier(version):
+    return re.split(r'[><=]', version)[0]
+
+
 def filter_for_compatibility(package_set):
     collected_packages = []
     v = sys.version_info
@@ -204,6 +215,24 @@ def filter_for_compatibility(package_set):
 
     return collected_packages
 
+
+def compare_python_version(version_spec):
+    current_sys_version = parse(platform.python_version())
+    spec_set = SpecifierSet(version_spec)
+
+    return current_sys_version in spec_set
+
+
+def filter_packages_by_compatibility_override(package_set, resolve_basename=True):
+    return [
+        p
+        for p in package_set
+        if compare_python_version(
+            TEST_COMPATIBILITY_MAP.get(
+                os.path.basename(p) if resolve_basename else p, ">=2.7"
+            )
+        )
+    ]
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
@@ -312,6 +341,7 @@ def create_code_coverage_params(parsed_args, package_name):
     else:
         current_package_name = package_name.replace("-", ".")
         coverage_args.append("--cov={}".format(current_package_name))
+        coverage_args.append("--cov-append")
         logging.info(
             "Code coverage is enabled for package {0}, pytest arguements: {1}".format(
                 current_package_name, coverage_args
@@ -340,7 +370,7 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
 
 # This function parses requirement and return package name and specifier
 def parse_require(req):
-    req_object = Requirement.parse(req)
+    req_object = Requirement.parse(req.split(";")[0])
     pkg_name = req_object.key
     spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
     return [pkg_name, spec]
@@ -353,9 +383,15 @@ def find_whl(package_name, version, whl_directory):
     parsed_version = parse(version)
 
     logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    paths = glob.glob(os.path.join(whl_directory, whl_name))
-    if not paths:
+    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
+    whls = []
+    for root, dirnames, filenames in os.walk(whl_directory):
+        for filename in fnmatch.filter(filenames, whl_name_format):
+            whls.append(os.path.join(root, filename))
+
+    whls = [os.path.relpath(w, whl_directory) for w in whls]
+
+    if not whls:
         logging.error(
             "whl is not found in whl directory {0} for package {1}-{2}".format(
                 whl_directory, package_name, parsed_version.base_version
@@ -363,13 +399,13 @@ def find_whl(package_name, version, whl_directory):
         )
         exit(1)
 
-    return paths[0]
+    return whls[0]
 
 # This method installs package from a pre-built whl
 def install_package_from_whl(
     package_whl_path, working_dir, python_sym_link=sys.executable
 ):
-    commands = [python_sym_link, "-m", "pip", "install", package_whl_path]
+    commands = [python_sym_link, "-m", "pip", "install", package_whl_path, "--extra-index-url", "https://pypi.python.org/simple"]
     run_check_call(commands, working_dir)
     logging.info("Installed package from {}".format(package_whl_path))
 
@@ -458,6 +494,12 @@ def get_installed_packages(paths = None):
     # WorkingSet returns installed packages in given path
     # working_set returns installed packages in default path
     # if paths is set then find installed packages from given paths
-    ws = WorkingSet(paths) if paths else working_set  
+    ws = WorkingSet(paths) if paths else working_set
     return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
 
+def get_package_properties(setup_py_path):
+    """Parse setup.py and return package details like package name, version, whether it's new SDK
+    """
+    pkgName, version, _, requires = parse_setup(setup_py_path)
+    is_new_sdk = pkgName in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+    return pkgName, version, is_new_sdk, setup_py_path

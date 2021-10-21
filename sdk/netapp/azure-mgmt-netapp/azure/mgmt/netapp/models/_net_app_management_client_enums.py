@@ -30,11 +30,34 @@ class ActiveDirectoryStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     """Status of the Active Directory
     """
 
-    CREATED = "Created"  #: Active Directory created but not in use.
-    IN_USE = "InUse"  #: Active Directory in use by SMB Volume.
-    DELETED = "Deleted"  #: Active Directory Deleted.
-    ERROR = "Error"  #: Error with the Active Directory.
-    UPDATING = "Updating"  #: Active Directory Updating.
+    #: Active Directory created but not in use.
+    CREATED = "Created"
+    #: Active Directory in use by SMB Volume.
+    IN_USE = "InUse"
+    #: Active Directory Deleted.
+    DELETED = "Deleted"
+    #: Error with the Active Directory.
+    ERROR = "Error"
+    #: Active Directory Updating.
+    UPDATING = "Updating"
+
+class AvsDataStore(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore purpose
+    """
+
+    #: avsDataStore is enabled.
+    ENABLED = "Enabled"
+    #: avsDataStore is disabled.
+    DISABLED = "Disabled"
+
+class BackupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of backup Manual or Scheduled
+    """
+
+    #: Manual backup.
+    MANUAL = "Manual"
+    #: Scheduled backup.
+    SCHEDULED = "Scheduled"
 
 class CheckNameResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Resource type used for verification.
@@ -54,6 +77,34 @@ class CheckQuotaNameResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_SNAPSHOTS = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
 
+class ChownMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This parameter specifies who is authorized to change the ownership of a file. restricted - Only
+    root user can change the ownership of the file. unrestricted - Non-root users can change
+    ownership of files that they own.
+    """
+
+    RESTRICTED = "Restricted"
+    UNRESTRICTED = "Unrestricted"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class EncryptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Encryption type of the capacity pool, set encryption type for data at rest for this pool and
+    all volumes in it. This value can only be set when creating new pool.
+    """
+
+    #: EncryptionType Single, volumes will use single encryption at rest.
+    SINGLE = "Single"
+    #: EncryptionType Double, volumes will use double encryption at rest.
+    DOUBLE = "Double"
+
 class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the local volume is the source or destination for the Volume Replication
     """
@@ -70,6 +121,10 @@ class InAvailabilityReasonType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+class MetricAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    AVERAGE = "Average"
+
 class MirrorState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the replication
     """
@@ -78,12 +133,23 @@ class MirrorState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MIRRORED = "Mirrored"
     BROKEN = "Broken"
 
+class NetworkFeatures(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Basic network, or Standard features available to the volume.
+    """
+
+    #: Basic network feature.
+    BASIC = "Basic"
+    #: Standard network feature.
+    STANDARD = "Standard"
+
 class QosType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The qos type of the pool
     """
 
-    AUTO = "Auto"  #: qos type Auto.
-    MANUAL = "Manual"  #: qos type Manual.
+    #: qos type Auto.
+    AUTO = "Auto"
+    #: qos type Manual.
+    MANUAL = "Manual"
 
 class RelationshipStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the mirror relationship
@@ -101,7 +167,7 @@ class ReplicationSchedule(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DAILY = "daily"
 
 class SecurityStyle(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The security style of volume
+    """The security style of volume, default unix, defaults to ntfs for dual protocol or CIFS protocol
     """
 
     NTFS = "ntfs"
@@ -111,6 +177,22 @@ class ServiceLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The service level of the file system
     """
 
-    STANDARD = "Standard"  #: Standard service level.
-    PREMIUM = "Premium"  #: Premium service level.
-    ULTRA = "Ultra"  #: Ultra service level.
+    #: Standard service level.
+    STANDARD = "Standard"
+    #: Premium service level.
+    PREMIUM = "Premium"
+    #: Ultra service level.
+    ULTRA = "Ultra"
+    #: Zone redundant storage service level.
+    STANDARD_ZRS = "StandardZRS"
+
+class VolumeStorageToNetworkProximity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provides storage to network proximity information for the volume.
+    """
+
+    #: Basic storage to network connectivity.
+    DEFAULT = "Default"
+    #: Standard T1 storage to network connectivity.
+    T1 = "T1"
+    #: Standard T2 storage to network connectivity.
+    T2 = "T2"

@@ -41,6 +41,14 @@ azure.core.exceptions
    :members:
    :undoc-members:
 
+azure.core.messaging
+-------------------
+
+.. automodule:: azure.core.messaging
+   :members:
+   :undoc-members:
+   :inherited-members:
+
 azure.core.paging
 -----------------
 
@@ -53,6 +61,25 @@ azure.core.settings
 -------------------
 
 .. automodule:: azure.core.settings
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+azure.core.serialization
+-------------------
+
+.. automodule:: azure.core.serialization
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+azure.core.rest
+-------------------
+***THIS MODULE IS PROVISIONAL***
+
+This module is ***provisional***, meaning any of the objects and methods in this module may be changed.
+
+.. automodule:: azure.core.rest
    :members:
    :undoc-members:
    :inherited-members:

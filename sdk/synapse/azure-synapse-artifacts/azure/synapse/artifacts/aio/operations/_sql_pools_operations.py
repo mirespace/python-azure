@@ -41,7 +41,7 @@ class SqlPoolsOperations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPoolInfoListResult":
         """List Sql Pools.
 
@@ -55,7 +55,7 @@ class SqlPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -79,7 +79,7 @@ class SqlPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorContract, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SqlPoolInfoListResult', pipeline_response)
@@ -93,7 +93,7 @@ class SqlPoolsOperations:
     async def get(
         self,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPool":
         """Get Sql Pool.
 
@@ -109,7 +109,7 @@ class SqlPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -134,7 +134,7 @@ class SqlPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorContract, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SqlPool', pipeline_response)

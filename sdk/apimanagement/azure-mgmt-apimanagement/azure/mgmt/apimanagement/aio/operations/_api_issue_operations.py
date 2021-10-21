@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ApiIssueOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,8 +50,8 @@ class ApiIssueOperations:
         expand_comments_attachments: Optional[bool] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.IssueCollection"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.IssueCollection"]:
         """Lists all issues associated with the specified API.
 
         :param resource_group_name: The name of the resource group.
@@ -77,12 +77,12 @@ class ApiIssueOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.IssueCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -133,7 +133,7 @@ class ApiIssueOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -150,7 +150,7 @@ class ApiIssueOperations:
         service_name: str,
         api_id: str,
         issue_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the Issue for an API specified by its identifier.
 
@@ -173,7 +173,7 @@ class ApiIssueOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -201,7 +201,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -220,8 +220,8 @@ class ApiIssueOperations:
         api_id: str,
         issue_id: str,
         expand_comments_attachments: Optional[bool] = None,
-        **kwargs
-    ) -> "models.IssueContract":
+        **kwargs: Any
+    ) -> "_models.IssueContract":
         """Gets the details of the Issue for an API specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -240,12 +240,12 @@ class ApiIssueOperations:
         :rtype: ~azure.mgmt.apimanagement.models.IssueContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -275,7 +275,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -294,10 +294,10 @@ class ApiIssueOperations:
         service_name: str,
         api_id: str,
         issue_id: str,
-        parameters: "models.IssueContract",
+        parameters: "_models.IssueContract",
         if_match: Optional[str] = None,
-        **kwargs
-    ) -> "models.IssueContract":
+        **kwargs: Any
+    ) -> "_models.IssueContract":
         """Creates a new Issue for an API or updates an existing one.
 
         :param resource_group_name: The name of the resource group.
@@ -319,12 +319,12 @@ class ApiIssueOperations:
         :rtype: ~azure.mgmt.apimanagement.models.IssueContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -359,7 +359,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -384,9 +384,9 @@ class ApiIssueOperations:
         api_id: str,
         issue_id: str,
         if_match: str,
-        parameters: "models.IssueUpdateContract",
-        **kwargs
-    ) -> "models.IssueContract":
+        parameters: "_models.IssueUpdateContract",
+        **kwargs: Any
+    ) -> "_models.IssueContract":
         """Updates an existing issue for an API.
 
         :param resource_group_name: The name of the resource group.
@@ -408,12 +408,12 @@ class ApiIssueOperations:
         :rtype: ~azure.mgmt.apimanagement.models.IssueContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -447,7 +447,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -467,7 +467,7 @@ class ApiIssueOperations:
         api_id: str,
         issue_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified Issue from an API.
 
@@ -493,7 +493,7 @@ class ApiIssueOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -522,7 +522,7 @@ class ApiIssueOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

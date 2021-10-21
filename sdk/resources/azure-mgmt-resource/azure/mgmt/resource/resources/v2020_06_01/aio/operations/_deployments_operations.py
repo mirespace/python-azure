@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DeploymentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -61,7 +61,7 @@ class DeploymentsOperations:
         url = self._delete_at_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -90,7 +90,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -108,8 +108,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -138,7 +138,12 @@ class DeploymentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -156,7 +161,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -181,7 +186,7 @@ class DeploymentsOperations:
         url = self.check_existence_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -211,10 +216,10 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> "models.DeploymentExtended":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -227,7 +232,7 @@ class DeploymentsOperations:
         url = self._create_or_update_at_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -267,9 +272,9 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentExtended"]:
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources at a given scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -282,8 +287,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -291,7 +296,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -316,7 +321,12 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -334,8 +344,8 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExtended":
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
         :param scope: The resource scope.
@@ -347,7 +357,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -359,7 +369,7 @@ class DeploymentsOperations:
         url = self.get_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -391,7 +401,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -421,7 +431,7 @@ class DeploymentsOperations:
         url = self.cancel_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -450,10 +460,10 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> Optional["_models.DeploymentValidateResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -466,7 +476,7 @@ class DeploymentsOperations:
         url = self._validate_at_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -507,9 +517,9 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentValidateResult"]:
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
@@ -521,8 +531,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -530,7 +540,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentValidateResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -555,7 +565,12 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -573,8 +588,8 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExportResult":
+        **kwargs: Any
+    ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
         :param scope: The resource scope.
@@ -586,7 +601,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -598,7 +613,7 @@ class DeploymentsOperations:
         url = self.export_template_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -631,8 +646,8 @@ class DeploymentsOperations:
         scope: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.DeploymentListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments at the given scope.
 
         :param scope: The resource scope.
@@ -647,7 +662,7 @@ class DeploymentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -709,7 +724,7 @@ class DeploymentsOperations:
     async def _delete_at_tenant_scope_initial(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -722,7 +737,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._delete_at_tenant_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -750,7 +765,7 @@ class DeploymentsOperations:
     async def begin_delete_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -766,8 +781,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -795,7 +810,11 @@ class DeploymentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -812,7 +831,7 @@ class DeploymentsOperations:
     async def check_existence_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -834,7 +853,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.check_existence_at_tenant_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -863,10 +882,10 @@ class DeploymentsOperations:
     async def _create_or_update_at_tenant_scope_initial(
         self,
         deployment_name: str,
-        parameters: "models.ScopedDeployment",
-        **kwargs
-    ) -> "models.DeploymentExtended":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        parameters: "_models.ScopedDeployment",
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -878,7 +897,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._create_or_update_at_tenant_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -917,9 +936,9 @@ class DeploymentsOperations:
     async def begin_create_or_update_at_tenant_scope(
         self,
         deployment_name: str,
-        parameters: "models.ScopedDeployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentExtended"]:
+        parameters: "_models.ScopedDeployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources at tenant scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -930,8 +949,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -939,7 +958,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -963,7 +982,11 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -980,8 +1003,8 @@ class DeploymentsOperations:
     async def get_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExtended":
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
         :param deployment_name: The name of the deployment.
@@ -991,7 +1014,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1002,7 +1025,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.get_at_tenant_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1033,7 +1056,7 @@ class DeploymentsOperations:
     async def cancel_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -1060,7 +1083,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.cancel_at_tenant_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1088,10 +1111,10 @@ class DeploymentsOperations:
     async def _validate_at_tenant_scope_initial(
         self,
         deployment_name: str,
-        parameters: "models.ScopedDeployment",
-        **kwargs
-    ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        parameters: "_models.ScopedDeployment",
+        **kwargs: Any
+    ) -> Optional["_models.DeploymentValidateResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1103,7 +1126,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._validate_at_tenant_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1143,9 +1166,9 @@ class DeploymentsOperations:
     async def begin_validate_at_tenant_scope(
         self,
         deployment_name: str,
-        parameters: "models.ScopedDeployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentValidateResult"]:
+        parameters: "_models.ScopedDeployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
@@ -1155,8 +1178,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -1164,7 +1187,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentValidateResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1188,7 +1211,11 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1205,10 +1232,10 @@ class DeploymentsOperations:
     async def _what_if_at_tenant_scope_initial(
         self,
         deployment_name: str,
-        parameters: "models.ScopedDeploymentWhatIf",
-        **kwargs
-    ) -> Optional["models.WhatIfOperationResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
+        parameters: "_models.ScopedDeploymentWhatIf",
+        **kwargs: Any
+    ) -> Optional["_models.WhatIfOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WhatIfOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1220,7 +1247,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._what_if_at_tenant_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1262,9 +1289,9 @@ class DeploymentsOperations:
     async def begin_what_if_at_tenant_scope(
         self,
         deployment_name: str,
-        parameters: "models.ScopedDeploymentWhatIf",
-        **kwargs
-    ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
+        parameters: "_models.ScopedDeploymentWhatIf",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the tenant
         group.
 
@@ -1274,8 +1301,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
@@ -1283,7 +1310,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WhatIfOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WhatIfOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1307,7 +1334,11 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1324,8 +1355,8 @@ class DeploymentsOperations:
     async def export_template_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExportResult":
+        **kwargs: Any
+    ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
         :param deployment_name: The name of the deployment.
@@ -1335,7 +1366,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1346,7 +1377,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.export_template_at_tenant_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1378,8 +1409,8 @@ class DeploymentsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.DeploymentListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments at the tenant scope.
 
         :param filter: The filter to apply on the operation. For example, you can use
@@ -1392,7 +1423,7 @@ class DeploymentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1451,7 +1482,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1465,7 +1496,7 @@ class DeploymentsOperations:
         url = self._delete_at_management_group_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1494,7 +1525,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -1512,8 +1543,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1542,7 +1573,12 @@ class DeploymentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1560,7 +1596,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -1585,7 +1621,7 @@ class DeploymentsOperations:
         url = self.check_existence_at_management_group_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1615,10 +1651,10 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        parameters: "models.ScopedDeployment",
-        **kwargs
-    ) -> "models.DeploymentExtended":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        parameters: "_models.ScopedDeployment",
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1631,7 +1667,7 @@ class DeploymentsOperations:
         url = self._create_or_update_at_management_group_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1671,9 +1707,9 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        parameters: "models.ScopedDeployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentExtended"]:
+        parameters: "_models.ScopedDeployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources at management group scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -1686,8 +1722,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -1695,7 +1731,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1720,7 +1756,12 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1738,8 +1779,8 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExtended":
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
         :param group_id: The management group ID.
@@ -1751,7 +1792,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1763,7 +1804,7 @@ class DeploymentsOperations:
         url = self.get_at_management_group_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1795,7 +1836,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -1825,7 +1866,7 @@ class DeploymentsOperations:
         url = self.cancel_at_management_group_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1854,10 +1895,10 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        parameters: "models.ScopedDeployment",
-        **kwargs
-    ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        parameters: "_models.ScopedDeployment",
+        **kwargs: Any
+    ) -> Optional["_models.DeploymentValidateResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1870,7 +1911,7 @@ class DeploymentsOperations:
         url = self._validate_at_management_group_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1911,9 +1952,9 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        parameters: "models.ScopedDeployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentValidateResult"]:
+        parameters: "_models.ScopedDeployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
@@ -1925,8 +1966,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -1934,7 +1975,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentValidateResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1959,7 +2000,12 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1977,10 +2023,10 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        parameters: "models.ScopedDeploymentWhatIf",
-        **kwargs
-    ) -> Optional["models.WhatIfOperationResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
+        parameters: "_models.ScopedDeploymentWhatIf",
+        **kwargs: Any
+    ) -> Optional["_models.WhatIfOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WhatIfOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1993,7 +2039,7 @@ class DeploymentsOperations:
         url = self._what_if_at_management_group_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2036,9 +2082,9 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        parameters: "models.ScopedDeploymentWhatIf",
-        **kwargs
-    ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
+        parameters: "_models.ScopedDeploymentWhatIf",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the management
         group.
 
@@ -2050,8 +2096,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.ScopedDeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
@@ -2059,7 +2105,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WhatIfOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WhatIfOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2084,7 +2130,12 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2102,8 +2153,8 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExportResult":
+        **kwargs: Any
+    ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
         :param group_id: The management group ID.
@@ -2115,7 +2166,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2127,7 +2178,7 @@ class DeploymentsOperations:
         url = self.export_template_at_management_group_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2160,8 +2211,8 @@ class DeploymentsOperations:
         group_id: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.DeploymentListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments for a management group.
 
         :param group_id: The management group ID.
@@ -2176,7 +2227,7 @@ class DeploymentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2238,7 +2289,7 @@ class DeploymentsOperations:
     async def _delete_at_subscription_scope_initial(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -2251,7 +2302,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._delete_at_subscription_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2280,7 +2331,7 @@ class DeploymentsOperations:
     async def begin_delete_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -2296,8 +2347,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -2325,7 +2376,12 @@ class DeploymentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2342,7 +2398,7 @@ class DeploymentsOperations:
     async def check_existence_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -2364,7 +2420,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.check_existence_at_subscription_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2394,10 +2450,10 @@ class DeploymentsOperations:
     async def _create_or_update_at_subscription_scope_initial(
         self,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> "models.DeploymentExtended":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2409,7 +2465,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._create_or_update_at_subscription_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2449,9 +2505,9 @@ class DeploymentsOperations:
     async def begin_create_or_update_at_subscription_scope(
         self,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentExtended"]:
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources at subscription scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -2462,8 +2518,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -2471,7 +2527,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2495,7 +2551,12 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2512,8 +2573,8 @@ class DeploymentsOperations:
     async def get_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExtended":
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
         :param deployment_name: The name of the deployment.
@@ -2523,7 +2584,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2534,7 +2595,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.get_at_subscription_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2566,7 +2627,7 @@ class DeploymentsOperations:
     async def cancel_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -2593,7 +2654,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.cancel_at_subscription_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2622,10 +2683,10 @@ class DeploymentsOperations:
     async def _validate_at_subscription_scope_initial(
         self,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> Optional["_models.DeploymentValidateResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2637,7 +2698,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._validate_at_subscription_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2678,9 +2739,9 @@ class DeploymentsOperations:
     async def begin_validate_at_subscription_scope(
         self,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentValidateResult"]:
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
@@ -2690,8 +2751,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -2699,7 +2760,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentValidateResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2723,7 +2784,12 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2740,10 +2806,10 @@ class DeploymentsOperations:
     async def _what_if_at_subscription_scope_initial(
         self,
         deployment_name: str,
-        parameters: "models.DeploymentWhatIf",
-        **kwargs
-    ) -> Optional["models.WhatIfOperationResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
+        parameters: "_models.DeploymentWhatIf",
+        **kwargs: Any
+    ) -> Optional["_models.WhatIfOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WhatIfOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2755,7 +2821,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self._what_if_at_subscription_scope_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2798,9 +2864,9 @@ class DeploymentsOperations:
     async def begin_what_if_at_subscription_scope(
         self,
         deployment_name: str,
-        parameters: "models.DeploymentWhatIf",
-        **kwargs
-    ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
+        parameters: "_models.DeploymentWhatIf",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the
         subscription.
 
@@ -2810,8 +2876,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
@@ -2819,7 +2885,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WhatIfOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WhatIfOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2843,7 +2909,12 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2860,8 +2931,8 @@ class DeploymentsOperations:
     async def export_template_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExportResult":
+        **kwargs: Any
+    ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
         :param deployment_name: The name of the deployment.
@@ -2871,7 +2942,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2882,7 +2953,7 @@ class DeploymentsOperations:
         # Construct URL
         url = self.export_template_at_subscription_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2915,8 +2986,8 @@ class DeploymentsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.DeploymentListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments for a subscription.
 
         :param filter: The filter to apply on the operation. For example, you can use
@@ -2929,7 +3000,7 @@ class DeploymentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2992,7 +3063,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -3005,8 +3076,8 @@ class DeploymentsOperations:
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3036,7 +3107,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -3056,8 +3127,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -3086,7 +3157,13 @@ class DeploymentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -3104,7 +3181,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -3129,8 +3206,8 @@ class DeploymentsOperations:
         # Construct URL
         url = self.check_existence.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3161,10 +3238,10 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> "models.DeploymentExtended":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3176,8 +3253,8 @@ class DeploymentsOperations:
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3218,9 +3295,9 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentExtended"]:
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources to a resource group.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -3234,8 +3311,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -3243,7 +3320,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -3268,7 +3345,13 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -3286,8 +3369,8 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExtended":
+        **kwargs: Any
+    ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3299,7 +3382,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExtended
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExtended"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3310,8 +3393,8 @@ class DeploymentsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3344,7 +3427,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -3373,8 +3456,8 @@ class DeploymentsOperations:
         # Construct URL
         url = self.cancel.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3404,10 +3487,10 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> Optional["models.DeploymentValidateResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DeploymentValidateResult"]]
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> Optional["_models.DeploymentValidateResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3419,8 +3502,8 @@ class DeploymentsOperations:
         # Construct URL
         url = self._validate_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3462,9 +3545,9 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.Deployment",
-        **kwargs
-    ) -> AsyncLROPoller["models.DeploymentValidateResult"]:
+        parameters: "_models.Deployment",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
@@ -3477,8 +3560,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -3486,7 +3569,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentValidateResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -3511,7 +3594,13 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -3529,10 +3618,10 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.DeploymentWhatIf",
-        **kwargs
-    ) -> Optional["models.WhatIfOperationResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
+        parameters: "_models.DeploymentWhatIf",
+        **kwargs: Any
+    ) -> Optional["_models.WhatIfOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WhatIfOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3544,8 +3633,8 @@ class DeploymentsOperations:
         # Construct URL
         url = self._what_if_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3589,9 +3678,9 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: "models.DeploymentWhatIf",
-        **kwargs
-    ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
+        parameters: "_models.DeploymentWhatIf",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the resource
         group.
 
@@ -3604,8 +3693,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
@@ -3613,7 +3702,7 @@ class DeploymentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WhatIfOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WhatIfOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -3638,7 +3727,13 @@ class DeploymentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -3656,8 +3751,8 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
-    ) -> "models.DeploymentExportResult":
+        **kwargs: Any
+    ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3669,7 +3764,7 @@ class DeploymentsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3680,8 +3775,8 @@ class DeploymentsOperations:
         # Construct URL
         url = self.export_template.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3715,8 +3810,8 @@ class DeploymentsOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.DeploymentListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments for a resource group.
 
         :param resource_group_name: The name of the resource group with the deployments to get. The
@@ -3732,7 +3827,7 @@ class DeploymentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3749,7 +3844,7 @@ class DeploymentsOperations:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -3794,19 +3889,19 @@ class DeploymentsOperations:
 
     async def calculate_template_hash(
         self,
-        template: object,
-        **kwargs
-    ) -> "models.TemplateHashResult":
+        template: Any,
+        **kwargs: Any
+    ) -> "_models.TemplateHashResult":
         """Calculate the hash of the given template.
 
         :param template: The template provided to calculate hash.
-        :type template: object
+        :type template: any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TemplateHashResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.TemplateHashResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateHashResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateHashResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

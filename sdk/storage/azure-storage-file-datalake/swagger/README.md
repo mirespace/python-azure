@@ -3,23 +3,20 @@
 > see https://aka.ms/autorest
 
 ### Setup
+Install Autorest v3
 ```ps
-cd C:\work
-git clone --recursive https://github.com/Azure/autorest.python.git
-cd autorest.python
-git checkout azure-core
-npm install
+npm install -g autorest
 ```
 
 ### Generation
 ```ps
 cd <swagger-folder>
-autorest --use=C:/work/autorest.python --version=2.0.4280
+autorest --v3 --python
 ```
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-dataplane-preview/specification/storage/data-plane/Microsoft.StorageDataLake/stable/2020-02-10/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-dataplane-preview/specification/storage/data-plane/Microsoft.StorageDataLake/stable/2020-06-12/DataLakeStorage.json
 output-folder: ../azure/storage/filedatalake/_generated
 namespace: azure.storage.filedatalake
 no-namespace-folders: true
@@ -28,4 +25,14 @@ enable-xml: true
 vanilla: true
 clear-output-folder: true
 python: true
+```
+
+### Remove x-ms-pageable
+Currently breaking the latest version of autorest.python
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]["/{filesystem}?restype=container&comp=list&hierarchy"].get
+  transform: >
+    delete $["x-ms-pageable"];
 ```

@@ -9,7 +9,6 @@ from azure.identity import (
     CertificateCredential,
     ClientSecretCredential,
     DeviceCodeCredential,
-    InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
@@ -24,19 +23,24 @@ def get_token(credential):
     assert token.expires_on
 
 
-def test_certificate_credential(live_certificate):
-    credential = CertificateCredential(
-        live_certificate["tenant_id"], live_certificate["client_id"], live_certificate["cert_path"]
-    )
+@pytest.mark.parametrize("certificate_fixture", ("live_pem_certificate", "live_pfx_certificate"))
+def test_certificate_credential(certificate_fixture, request):
+    cert = request.getfixturevalue(certificate_fixture)
+
+    tenant_id = cert["tenant_id"]
+    client_id = cert["client_id"]
+
+    credential = CertificateCredential(tenant_id, client_id, cert["cert_path"])
     get_token(credential)
 
+    credential = CertificateCredential(tenant_id, client_id, cert["cert_with_password_path"], password=cert["password"])
+    get_token(credential)
 
-def test_certificate_credential_with_password(live_certificate_with_password):
+    credential = CertificateCredential(tenant_id, client_id, certificate_data=cert["cert_bytes"])
+    get_token(credential)
+
     credential = CertificateCredential(
-        live_certificate_with_password["tenant_id"],
-        live_certificate_with_password["client_id"],
-        live_certificate_with_password["cert_path"],
-        password=live_certificate_with_password["password"],
+        tenant_id, client_id, certificate_data=cert["cert_with_password_bytes"], password=cert["password"]
     )
     get_token(credential)
 
@@ -75,10 +79,4 @@ def test_device_code():
         webbrowser.open_new_tab(url)
 
     credential = DeviceCodeCredential(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, prompt_callback=prompt, timeout=40)
-    get_token(credential)
-
-
-@pytest.mark.manual
-def test_browser_auth():
-    credential = InteractiveBrowserCredential(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, timeout=40)
     get_token(credential)

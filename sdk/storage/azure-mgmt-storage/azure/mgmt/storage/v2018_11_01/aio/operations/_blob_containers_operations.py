@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class BlobContainersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,8 +44,8 @@ class BlobContainersOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
-    ) -> "models.ListContainerItems":
+        **kwargs: Any
+    ) -> "_models.ListContainerItems":
         """Lists all containers and does not support a prefix like data plane. Also SRP today does not
         return continuation token.
 
@@ -53,15 +53,15 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListContainerItems, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ListContainerItems
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListContainerItems"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListContainerItems"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,9 +107,9 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: "models.BlobContainer",
-        **kwargs
-    ) -> "models.BlobContainer":
+        blob_container: "_models.BlobContainer",
+        **kwargs: Any
+    ) -> "_models.BlobContainer":
         """Creates a new container under the specified account as described by request body. The container
         resource includes metadata and properties for that container. It does not include a list of the
         blobs contained by the container.
@@ -118,8 +118,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -133,7 +133,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BlobContainer"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -189,9 +189,9 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: "models.BlobContainer",
-        **kwargs
-    ) -> "models.BlobContainer":
+        blob_container: "_models.BlobContainer",
+        **kwargs: Any
+    ) -> "_models.BlobContainer":
         """Updates container properties as specified in request body. Properties not mentioned in the
         request will be unchanged. Update fails if the specified container doesn't already exist.
 
@@ -199,8 +199,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -214,7 +214,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BlobContainer"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -266,16 +266,16 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        **kwargs
-    ) -> "models.BlobContainer":
+        **kwargs: Any
+    ) -> "_models.BlobContainer":
         """Gets properties of a specified container.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -287,7 +287,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BlobContainer"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -334,7 +334,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specified container under its account.
 
@@ -342,8 +342,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -397,9 +397,9 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: "models.LegalHold",
-        **kwargs
-    ) -> "models.LegalHold":
+        legal_hold: "_models.LegalHold",
+        **kwargs: Any
+    ) -> "_models.LegalHold":
         """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
         follows an append pattern and does not clear out the existing tags that are not specified in
         the request.
@@ -408,8 +408,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -423,7 +423,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.LegalHold
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LegalHold"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LegalHold"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -475,9 +475,9 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: "models.LegalHold",
-        **kwargs
-    ) -> "models.LegalHold":
+        legal_hold: "_models.LegalHold",
+        **kwargs: Any
+    ) -> "_models.LegalHold":
         """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent
         operation. ClearLegalHold clears out only the specified tags in the request.
 
@@ -485,8 +485,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -500,7 +500,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.LegalHold
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LegalHold"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LegalHold"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -553,9 +553,9 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: Optional[str] = None,
-        parameters: Optional["models.ImmutabilityPolicy"] = None,
-        **kwargs
-    ) -> "models.ImmutabilityPolicy":
+        parameters: Optional["_models.ImmutabilityPolicy"] = None,
+        **kwargs: Any
+    ) -> "_models.ImmutabilityPolicy":
         """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but
         not required for this operation.
 
@@ -563,8 +563,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -583,7 +583,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImmutabilityPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -645,8 +645,8 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: Optional[str] = None,
-        **kwargs
-    ) -> "models.ImmutabilityPolicy":
+        **kwargs: Any
+    ) -> "_models.ImmutabilityPolicy":
         """Gets the existing immutability policy along with the corresponding ETag in response headers and
         body.
 
@@ -654,8 +654,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -671,7 +671,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImmutabilityPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -725,8 +725,8 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: str,
-        **kwargs
-    ) -> "models.ImmutabilityPolicy":
+        **kwargs: Any
+    ) -> "_models.ImmutabilityPolicy":
         """Aborts an unlocked immutability policy. The response of delete has
         immutabilityPeriodSinceCreationInDays set to 0. ETag in If-Match is required for this
         operation. Deleting a locked immutability policy is not allowed, only way is to delete the
@@ -736,8 +736,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -753,7 +753,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImmutabilityPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -806,8 +806,8 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: str,
-        **kwargs
-    ) -> "models.ImmutabilityPolicy":
+        **kwargs: Any
+    ) -> "_models.ImmutabilityPolicy":
         """Sets the ImmutabilityPolicy to Locked state. The only action allowed on a Locked policy is
         ExtendImmutabilityPolicy action. ETag in If-Match is required for this operation.
 
@@ -815,8 +815,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -832,7 +832,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImmutabilityPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -883,9 +883,9 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: str,
-        parameters: Optional["models.ImmutabilityPolicy"] = None,
-        **kwargs
-    ) -> "models.ImmutabilityPolicy":
+        parameters: Optional["_models.ImmutabilityPolicy"] = None,
+        **kwargs: Any
+    ) -> "_models.ImmutabilityPolicy":
         """Extends the immutabilityPeriodSinceCreationInDays of a locked immutabilityPolicy. The only
         action allowed on a Locked policy will be this action. ETag in If-Match is required for this
         operation.
@@ -894,8 +894,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -914,7 +914,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImmutabilityPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -972,9 +972,9 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional["models.LeaseContainerRequest"] = None,
-        **kwargs
-    ) -> "models.LeaseContainerResponse":
+        parameters: Optional["_models.LeaseContainerRequest"] = None,
+        **kwargs: Any
+    ) -> "_models.LeaseContainerResponse":
         """The Lease Container operation establishes and manages a lock on a container for delete
         operations. The lock duration can be 15 to 60 seconds, or can be infinite.
 
@@ -982,8 +982,8 @@ class BlobContainersOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param container_name: The name of the blob container within the specified storage account.
          Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
@@ -997,7 +997,7 @@ class BlobContainersOperations:
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.LeaseContainerResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LeaseContainerResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LeaseContainerResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

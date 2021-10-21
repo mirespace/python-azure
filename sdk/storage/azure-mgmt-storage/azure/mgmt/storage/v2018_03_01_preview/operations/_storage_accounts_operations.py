@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class StorageAccountsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,22 +49,22 @@ class StorageAccountsOperations(object):
 
     def check_name_availability(
         self,
-        account_name,  # type: "models.StorageAccountCheckNameAvailabilityParameters"
+        account_name,  # type: "_models.StorageAccountCheckNameAvailabilityParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckNameAvailabilityResult"
+        # type: (...) -> "_models.CheckNameAvailabilityResult"
         """Checks that the storage account name is valid and is not already in use.
 
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountCheckNameAvailabilityParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResult, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,11 +112,11 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.StorageAccountCreateParameters"
+        parameters,  # type: "_models.StorageAccountCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.StorageAccount"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.StorageAccount"]]
+        # type: (...) -> Optional["_models.StorageAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.StorageAccount"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -168,10 +168,10 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.StorageAccountCreateParameters"
+        parameters,  # type: "_models.StorageAccountCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.StorageAccount"]
+        # type: (...) -> LROPoller["_models.StorageAccount"]
         """Asynchronously creates a new storage account with the specified parameters. If an account is
         already created and a subsequent create request is issued with different properties, the
         account properties will be updated. If an account is already created and a subsequent create or
@@ -181,15 +181,15 @@ class StorageAccountsOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param parameters: The parameters to provide for the created account.
         :type parameters: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either StorageAccount or the result of cls(response)
@@ -197,7 +197,7 @@ class StorageAccountsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccount"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -222,7 +222,13 @@ class StorageAccountsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -249,8 +255,8 @@ class StorageAccountsOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -299,7 +305,7 @@ class StorageAccountsOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageAccount"
+        # type: (...) -> "_models.StorageAccount"
         """Returns the properties for the specified storage account including but not limited to name, SKU
         name, location, and account status. The ListKeys operation should be used to retrieve storage
         keys.
@@ -308,15 +314,15 @@ class StorageAccountsOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccount, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -361,10 +367,10 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.StorageAccountUpdateParameters"
+        parameters,  # type: "_models.StorageAccountUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageAccount"
+        # type: (...) -> "_models.StorageAccount"
         """The update operation can be used to update the SKU, encryption, access tier, or tags for a
         storage account. It can also be used to map the account to a custom domain. Only one custom
         domain is supported per storage account; the replacement/change of custom domain is not
@@ -378,8 +384,8 @@ class StorageAccountsOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param parameters: The parameters to provide for the updated account.
         :type parameters: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountUpdateParameters
@@ -388,7 +394,7 @@ class StorageAccountsOperations(object):
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -438,7 +444,7 @@ class StorageAccountsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.StorageAccountListResult"]
+        # type: (...) -> Iterable["_models.StorageAccountListResult"]
         """Lists all the storage accounts available under the subscription. Note that storage keys are not
         returned; use the ListKeys operation for this.
 
@@ -447,7 +453,7 @@ class StorageAccountsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -507,7 +513,7 @@ class StorageAccountsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.StorageAccountListResult"]
+        # type: (...) -> Iterable["_models.StorageAccountListResult"]
         """Lists all the storage accounts available under the given resource group. Note that storage keys
         are not returned; use the ListKeys operation for this.
 
@@ -519,7 +525,7 @@ class StorageAccountsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -581,22 +587,22 @@ class StorageAccountsOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageAccountListKeysResult"
+        # type: (...) -> "_models.StorageAccountListKeysResult"
         """Lists the access keys for the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccountListKeysResult, or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountListKeysResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountListKeysResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccountListKeysResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -641,18 +647,18 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        regenerate_key,  # type: "models.StorageAccountRegenerateKeyParameters"
+        regenerate_key,  # type: "_models.StorageAccountRegenerateKeyParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageAccountListKeysResult"
+        # type: (...) -> "_models.StorageAccountListKeysResult"
         """Regenerates one of the access keys for the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param regenerate_key: Specifies name of the key which should be regenerated -- key1 or key2.
         :type regenerate_key: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountRegenerateKeyParameters
@@ -661,7 +667,7 @@ class StorageAccountsOperations(object):
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountListKeysResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountListKeysResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccountListKeysResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -711,18 +717,18 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.AccountSasParameters"
+        parameters,  # type: "_models.AccountSasParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ListAccountSasResponse"
+        # type: (...) -> "_models.ListAccountSasResponse"
         """List SAS credentials of a storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param parameters: The parameters to provide to list SAS credentials for the storage account.
         :type parameters: ~azure.mgmt.storage.v2018_03_01_preview.models.AccountSasParameters
@@ -731,7 +737,7 @@ class StorageAccountsOperations(object):
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.ListAccountSasResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListAccountSasResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListAccountSasResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -781,18 +787,18 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.ServiceSasParameters"
+        parameters,  # type: "_models.ServiceSasParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ListServiceSasResponse"
+        # type: (...) -> "_models.ListServiceSasResponse"
         """List service SAS credentials of a specific resource.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param parameters: The parameters to provide to list service SAS credentials.
         :type parameters: ~azure.mgmt.storage.v2018_03_01_preview.models.ServiceSasParameters
@@ -801,7 +807,7 @@ class StorageAccountsOperations(object):
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.ListServiceSasResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListServiceSasResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListServiceSasResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -851,18 +857,18 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        management_policy_name,  # type: Union[str, "models.ManagementPolicyName"]
+        management_policy_name,  # type: Union[str, "_models.ManagementPolicyName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageAccountManagementPolicies"
+        # type: (...) -> "_models.StorageAccountManagementPolicies"
         """Gets the data policy rules associated with the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param management_policy_name: The name of the Storage Account Management Policy. It should
          always be 'default'.
@@ -872,7 +878,7 @@ class StorageAccountsOperations(object):
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountManagementPolicies
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountManagementPolicies"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccountManagementPolicies"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -918,19 +924,19 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        management_policy_name,  # type: Union[str, "models.ManagementPolicyName"]
-        properties,  # type: "models.ManagementPoliciesRulesSetParameter"
+        management_policy_name,  # type: Union[str, "_models.ManagementPolicyName"]
+        properties,  # type: "_models.ManagementPoliciesRulesSetParameter"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageAccountManagementPolicies"
+        # type: (...) -> "_models.StorageAccountManagementPolicies"
         """Sets the data policy rules associated with the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param management_policy_name: The name of the Storage Account Management Policy. It should
          always be 'default'.
@@ -942,7 +948,7 @@ class StorageAccountsOperations(object):
         :rtype: ~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccountManagementPolicies
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountManagementPolicies"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccountManagementPolicies"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -993,7 +999,7 @@ class StorageAccountsOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        management_policy_name,  # type: Union[str, "models.ManagementPolicyName"]
+        management_policy_name,  # type: Union[str, "_models.ManagementPolicyName"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1003,8 +1009,8 @@ class StorageAccountsOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param management_policy_name: The name of the Storage Account Management Policy. It should
          always be 'default'.

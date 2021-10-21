@@ -22,14 +22,14 @@ from azure.mgmt.keyvault.models import (
 )
 
 try:
-    from azure.mgmt.keyvault.models import (
-        SkuFamily
-    )
+    from azure.mgmt.keyvault.models import SkuFamily
 except ImportError:
     pass
 
-from azure_devtools.scenario_tests.exceptions import(
-    AzureTestError, NameInUseError, ReservedResourceNameError
+from azure_devtools.scenario_tests.exceptions import (
+    AzureTestError,
+    NameInUseError,
+    ReservedResourceNameError,
 )
 
 from . import AzureMgmtPreparer, ResourceGroupPreparer
@@ -45,6 +45,7 @@ DEFAULT_PERMISSIONS = Permissions(
 DEFAULT_SKU = SkuName.premium.value
 CLIENT_OID = "00000000-0000-0000-0000-000000000000"
 
+
 class KeyVaultPreparer(AzureMgmtPreparer):
     def __init__(
         self,
@@ -55,19 +56,22 @@ class KeyVaultPreparer(AzureMgmtPreparer):
         enabled_for_disk_encryption=True,
         enabled_for_template_deployment=True,
         enable_soft_delete=None,
-        location='westus',
-        parameter_name='vault_uri',
+        location="westus",
+        parameter_name="vault_uri",
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
-        random_name_enabled=True
+        random_name_enabled=True,
     ):
-        super(KeyVaultPreparer, self).__init__(name_prefix, 24,
-                                                     disable_recording=disable_recording,
-                                                     playback_fake_resource=playback_fake_resource,
-                                                     client_kwargs=client_kwargs,
-                                                     random_name_enabled=random_name_enabled)
+        super(KeyVaultPreparer, self).__init__(
+            name_prefix,
+            24,
+            disable_recording=disable_recording,
+            playback_fake_resource=playback_fake_resource,
+            client_kwargs=client_kwargs,
+            random_name_enabled=random_name_enabled,
+        )
         self.location = location
         self.sku = sku
         self.permissions = permissions
@@ -120,10 +124,7 @@ class KeyVaultPreparer(AzureMgmtPreparer):
                     if "ResourceGroupNotFound" not in str(ex) or i == retries - 1:
                         raise
                     time.sleep(3)
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
+            self.test_class_instance.scrubber.register_name_pair(name, self.resource_moniker)
             vault_uri = vault.properties.vault_uri
         else:
             # playback => we need only the uri used in the recording

@@ -66,10 +66,10 @@ class DiffDiskPlacement(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the ephemeral disk placement for operating system disk. This property can be used by
     user in the request to choose the location i.e, cache disk or resource disk space for Ephemeral
     OS disk provisioning. For more information on Ephemeral OS disk size requirements, please refer
-    Ephemeral OS disk size requirements for Windows VM at https://docs.microsoft.com/en-
-    us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements and Linux VM at
-    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-
-    requirements
+    Ephemeral OS disk size requirements for Windows VM at
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+    and Linux VM at
+    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
     """
 
     CACHE_DISK = "CacheDisk"
@@ -121,7 +121,7 @@ class InGuestPatchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     mode, automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
     must be false:code:`<br />`:code:`<br />` **AutomaticByOS** - The virtual machine will
     automatically be updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
-    must be true. :code:`<br />`:code:`<br />` ** AutomaticByPlatform** - the virtual machine will
+    must be true. :code:`<br />`:code:`<br />` **AutomaticByPlatform** - the virtual machine will
     automatically updated by the platform. The properties provisionVMAgent and
     WindowsConfiguration.enableAutomaticUpdates must be true
     """
@@ -161,8 +161,10 @@ class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     """The OS State.
     """
 
-    GENERALIZED = "Generalized"  #: Generalized image. Needs to be provisioned during deployment time.
-    SPECIALIZED = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
+    #: Generalized image. Needs to be provisioned during deployment time.
+    GENERALIZED = "Generalized"
+    #: Specialized image. Contains already provisioned OS Disk.
+    SPECIALIZED = "Specialized"
 
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The operating system of the osDiskImage.
@@ -298,12 +300,12 @@ class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ERROR = "Error"
 
 class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the storage account type for the managed disk. Managed OS disk storage account type
-    can only be set when you create the scale set. NOTE: UltraSSD_LRS can only be used with data
-    disks. It cannot be used with OS Disk. Standard_LRS uses Standard HDD. StandardSSD_LRS uses
-    Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. For more information
-    regarding disks supported for Windows Virtual Machines, refer to https://docs.microsoft.com/en-
-    us/azure/virtual-machines/windows/disks-types and, for Linux Virtual Machines, refer to
+    """Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can only be used
+    with data disks. It cannot be used with OS Disk. Standard_LRS uses Standard HDD.
+    StandardSSD_LRS uses Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk.
+    For more information regarding disks supported for Windows Virtual Machines, refer to
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disks-types and, for Linux
+    Virtual Machines, refer to
     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-types
     """
 
@@ -373,16 +375,21 @@ class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
-    see `Sizes for virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-
-    machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
-    :code:`<br>`:code:`<br>` The available VM sizes depend on region and availability set. For a
-    list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List all available virtual
-    machine sizes in an availability set
+    see `Sizes for virtual machines
+    <https://docs.microsoft.com/en-us/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
+    available VM sizes depend on region and availability set. For a list of available sizes use
+    these APIs:  :code:`<br>`:code:`<br>` `List all available virtual machine sizes in an
+    availability set
     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
-    <https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list>`_
+    <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
-    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_
+    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_.
+    :code:`<br>`:code:`<br>` This list of sizes is no longer updated and the
+    **VirtualMachineSizeTypes** string constants will be removed from the subsequent REST API
+    specification. Use `List all available virtual machine sizes in a region
+    <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_ to get the latest
+    sizes.
     """
 
     BASIC_A0 = "Basic_A0"

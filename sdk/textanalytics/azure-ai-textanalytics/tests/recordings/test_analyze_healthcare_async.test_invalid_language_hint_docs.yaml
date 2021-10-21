@@ -10,46 +10,46 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 9e801bab-a376-4a4d-af5a-48526de21c02
-      date: Thu, 19 Nov 2020 21:29:11 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66a53a9d-950d-46d1-a481-40832e471f92
+      apim-request-id: 40f53957-10ac-45a9-876e-61d16d99f7cb
+      date: Tue, 03 Aug 2021 17:33:52 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/d6f7adad-79c5-40a6-a95b-c9840072dd53
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '62'
+      x-envoy-upstream-service-time: '120'
     status:
       code: 202
       message: Accepted
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66a53a9d-950d-46d1-a481-40832e471f92
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/d6f7adad-79c5-40a6-a95b-c9840072dd53
   response:
     body:
-      string: '{"jobId":"66a53a9d-950d-46d1-a481-40832e471f92","lastUpdateDateTime":"2020-11-19T21:29:12Z","createdDateTime":"2020-11-19T21:29:12Z","expirationDateTime":"2020-11-20T21:29:12Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"d6f7adad-79c5-40a6-a95b-c9840072dd53","lastUpdateDateTime":"2021-08-03T17:33:57Z","createdDateTime":"2021-08-03T17:33:52Z","expirationDateTime":"2021-08-04T17:33:52Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en"}}}],"modelVersion":"2020-09-03"}}'
+        language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"}}}],"modelVersion":"2021-05-15"}}'
     headers:
-      apim-request-id: 2d5668e4-3861-463c-a4b4-5960380ae710
+      apim-request-id: 0b5a4c59-79f9-460a-b4dd-be9f43881545
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:29:17 GMT
+      date: Tue, 03 Aug 2021 17:33:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '29'
+      x-envoy-upstream-service-time: '44'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66a53a9d-950d-46d1-a481-40832e471f92
+    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/d6f7adad-79c5-40a6-a95b-c9840072dd53
 version: 1

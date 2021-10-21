@@ -33,6 +33,10 @@ build/
 
 # Test results
 TestResults/
+ENV_DIR/
+
+# Perf test profiling
+cProfile-*.pstats
 
 # tox generated artifacts
 test-junit-*.xml
@@ -91,10 +95,22 @@ venv/
 code_reports
 
 # Azure Storage test credentials
+sdk/storage/azure-storage-blob/tests/settings/settings_real.py
+sdk/storage/azure-storage-queue/tests/settings/settings_real.py
+sdk/storage/azure-storage-file-share/tests/settings/settings_real.py
+sdk/storage/azure-storage-file-datalake/tests/settings/settings_real.py
+
+
+# The locations below are deprecated - keep to prevent any accidental secrets leakage ==========
+sdk/storage/azure-storage-blob/tests/_shared/settings_real.py
+sdk/storage/azure-storage-queue/tests/_shared/settings_real.py
+sdk/storage/azure-storage-file-share/tests/_shared/settings_real.py
+sdk/storage/azure-storage-file-datalake/tests/settings_real.py
 sdk/storage/azure-storage-blob/tests/settings_real.py
 sdk/storage/azure-storage-queue/tests/settings_real.py
 sdk/storage/azure-storage-file-share/tests/settings_real.py
-sdk/storage/azure-storage-file-datalake/tests/settings_real.py
+# ==============================================================================================
+
 *.code-workspace
 sdk/cosmos/azure-cosmos/test/test_config.py
 
@@ -103,3 +119,6 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # env vars
 .env
+
+# local SSL certificate folder
+.certificate

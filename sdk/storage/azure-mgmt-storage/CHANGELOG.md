@@ -1,5 +1,113 @@
 # Release History
 
+## 19.0.0 (2021-09-14)
+
+**Features**
+
+  - Model BlobContainer has a new parameter enable_nfs_v3_root_squash
+  - Model BlobContainer has a new parameter enable_nfs_v3_all_squash
+  - Model UpdateHistoryProperty has a new parameter allow_protected_append_writes
+  - Model UpdateHistoryProperty has a new parameter allow_protected_append_writes_all
+  - Model StorageAccountUpdateParameters has a new parameter default_to_o_auth_authentication
+  - Model StorageAccountUpdateParameters has a new parameter public_network_access
+  - Model StorageAccountUpdateParameters has a new parameter immutable_storage_with_versioning
+  - Model ImmutabilityPolicy has a new parameter allow_protected_append_writes_all
+  - Model StorageAccountCreateParameters has a new parameter default_to_o_auth_authentication
+  - Model StorageAccountCreateParameters has a new parameter public_network_access
+  - Model StorageAccountCreateParameters has a new parameter immutable_storage_with_versioning
+  - Model ListContainerItem has a new parameter enable_nfs_v3_root_squash
+  - Model ListContainerItem has a new parameter enable_nfs_v3_all_squash
+  - Model LegalHoldProperties has a new parameter protected_append_writes_history
+  - Model ImmutabilityPolicyProperties has a new parameter allow_protected_append_writes_all
+  - Model StorageAccount has a new parameter default_to_o_auth_authentication
+  - Model StorageAccount has a new parameter public_network_access
+  - Model StorageAccount has a new parameter immutable_storage_with_versioning
+  - Model LegalHold has a new parameter allow_protected_append_writes_all
+  - Added operation StorageAccountsOperations.begin_abort_hierarchical_namespace_migration
+  - Added operation StorageAccountsOperations.begin_hierarchical_namespace_migration
+
+**Breaking changes**
+
+  - Model AccessPolicy has a new signature
+
+## 18.0.0 (2021-05-13)
+
+**Features**
+
+  - Model StorageAccountUpdateParameters has a new parameter allow_cross_tenant_replication
+  - Model BlobContainer has a new parameter immutable_storage_with_versioning
+  - Model FileShareItem has a new parameter lease_state
+  - Model FileShareItem has a new parameter lease_duration
+  - Model FileShareItem has a new parameter lease_status
+  - Model FileShareItem has a new parameter signed_identifiers
+  - Model FileShare has a new parameter lease_state
+  - Model FileShare has a new parameter lease_duration
+  - Model FileShare has a new parameter lease_status
+  - Model FileShare has a new parameter signed_identifiers
+  - Model StorageAccountCreateParameters has a new parameter allow_cross_tenant_replication
+  - Model AzureFilesIdentityBasedAuthentication has a new parameter default_share_permission
+  - Model StorageAccount has a new parameter allow_cross_tenant_replication
+  - Model ListContainerItem has a new parameter immutable_storage_with_versioning
+  - Added operation BlobContainersOperations.begin_object_level_worm
+  - Added operation FileSharesOperations.lease
+
+**Breaking changes**
+
+  - Operation FileSharesOperations.delete has a new signature
+  - Model BlobInventoryPolicySchema no longer has parameter destination
+  - Model BlobInventoryPolicyRule has a new required parameter destination
+  - Model BlobInventoryPolicyDefinition has a new signature
+
+## 17.1.0 (2021-04-13)
+
+**Features**
+
+  - Model StorageAccountKey has a new parameter creation_time
+  - Model StorageAccountUpdateParameters has a new parameter sas_policy
+  - Model StorageAccountUpdateParameters has a new parameter key_policy
+  - Model StorageAccountCreateParameters has a new parameter sas_policy
+  - Model StorageAccountCreateParameters has a new parameter key_policy
+  - Model StorageAccount has a new parameter sas_policy
+  - Model StorageAccount has a new parameter key_policy
+  - Model StorageAccount has a new parameter key_creation_time
+
+## 17.0.0 (2021-02-20)
+
+**Features**
+
+  - Model Encryption has a new parameter encryption_identity
+  - Model Identity has a new parameter user_assigned_identities
+  - Model ManagementPolicyBaseBlob has a new parameter enable_auto_tier_to_hot_from_cool
+  - Model EncryptionScope has a new parameter require_infrastructure_encryption
+  - Model StorageAccount has a new parameter extended_location
+  - Model StorageAccount has a new parameter allow_shared_key_access
+  - Model StorageAccount has a new parameter enable_nfs_v3
+  - Model EncryptionScopeKeyVaultProperties has a new parameter current_versioned_key_identifier
+  - Model EncryptionScopeKeyVaultProperties has a new parameter last_key_rotation_timestamp
+  - Model DateAfterModification has a new parameter days_after_last_access_time_greater_than
+  - Model StorageAccountUpdateParameters has a new parameter allow_shared_key_access
+  - Model BlobServiceProperties has a new parameter last_access_time_tracking_policy
+  - Model ChangeFeed has a new parameter retention_in_days
+  - Model FileShare has a new parameter snapshot_time
+  - Model ManagementPolicyAction has a new parameter version
+  - Model StorageAccountCreateParameters has a new parameter extended_location
+  - Model StorageAccountCreateParameters has a new parameter allow_shared_key_access
+  - Model StorageAccountCreateParameters has a new parameter enable_nfs_v3
+  - Model FileShareItem has a new parameter snapshot_time
+  - Model FileServiceProperties has a new parameter protocol_settings
+  - Model ManagementPolicySnapShot has a new parameter tier_to_archive
+  - Model ManagementPolicySnapShot has a new parameter tier_to_cool
+  - Model NetworkRuleSet has a new parameter resource_access_rules
+  - Added operation group BlobInventoryPoliciesOperations
+  - Added operation group DeletedAccountsOperations
+
+**Breaking changes**
+
+  - Operation FileSharesOperations.create has a new signature
+  - Operation FileSharesOperations.delete has a new signature
+  - Operation FileSharesOperations.get has a new signature
+  - Model ErrorResponse has a new signature
+
 ## 16.0.0 (2020-09-15)
 
 **Features**
@@ -31,7 +139,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -39,13 +147,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 10.0.0 (2020-05-07)
 

@@ -4,7 +4,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -16,7 +16,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -31,6 +31,6 @@ extends:
   parameters:
     ServiceDirectory: metricsadvisor
     Artifacts:
-    - name: azure_ai_metricsadvisor
+    - name: azure-ai-metricsadvisor
       safeName: azureaimetricsadvisor
 

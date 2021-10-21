@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class NotificationRecipientEmailOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,9 +44,9 @@ class NotificationRecipientEmailOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        notification_name: Union[str, "models.NotificationName"],
-        **kwargs
-    ) -> "models.RecipientEmailCollection":
+        notification_name: Union[str, "_models.NotificationName"],
+        **kwargs: Any
+    ) -> "_models.RecipientEmailCollection":
         """Gets the list of the Notification Recipient Emails subscribed to a notification.
 
         :param resource_group_name: The name of the resource group.
@@ -60,12 +60,12 @@ class NotificationRecipientEmailOperations:
         :rtype: ~azure.mgmt.apimanagement.models.RecipientEmailCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecipientEmailCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecipientEmailCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -92,7 +92,7 @@ class NotificationRecipientEmailOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RecipientEmailCollection', pipeline_response)
@@ -107,9 +107,9 @@ class NotificationRecipientEmailOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        notification_name: Union[str, "models.NotificationName"],
+        notification_name: Union[str, "_models.NotificationName"],
         email: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Determine if Notification Recipient Email subscribed to the notification.
 
@@ -131,7 +131,7 @@ class NotificationRecipientEmailOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -159,7 +159,7 @@ class NotificationRecipientEmailOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -172,10 +172,10 @@ class NotificationRecipientEmailOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        notification_name: Union[str, "models.NotificationName"],
+        notification_name: Union[str, "_models.NotificationName"],
         email: str,
-        **kwargs
-    ) -> "models.RecipientEmailContract":
+        **kwargs: Any
+    ) -> "_models.RecipientEmailContract":
         """Adds the Email address to the list of Recipients for the Notification.
 
         :param resource_group_name: The name of the resource group.
@@ -191,12 +191,12 @@ class NotificationRecipientEmailOperations:
         :rtype: ~azure.mgmt.apimanagement.models.RecipientEmailContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecipientEmailContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecipientEmailContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -224,7 +224,7 @@ class NotificationRecipientEmailOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -243,9 +243,9 @@ class NotificationRecipientEmailOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        notification_name: Union[str, "models.NotificationName"],
+        notification_name: Union[str, "_models.NotificationName"],
         email: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Removes the email from the list of Notification.
 
@@ -267,7 +267,7 @@ class NotificationRecipientEmailOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -295,7 +295,7 @@ class NotificationRecipientEmailOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

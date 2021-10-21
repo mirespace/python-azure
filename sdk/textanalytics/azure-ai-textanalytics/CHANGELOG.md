@@ -1,6 +1,116 @@
 # Release History
 
-## 5.1.0b4 (Unreleased)
+## 5.2.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.2.0b1 (2021-08-09)
+
+This version of the SDK defaults to the latest supported API version, which currently is `v3.2-preview.1`.
+
+### Features Added
+- Added support for Extractive Summarization actions through the `ExtractSummaryAction` type.
+
+### Bugs Fixed
+- `RecognizePiiEntitiesAction` option `disable_service_logs` now correctly defaults to `True`.
+
+### Other Changes
+- Python 3.5 is no longer supported.
+
+## 5.1.0 (2021-07-07)
+
+This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
+Includes all changes from `5.1.0b1` to `5.1.0b7`.
+
+Note: this version will be the last to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+### Features Added
+
+- Added `catagories_filter` to `RecognizePiiEntitiesAction`
+- Added `HealthcareEntityCategory`
+- Added AAD support for the `begin_analyze_healthcare_entities` methods.
+
+### Breaking Changes
+
+- Changed: the response structure of `being_analyze_actions`. Now, we return a list of results, where each result is a list of the action results for the document, in the order the documents and actions were passed.
+- Changed: `begin_analyze_actions` now accepts a single action per type. A `ValueError` is raised if duplicate actions are passed.
+- Removed: `AnalyzeActionsType`
+- Removed: `AnalyzeActionsResult`
+- Removed: `AnalyzeActionsError`
+- Removed: `HealthcareEntityRelationRoleType`
+- Changed: renamed `HealthcareEntityRelationType` to `HealthcareEntityRelation`
+- Changed: renamed `PiiEntityCategoryType` to `PiiEntityCategory`
+- Changed: renamed `PiiEntityDomainType` to `PiiEntityDomain`
+
+## 5.1.0b7 (2021-05-18)
+
+**Breaking Changes**
+- Renamed `begin_analyze_batch_actions` to `begin_analyze_actions`.
+- Renamed `AnalyzeBatchActionsType` to `AnalyzeActionsType`.
+- Renamed `AnalyzeBatchActionsResult` to `AnalyzeActionsResult`.
+- Renamed `AnalyzeBatchActionsError` to `AnalyzeActionsError`.
+- Renamed `AnalyzeHealthcareEntitiesResultItem` to `AnalyzeHealthcareEntitiesResult`.
+- Fixed `AnalyzeHealthcareEntitiesResult`'s `statistics` to be the correct type, `TextDocumentStatistics`
+- Remove `RequestStatistics`, use `TextDocumentBatchStatistics` instead
+
+**New Features**
+- Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
+- Added `AnalyzeSentimentAction` as a supported action type for `begin_analyze_batch_actions`.
+- Added kwarg `disable_service_logs`. If set to true, you opt-out of having your text input logged on the service side for troubleshooting.
+
+## 5.1.0b6 (2021-03-09)
+
+**Breaking Changes**
+- By default, we now target the service's `v3.1-preview.4` endpoint through enum value `TextAnalyticsApiVersion.V3_1_PREVIEW`
+- Removed property `related_entities` on `HealthcareEntity` and added `entity_relations` onto the document response level for healthcare
+- Renamed properties `aspect` and `opinions` to `target` and `assessments` respectively in class `MinedOpinion`.
+- Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
+
+**New Features**
+- Added `RecognizeLinkedEntitiesAction` as a supported action type for `begin_analyze_batch_actions`.
+- Added parameter `categories_filter` to the `recognize_pii_entities` client method.
+- Added enum `PiiEntityCategoryType`.
+- Add property `normalized_text` to `HealthcareEntity`. This property is a normalized version of the `text` property that already
+exists on the `HealthcareEntity`
+- Add property `assertion` onto `HealthcareEntity`. This contains assertions about the entity itself, i.e. if the entity represents a diagnosis,
+is this diagnosis conditional on a symptom?
+
+**Known Issues**
+
+- `begin_analyze_healthcare_entities` is currently in gated preview and can not be used with AAD credentials. For more information, see [the Text Analytics for Health documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+- At time of this SDK release, the service is not respecting the value passed through `model_version` to `begin_analyze_healthcare_entities`, it only uses the latest model.
+
+## 5.1.0b5 (2021-02-10)
+
+**Breaking Changes**
+
+- Rename `begin_analyze` to `begin_analyze_batch_actions`.
+- Now instead of separate parameters for all of the different types of actions you can pass to `begin_analyze_batch_actions`, we accept one parameter `actions`,
+which is a list of actions you would like performed. The results of the actions are returned in the same order as when inputted.
+- The response object from `begin_analyze_batch_actions` has also changed. Now, after the completion of your long running operation, we return a paged iterable
+of action results, in the same order they've been inputted. The actual document results for each action are included under property `document_results` of
+each action result.
+
+**New Features**
+- Renamed `begin_analyze_healthcare` to `begin_analyze_healthcare_entities`.
+- Renamed `AnalyzeHealthcareResult` to `AnalyzeHealthcareEntitiesResult` and `AnalyzeHealthcareResultItem` to `AnalyzeHealthcareEntitiesResultItem`.
+- Renamed `HealthcareEntityLink` to `HealthcareEntityDataSource` and renamed its properties `id` to `entity_id` and `data_source` to `name`.
+- Removed `relations` from `AnalyzeHealthcareEntitiesResultItem` and added `related_entities` to `HealthcareEntity`.
+- Moved the cancellation logic for the Analyze Healthcare Entities service from
+the service client to the poller object returned from `begin_analyze_healthcare_entities`.
+- Exposed Analyze Healthcare Entities operation metadata on the poller object returned from `begin_analyze_healthcare_entities`.
+- No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare_entities`. `begin_analyze_healthcare_entities` is still in gated preview though.
+- Added a new parameter `string_index_type` to the service client methods `begin_analyze_healthcare_entities`, `analyze_sentiment`, `recognize_entities`, `recognize_pii_entities`, and `recognize_linked_entities` which tells the service how to interpret string offsets.
+- Added property `length` to `CategorizedEntity`, `SentenceSentiment`, `LinkedEntityMatch`, `AspectSentiment`, `OpinionSentiment`, `PiiEntity` and
+`HealthcareEntity`.
+
+## 5.1.0b4 (2021-01-12)
 
 **Bug Fixes**
 
@@ -184,7 +294,7 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See README for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 - New error hierarchy:
     - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`

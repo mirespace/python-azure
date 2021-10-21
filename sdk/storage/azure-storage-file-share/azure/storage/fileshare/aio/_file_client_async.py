@@ -11,6 +11,7 @@ from typing import Optional, Union, IO, List, Tuple, Dict, Any, Iterable, TYPE_C
 
 import six
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import HttpResponseError
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -18,8 +19,7 @@ from .._parser import _datetime_to_str, _get_file_permission
 from .._shared.parser import _str
 
 from .._generated.aio import AzureFileStorage
-from .._generated.version import VERSION
-from .._generated.models import StorageErrorException, FileHTTPHeaders
+from .._generated.models import FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
 from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterStreamer
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
@@ -83,7 +83,7 @@ async def _upload_file_helper(
             **kwargs
         )
         return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         process_storage_error(error)
 
 
@@ -104,11 +104,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
         The credential with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string or an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.1.0
 
@@ -135,8 +136,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
             credential=credential, loop=loop, **kwargs
         )
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
@@ -273,7 +274,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 cls=return_response_headers,
                 **kwargs
             )
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -510,7 +511,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 timeout=timeout,
                 **kwargs
             )
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -549,7 +550,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             await self._client.file.abort_copy(copy_id=copy_id,
                                                lease_access_conditions=access_conditions,
                                                timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -559,8 +560,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         length=None,  # type: Optional[int]
         **kwargs
     ):
-        # type: (...) -> Iterable[bytes]
-        """Downloads a file to a stream with automatic chunking.
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        """Downloads a file to the StorageStreamDownloader. The readall() method must
+        be used to read all the content or readinto() must be used to download the file into
+        a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -588,7 +591,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A iterable data generator (stream)
+        :returns: A streaming object (StorageStreamDownloader)
+        :rtype: ~azure.storage.fileshare.aio.StorageStreamDownloader
 
         .. admonition:: Example:
 
@@ -656,7 +660,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         timeout = kwargs.pop('timeout', None)
         try:
             await self._client.file.delete(lease_access_conditions=access_conditions, timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -687,7 +691,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 cls=deserialize_file_properties,
                 **kwargs
             )
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         file_props.name = self.file_name
         file_props.share = self.share_name
@@ -770,7 +774,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 cls=return_response_headers,
                 **kwargs
             )
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -807,7 +811,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 metadata=metadata, lease_access_conditions=access_conditions,
                 timeout=timeout, cls=return_response_headers, headers=headers, **kwargs
             )
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -871,7 +875,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 cls=return_response_headers,
                 **kwargs
             )
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -912,6 +916,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_range_from_url_options(
             source_url=source_url,
@@ -922,7 +929,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         )
         try:
             return await self._client.file.upload_range_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -958,7 +965,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             **kwargs)
         try:
             ranges = await self._client.file.get_range_list(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
@@ -1002,7 +1009,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             **kwargs)
         try:
             ranges = await self._client.file.get_range_list(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_file_ranges_result(ranges)
 
@@ -1051,12 +1058,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 timeout=timeout,
                 cls=return_response_headers,
                 content_length=0,
+                optionalbody=None,
                 file_range_write="clear",
                 range=content_range,
                 lease_access_conditions=access_conditions,
                 **kwargs
             )
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1092,7 +1100,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 timeout=timeout,
                 **kwargs
             )
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -1149,7 +1157,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 'closed_handles_count': response.get('number_of_handles_closed', 0),
                 'failed_handles_count': response.get('number_of_handles_failed', 0)
             }
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1183,7 +1191,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                     cls=return_response_headers,
                     **kwargs
                 )
-            except StorageErrorException as error:
+            except HttpResponseError as error:
                 process_storage_error(error)
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)

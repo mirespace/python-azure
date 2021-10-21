@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class PrivateLinkResourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,8 +45,8 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.PrivateLinkResources"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PrivateLinkResources"]:
         """Returns the list of private link resources that need to be created for Backup and SiteRecovery.
 
         Returns the list of private link resources that need to be created for Backup and SiteRecovery.
@@ -61,12 +61,12 @@ class PrivateLinkResourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservices.models.PrivateLinkResources]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResources"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResources"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -123,8 +123,8 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         vault_name: str,
         private_link_resource_name: str,
-        **kwargs
-    ) -> "models.PrivateLinkResource":
+        **kwargs: Any
+    ) -> "_models.PrivateLinkResource":
         """Returns a specified private link resource that need to be created for Backup and SiteRecovery.
 
         Returns a specified private link resource that need to be created for Backup and SiteRecovery.
@@ -141,12 +141,12 @@ class PrivateLinkResourcesOperations:
         :rtype: ~azure.mgmt.recoveryservices.models.PrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL

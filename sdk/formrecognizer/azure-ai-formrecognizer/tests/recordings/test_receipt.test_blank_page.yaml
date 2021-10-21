@@ -462,29 +462,29 @@ interactions:
       Content-Length:
       - '25662'
       Content-Type:
-      - application/pdf
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - af108532-ae00-46c2-a8b5-b316dd512760
+      - 8e9d1875-c70a-48cb-b1cd-8ba2c855615a
       content-length:
       - '0'
       date:
-      - Mon, 16 Nov 2020 19:09:04 GMT
+      - Tue, 14 Sep 2021 22:16:19 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/af108532-ae00-46c2-a8b5-b316dd512760
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/8e9d1875-c70a-48cb-b1cd-8ba2c855615a?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '119'
+      - '204'
     status:
       code: 202
       message: Accepted
@@ -498,31 +498,32 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/af108532-ae00-46c2-a8b5-b316dd512760
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/8e9d1875-c70a-48cb-b1cd-8ba2c855615a?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-11-16T19:09:04Z",
-        "lastUpdatedDateTime": "2020-11-16T19:09:08Z", "analyzeResult": {"version":
-        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
-        "unit": "inch"}], "documentResults": [{"docType": "prebuilt:receipt", "pageRange":
-        [1, 1], "fields": {}}]}}'
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-14T22:16:19Z",
+        "lastUpdatedDateTime": "2021-09-14T22:16:22Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-receipt", "stringIndexType": "unicodeCodePoint",
+        "content": "", "pages": [{"pageNumber": 1, "angle": 0, "width": 8.5, "height":
+        11, "unit": "inch", "words": [], "lines": [], "spans": [{"offset": 0, "length":
+        0}]}], "documents": []}}'
     headers:
       apim-request-id:
-      - 72063e63-d1b4-4f6b-8ac5-2f7ab23a4617
-      content-length:
-      - '300'
+      - 4583b2f3-fbb7-431f-bd01-cd74f2b2ae4a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Nov 2020 19:09:09 GMT
+      - Tue, 14 Sep 2021 22:16:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '16'
+      - '158'
     status:
       code: 200
       message: OK

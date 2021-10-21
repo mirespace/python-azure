@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class RegisteredIdentitiesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class RegisteredIdentitiesOperations:
         resource_group_name: str,
         vault_name: str,
         identity_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Unregisters the given container from your Recovery Services vault.
 
@@ -66,7 +66,7 @@ class RegisteredIdentitiesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore

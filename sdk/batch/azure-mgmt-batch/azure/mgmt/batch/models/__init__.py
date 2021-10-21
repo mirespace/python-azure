@@ -27,6 +27,7 @@ try:
     from ._models_py3 import BatchAccountRegenerateKeyParameters
     from ._models_py3 import BatchAccountUpdateParameters
     from ._models_py3 import BatchLocationQuota
+    from ._models_py3 import BatchPoolIdentity
     from ._models_py3 import CIFSMountConfiguration
     from ._models_py3 import Certificate
     from ._models_py3 import CertificateBaseProperties
@@ -38,13 +39,17 @@ try:
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudErrorBody
     from ._models_py3 import CloudServiceConfiguration
+    from ._models_py3 import ComputeNodeIdentityReference
     from ._models_py3 import ContainerConfiguration
     from ._models_py3 import ContainerRegistry
     from ._models_py3 import DataDisk
     from ._models_py3 import DeleteCertificateError
     from ._models_py3 import DeploymentConfiguration
+    from ._models_py3 import DiffDiskSettings
     from ._models_py3 import DiskEncryptionConfiguration
     from ._models_py3 import EncryptionProperties
+    from ._models_py3 import EndpointDependency
+    from ._models_py3 import EndpointDetail
     from ._models_py3 import EnvironmentSetting
     from ._models_py3 import FixedScaleSettings
     from ._models_py3 import ImageReference
@@ -63,9 +68,13 @@ try:
     from ._models_py3 import NFSMountConfiguration
     from ._models_py3 import NetworkConfiguration
     from ._models_py3 import NetworkSecurityGroupRule
+    from ._models_py3 import NodePlacementConfiguration
+    from ._models_py3 import OSDisk
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import OutboundEnvironmentEndpoint
+    from ._models_py3 import OutboundEnvironmentEndpointCollection
     from ._models_py3 import Pool
     from ._models_py3 import PoolEndpointConfiguration
     from ._models_py3 import PrivateEndpoint
@@ -79,11 +88,16 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import ResourceFile
     from ._models_py3 import ScaleSettings
+    from ._models_py3 import SkuCapability
     from ._models_py3 import StartTask
+    from ._models_py3 import SupportedSku
+    from ._models_py3 import SupportedSkusResult
     from ._models_py3 import TaskContainerSettings
     from ._models_py3 import TaskSchedulingPolicy
     from ._models_py3 import UserAccount
+    from ._models_py3 import UserAssignedIdentities
     from ._models_py3 import UserIdentity
+    from ._models_py3 import VMExtension
     from ._models_py3 import VirtualMachineConfiguration
     from ._models_py3 import VirtualMachineFamilyCoreQuota
     from ._models_py3 import WindowsConfiguration
@@ -109,6 +123,7 @@ except (SyntaxError, ImportError):
     from ._models import BatchAccountRegenerateKeyParameters  # type: ignore
     from ._models import BatchAccountUpdateParameters  # type: ignore
     from ._models import BatchLocationQuota  # type: ignore
+    from ._models import BatchPoolIdentity  # type: ignore
     from ._models import CIFSMountConfiguration  # type: ignore
     from ._models import Certificate  # type: ignore
     from ._models import CertificateBaseProperties  # type: ignore
@@ -120,13 +135,17 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
     from ._models import CloudServiceConfiguration  # type: ignore
+    from ._models import ComputeNodeIdentityReference  # type: ignore
     from ._models import ContainerConfiguration  # type: ignore
     from ._models import ContainerRegistry  # type: ignore
     from ._models import DataDisk  # type: ignore
     from ._models import DeleteCertificateError  # type: ignore
     from ._models import DeploymentConfiguration  # type: ignore
+    from ._models import DiffDiskSettings  # type: ignore
     from ._models import DiskEncryptionConfiguration  # type: ignore
     from ._models import EncryptionProperties  # type: ignore
+    from ._models import EndpointDependency  # type: ignore
+    from ._models import EndpointDetail  # type: ignore
     from ._models import EnvironmentSetting  # type: ignore
     from ._models import FixedScaleSettings  # type: ignore
     from ._models import ImageReference  # type: ignore
@@ -145,9 +164,13 @@ except (SyntaxError, ImportError):
     from ._models import NFSMountConfiguration  # type: ignore
     from ._models import NetworkConfiguration  # type: ignore
     from ._models import NetworkSecurityGroupRule  # type: ignore
+    from ._models import NodePlacementConfiguration  # type: ignore
+    from ._models import OSDisk  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import OutboundEnvironmentEndpoint  # type: ignore
+    from ._models import OutboundEnvironmentEndpointCollection  # type: ignore
     from ._models import Pool  # type: ignore
     from ._models import PoolEndpointConfiguration  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
@@ -161,19 +184,26 @@ except (SyntaxError, ImportError):
     from ._models import Resource  # type: ignore
     from ._models import ResourceFile  # type: ignore
     from ._models import ScaleSettings  # type: ignore
+    from ._models import SkuCapability  # type: ignore
     from ._models import StartTask  # type: ignore
+    from ._models import SupportedSku  # type: ignore
+    from ._models import SupportedSkusResult  # type: ignore
     from ._models import TaskContainerSettings  # type: ignore
     from ._models import TaskSchedulingPolicy  # type: ignore
     from ._models import UserAccount  # type: ignore
+    from ._models import UserAssignedIdentities  # type: ignore
     from ._models import UserIdentity  # type: ignore
+    from ._models import VMExtension  # type: ignore
     from ._models import VirtualMachineConfiguration  # type: ignore
     from ._models import VirtualMachineFamilyCoreQuota  # type: ignore
     from ._models import WindowsConfiguration  # type: ignore
     from ._models import WindowsUserConfiguration  # type: ignore
 
-from ._batch_management_enums import (
+from ._batch_management_client_enums import (
     AccountKeyType,
     AllocationState,
+    AuthenticationMode,
+    AutoStorageAuthenticationMode,
     AutoUserScope,
     CachingType,
     CertificateFormat,
@@ -192,8 +222,10 @@ from ._batch_management_enums import (
     LoginMode,
     NameAvailabilityReason,
     NetworkSecurityGroupRuleAccess,
+    NodePlacementPolicyType,
     PackageState,
     PoolAllocationMode,
+    PoolIdentityType,
     PoolProvisioningState,
     PrivateEndpointConnectionProvisioningState,
     PrivateLinkServiceConnectionStatus,
@@ -224,6 +256,7 @@ __all__ = [
     'BatchAccountRegenerateKeyParameters',
     'BatchAccountUpdateParameters',
     'BatchLocationQuota',
+    'BatchPoolIdentity',
     'CIFSMountConfiguration',
     'Certificate',
     'CertificateBaseProperties',
@@ -235,13 +268,17 @@ __all__ = [
     'CheckNameAvailabilityResult',
     'CloudErrorBody',
     'CloudServiceConfiguration',
+    'ComputeNodeIdentityReference',
     'ContainerConfiguration',
     'ContainerRegistry',
     'DataDisk',
     'DeleteCertificateError',
     'DeploymentConfiguration',
+    'DiffDiskSettings',
     'DiskEncryptionConfiguration',
     'EncryptionProperties',
+    'EndpointDependency',
+    'EndpointDetail',
     'EnvironmentSetting',
     'FixedScaleSettings',
     'ImageReference',
@@ -260,9 +297,13 @@ __all__ = [
     'NFSMountConfiguration',
     'NetworkConfiguration',
     'NetworkSecurityGroupRule',
+    'NodePlacementConfiguration',
+    'OSDisk',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'OutboundEnvironmentEndpoint',
+    'OutboundEnvironmentEndpointCollection',
     'Pool',
     'PoolEndpointConfiguration',
     'PrivateEndpoint',
@@ -276,17 +317,24 @@ __all__ = [
     'Resource',
     'ResourceFile',
     'ScaleSettings',
+    'SkuCapability',
     'StartTask',
+    'SupportedSku',
+    'SupportedSkusResult',
     'TaskContainerSettings',
     'TaskSchedulingPolicy',
     'UserAccount',
+    'UserAssignedIdentities',
     'UserIdentity',
+    'VMExtension',
     'VirtualMachineConfiguration',
     'VirtualMachineFamilyCoreQuota',
     'WindowsConfiguration',
     'WindowsUserConfiguration',
     'AccountKeyType',
     'AllocationState',
+    'AuthenticationMode',
+    'AutoStorageAuthenticationMode',
     'AutoUserScope',
     'CachingType',
     'CertificateFormat',
@@ -305,8 +353,10 @@ __all__ = [
     'LoginMode',
     'NameAvailabilityReason',
     'NetworkSecurityGroupRuleAccess',
+    'NodePlacementPolicyType',
     'PackageState',
     'PoolAllocationMode',
+    'PoolIdentityType',
     'PoolProvisioningState',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateLinkServiceConnectionStatus',

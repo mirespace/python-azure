@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -14,7 +14,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,7 +28,9 @@ extends:
   parameters:
     ServiceDirectory: machinelearning
     Artifacts:
-    - name: azure_mgmt_machinelearningcompute
-      safeName: azuremgmtmachinelearningcompute
-    - name: azure_mgmt_machinelearningservices
+    - name: azure-mgmt-machinelearningservices
       safeName: azuremgmtmachinelearningservices
+    - name: azure-mgmt-machinelearningcompute
+      safeName: azuremgmtmachinelearningcompute
+    - name: azure-mgmt-guestconfig
+      safeName: azuremgmtguestconfig

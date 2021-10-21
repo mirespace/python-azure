@@ -4,24 +4,38 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from collections import defaultdict
 import os
 import pytest
 import platform
 import functools
 import itertools
+import datetime
+import json
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
-    EntitiesRecognitionTask,
-    PiiEntitiesRecognitionTask,
-    KeyPhraseExtractionTask,
+    RecognizeEntitiesAction,
+    RecognizeLinkedEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
+    AnalyzeSentimentAction,
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
+    _AnalyzeActionsType,
+    ExtractKeyPhrasesResult,
+    AnalyzeSentimentResult,
+    RecognizeLinkedEntitiesResult,
+    RecognizeEntitiesResult,
+    RecognizePiiEntitiesResult,
+    ExtractSummaryAction,
+    PiiEntityCategory,
+    ExtractSummaryResult
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -33,1092 +47,843 @@ class TestAnalyze(TextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = client.begin_analyze("hello world", polling_interval=self._interval())
+            response = client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_all_successful_passing_dict_key_phrase_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_actions(
             docs,
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            actions=[ExtractKeyPhrasesAction()],
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
+        document_results = list(response)
 
-        task_results = results_pages[0].key_phrase_extraction_results
-        self.assertEqual(len(task_results), 1)
+        assert len(document_results) == 2
+        for document_result in document_results:
+            assert len(document_result) == 1
+            for document_result in document_result:
+                assert isinstance(document_result, ExtractKeyPhrasesResult)
+                assert "Paul Allen" in document_result.key_phrases
+                assert "Bill Gates" in document_result.key_phrases
+                assert "Microsoft" in document_result.key_phrases
+                assert document_result.id is not None
 
-        results = task_results[0].results
-        self.assertEqual(len(results), 2)
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_all_successful_passing_dict_sentiment_task(self, client):
+        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
+                {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
 
-        for phrases in results:
-            self.assertIn("Paul Allen", phrases.key_phrases)
-            self.assertIn("Bill Gates", phrases.key_phrases)
-            self.assertIn("Microsoft", phrases.key_phrases)
-            self.assertIsNotNone(phrases.id)
-            #self.assertIsNotNone(phrases.statistics)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_all_successful_passing_dict_entities_task(self, client):
-        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
-                {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
-                {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
-
-        response = client.begin_analyze(
+        response = client.begin_analyze_actions(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
+            actions=[AnalyzeSentimentAction()],
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
+        pages = list(response)
 
-        task_results = results_pages[0].entities_recognition_results
-        self.assertEqual(len(task_results), 1)
+        assert len(pages) == len(docs)
+        for idx, document_results in enumerate(pages):
+            assert len(document_results) == 1
+            document_result = document_results[0]
+            assert isinstance(document_result, AnalyzeSentimentResult)
+            assert document_result.id is not None
+            assert document_result.statistics is not None
+            self.validateConfidenceScores(document_result.confidence_scores)
+            assert document_result.sentences is not None
+            if idx == 0:
+                assert document_result.sentiment == "neutral"
+                assert len(document_result.sentences) == 1
+                assert document_result.sentences[0].text == "Microsoft was founded by Bill Gates and Paul Allen."
+            elif idx == 1:
+                assert document_result.sentiment == "negative"
+                assert len(document_result.sentences) == 2
+                assert document_result.sentences[0].text == "I did not like the hotel we stayed at."
+                assert document_result.sentences[1].text == "It was too expensive."
+            else:
+                assert document_result.sentiment == "positive"
+                assert len(document_result.sentences) == 2
+                assert document_result.sentences[0].text == "The restaurant had really good food."
+                assert document_result.sentences[1].text == "I recommend you try it."
 
-        results = task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        for doc in results:
-            self.assertEqual(len(doc.entities), 4)
-            self.assertIsNotNone(doc.id)
-            # self.assertIsNotNone(doc.statistics)
-            for entity in doc.entities:
-                self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.confidence_score)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_all_successful_passing_dict_pii_entities_task(self, client):
-
-        docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
-                {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
-                {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
-
-        response = client.begin_analyze(
-            docs,
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            show_stats=True,
-            polling_interval=self._interval(),
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_results = results_pages[0].pii_entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        self.assertEqual(results[0].entities[0].text, "859-98-0987")
-        self.assertEqual(results[0].entities[0].category, "U.S. Social Security Number (SSN)")
-        self.assertEqual(results[1].entities[0].text, "111000025")
-        # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
-        self.assertEqual(results[2].entities[0].text, "998.214.865-68")
-        self.assertEqual(results[2].entities[0].category, "Brazil CPF Number")
-        for doc in results:
-            self.assertIsNotNone(doc.id)
-            # self.assertIsNotNone(doc.statistics)
-            for entity in doc.entities:
-                self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.confidence_score)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_all_successful_passing_text_document_input_key_phrase_task(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen", language="en"),
-            TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen", language="es")
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_sentiment_analysis_task_with_opinion_mining(self, client):
+        documents = [
+            "It has a sleek premium aluminum design that makes it beautiful to look at.",
+            "The food and service is not good"
         ]
 
-        response = client.begin_analyze(
-            docs,
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+        response = client.begin_analyze_actions(
+            documents,
+            actions=[AnalyzeSentimentAction(show_opinion_mining=True)],
+            show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
+        pages = list(response)
 
-        key_phrase_task_results = results_pages[0].key_phrase_extraction_results
-        self.assertEqual(len(key_phrase_task_results), 1)
+        assert len(pages) == len(documents)
+        for idx, document_results in enumerate(pages):
+            assert len(document_results) == 1
+            document_result = document_results[0]
+            assert isinstance(document_result, AnalyzeSentimentResult)
+            for sentence in document_result.sentences:
+                if idx == 0:
+                    for mined_opinion in sentence.mined_opinions:
+                        target = mined_opinion.target
+                        self.assertEqual('design', target.text)
+                        self.assertEqual('positive', target.sentiment)
+                        self.assertEqual(0.0, target.confidence_scores.neutral)
+                        self.validateConfidenceScores(target.confidence_scores)
+                        self.assertEqual(32, target.offset)
 
-        results = key_phrase_task_results[0].results
-        self.assertEqual(len(results), 2)
+                        sleek_opinion = mined_opinion.assessments[0]
+                        self.assertEqual('sleek', sleek_opinion.text)
+                        self.assertEqual('positive', sleek_opinion.sentiment)
+                        self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
+                        self.validateConfidenceScores(sleek_opinion.confidence_scores)
+                        self.assertEqual(9, sleek_opinion.offset)
+                        self.assertFalse(sleek_opinion.is_negated)
 
-        for phrases in results:
-            self.assertIn("Paul Allen", phrases.key_phrases)
-            self.assertIn("Bill Gates", phrases.key_phrases)
-            self.assertIn("Microsoft", phrases.key_phrases)
-            self.assertIsNotNone(phrases.id)
+                        premium_opinion = mined_opinion.assessments[1]
+                        self.assertEqual('premium', premium_opinion.text)
+                        self.assertEqual('positive', premium_opinion.sentiment)
+                        self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
+                        self.validateConfidenceScores(premium_opinion.confidence_scores)
+                        self.assertEqual(15, premium_opinion.offset)
+                        self.assertFalse(premium_opinion.is_negated)
+                else:
+                    food_target = sentence.mined_opinions[0].target
+                    service_target = sentence.mined_opinions[1].target
+                    self.validateConfidenceScores(food_target.confidence_scores)
+                    self.assertEqual(4, food_target.offset)
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+                    self.assertEqual('service', service_target.text)
+                    self.assertEqual('negative', service_target.sentiment)
+                    self.assertEqual(0.0, service_target.confidence_scores.neutral)
+                    self.validateConfidenceScores(service_target.confidence_scores)
+                    self.assertEqual(13, service_target.offset)
+
+                    food_opinion = sentence.mined_opinions[0].assessments[0]
+                    service_opinion = sentence.mined_opinions[1].assessments[0]
+                    self.assertOpinionsEqual(food_opinion, service_opinion)
+
+                    self.assertEqual('good', food_opinion.text)
+                    self.assertEqual('negative', food_opinion.sentiment)
+                    self.assertEqual(0.0, food_opinion.confidence_scores.neutral)
+                    self.validateConfidenceScores(food_opinion.confidence_scores)
+                    self.assertEqual(28, food_opinion.offset)
+                    self.assertTrue(food_opinion.is_negated)
+                    service_target = sentence.mined_opinions[1].target
+
+                    self.assertEqual('food', food_target.text)
+                    self.assertEqual('negative', food_target.sentiment)
+                    self.assertEqual(0.0, food_target.confidence_scores.neutral)
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_all_successful_passing_text_document_input_entities_task(self, client):
         docs = [
-            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.", language="en"),
+            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975", language="en"),
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.", language="es"),
-            TextDocumentInput(id="3", text="Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.", language="de")
+            TextDocumentInput(id="3", text="Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.", language="de"),
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_actions(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
+            actions=[RecognizeEntitiesAction()],
+            show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
+        pages = list(response)
+        assert len(pages) == len(docs)
 
-        task_results = results_pages[0].entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        for doc in results:
-            self.assertEqual(len(doc.entities), 4)
-            self.assertIsNotNone(doc.id)
-            for entity in doc.entities:
-                self.assertIsNotNone(entity.text)
+        for document_results in pages:
+            assert len(document_results) == 1
+            document_result = document_results[0]
+            assert isinstance(document_result, RecognizeEntitiesResult)
+            assert len(document_result.entities) == 4
+            assert document_result.id is not None
+            for entity in document_result.entities:
+                assert entity.text is not None
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.confidence_score is not None
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_all_successful_passing_text_document_input_pii_entities_task(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="My SSN is 859-98-0987."),
-            TextDocumentInput(id="2", text="Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."),
-            TextDocumentInput(id="3", text="Is 998.214.865-68 your Brazilian CPF number?")
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_all_successful_passing_string_pii_entities_task(self, client):
+
+        docs = ["My SSN is 859-98-0987.",
+                "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
+                "Is 998.214.865-68 your Brazilian CPF number?"
         ]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_actions(
             docs,
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            actions=[RecognizePiiEntitiesAction()],
+            show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
+        pages = list(response)
+        assert len(pages) == len(docs)
 
-        task_results = results_pages[0].pii_entities_recognition_results
-        self.assertEqual(len(task_results), 1)
+        for idx, document_results in enumerate(pages):
+            assert len(document_results) == 1
+            document_result = document_results[0]
+            assert isinstance(document_result, RecognizePiiEntitiesResult)
+            if idx == 0:
+                assert document_result.entities[0].text == "859-98-0987"
+                assert document_result.entities[0].category == "USSocialSecurityNumber"
+            elif idx == 1:
+                assert document_result.entities[0].text == "111000025"
+            for entity in document_result.entities:
+                assert entity.text is not None
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.confidence_score is not None
 
-        results = task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        self.assertEqual(results[0].entities[0].text, "859-98-0987")
-        self.assertEqual(results[0].entities[0].category, "U.S. Social Security Number (SSN)")
-        self.assertEqual(results[1].entities[0].text, "111000025")
-        # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
-        self.assertEqual(results[2].entities[0].text, "998.214.865-68")
-        self.assertEqual(results[2].entities[0].category, "Brazil CPF Number")
-        for doc in results:
-            self.assertIsNotNone(doc.id)
-            for entity in doc.entities:
-                self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.confidence_score)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_passing_only_string_key_phrase_task(self, client):
-        docs = [
-            u"Microsoft was founded by Bill Gates and Paul Allen",
-            u"Microsoft fue fundado por Bill Gates y Paul Allen"
-        ]
-
-        response = client.begin_analyze(
-            docs,
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            polling_interval=self._interval(),
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        key_phrase_task_results = results_pages[0].key_phrase_extraction_results
-        self.assertEqual(len(key_phrase_task_results), 1)
-
-        results = key_phrase_task_results[0].results
-        self.assertEqual(len(results), 2)
-
-        self.assertIn("Paul Allen", results[0].key_phrases)
-        self.assertIn("Bill Gates", results[0].key_phrases)
-        self.assertIn("Microsoft", results[0].key_phrases)
-        self.assertIsNotNone(results[0].id)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_bad_request_on_empty_document(self, client):
         docs = [u""]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_actions(
                 docs,
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                actions=[ExtractKeyPhrasesAction()],
                 polling_interval=self._interval(),
             )
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_passing_only_string_entities_task(self, client):
-        docs = [
-            u"Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
-            u"Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.",
-            u"Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."
-        ]
-
-        response = client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_results = results_pages[0].entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        self.assertEqual(len(results[0].entities), 4)
-        self.assertIsNotNone(results[0].id)
-        for entity in results[0].entities:
-            self.assertIsNotNone(entity.text)
-            self.assertIsNotNone(entity.category)
-            self.assertIsNotNone(entity.offset)
-            self.assertIsNotNone(entity.confidence_score)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_passing_only_string_pii_entities_task(self, client):
-        docs = [
-            u"My SSN is 859-98-0987.",
-            u"Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
-            u"Is 998.214.865-68 your Brazilian CPF number?"
-        ]
-
-        response = client.begin_analyze(
-            docs,
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_results = results_pages[0].pii_entities_recognition_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        self.assertEqual(results[0].entities[0].text, "859-98-0987")
-        self.assertEqual(results[0].entities[0].category, "U.S. Social Security Number (SSN)")
-        self.assertEqual(results[1].entities[0].text, "111000025")
-        # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
-        self.assertEqual(results[2].entities[0].text, "998.214.865-68")
-        self.assertEqual(results[2].entities[0].category, "Brazil CPF Number")
-
-        for i in range(3):
-            self.assertIsNotNone(results[i].id)
-            for entity in results[i].entities:
-                self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.confidence_score)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_payload_too_large(self, client):
-        pass  # TODO: verify payload size limit
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_document_warnings(self, client):
-        # TODO: reproduce a warnings scenario for implementation
-        pass
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_output_same_order_as_input_multiple_tasks(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="one"),
-            TextDocumentInput(id="2", text="two"),
-            TextDocumentInput(id="3", text="three"),
-            TextDocumentInput(id="4", text="four"),
-            TextDocumentInput(id="5", text="five")
-        ]
-
-        response = client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            self.assertEqual(len(results), 5)
-
-            for idx, doc in enumerate(results):
-                self.assertEqual(str(idx + 1), doc.id)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": "",
+        "textanalytics_test_api_key": "",
     })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_actions(
                 ["This is written in English."],
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
+                ],
                 polling_interval=self._interval(),
             )
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": "xxxxxxxxxxxx",
+        "textanalytics_test_api_key": "xxxxxxxxxxxx",
     })
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze(
+            response = client.begin_analyze_actions(
                 ["This is written in English."],
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
+                ],
                 polling_interval=self._interval(),
             )
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_bad_document_input(self, client):
-        docs = "This is the wrong type"
-
-        with self.assertRaises(TypeError):
-            response = client.begin_analyze(
-                docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                polling_interval=self._interval(),
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_mixing_inputs(self, client):
-        docs = [
-            {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above inputs"
-        ]
-        with self.assertRaises(TypeError):
-            response = client.begin_analyze(
-                docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                polling_interval=self._interval(),
-            ).result()
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_out_of_order_ids_multiple_tasks(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.begin_analyze(
+        response = client.begin_analyze_actions(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],  # at this moment this should cause all documents to be errors, which isn't correct behavior but I'm using it here to test document ordering with errors.  :)
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            actions=[
+                RecognizeEntitiesAction(),
+                ExtractKeyPhrasesAction(),
+                RecognizePiiEntitiesAction(),
+                RecognizeLinkedEntitiesAction(),
+                AnalyzeSentimentAction(),
+                ExtractSummaryAction()
+            ],
             polling_interval=self._interval(),
         ).result()
 
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
+        results = list(response)
+        assert len(results) == len(docs)
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        document_order = ["56", "0", "19", "1"]
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.EXTRACT_SUMMARY
         ]
+        for doc_idx, document_results in enumerate(results):
+            assert len(document_results) == 6
+            for action_idx, document_result in enumerate(document_results):
+                self.assertEqual(document_result.id, document_order[doc_idx])
+                self.assertEqual(self.document_result_to_action_type(document_result), action_order[action_idx])
 
-        in_order = ["56", "0", "19", "1"]
-
-        for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            self.assertEqual(len(results), len(docs))
-
-            for idx, resp in enumerate(results):
-                self.assertEqual(resp.id, in_order[idx])
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_show_stats_and_model_version_multiple_tasks(self, client):
+
+        def callback(resp):
+            assert resp.raw_response
+            tasks = resp.raw_response['tasks']
+            assert tasks['completed'] == 6
+            assert tasks['inProgress'] == 0
+            assert tasks['failed'] == 0
+            assert tasks['total'] == 6
+            num_tasks = 0
+            for key, task in tasks.items():
+                if "Tasks" in key:
+                    num_tasks += 1
+                    assert len(task) == 1
+                    task_stats = task[0]['results']['statistics']
+                    assert task_stats['documentsCount'] == 4
+                    assert task_stats['validDocumentsCount'] == 4
+                    assert task_stats['erroneousDocumentsCount'] == 0
+                    assert task_stats['transactionsCount'] == 4
+            assert num_tasks == 6
+
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.begin_analyze(
+        poller = client.begin_analyze_actions(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="latest")],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="latest")],
+            actions=[
+                RecognizeEntitiesAction(model_version="latest"),
+                ExtractKeyPhrasesAction(model_version="latest"),
+                RecognizePiiEntitiesAction(model_version="latest"),
+                RecognizeLinkedEntitiesAction(model_version="latest"),
+                AnalyzeSentimentAction(model_version="latest"),
+                ExtractSummaryAction(model_version="latest")
+            ],
             show_stats=True,
             polling_interval=self._interval(),
-        ).result()
+            raw_response_hook=callback,
+        )
 
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
+        response = poller.result()
 
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        pages = list(response)
+        assert len(pages) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.EXTRACT_SUMMARY
         ]
+        for document_results in pages:
+            assert len(document_results) == len(action_order)
+            for document_result in document_results:
+                assert document_result.statistics
+                assert document_result.statistics.character_count
+                assert document_result.statistics.transaction_count
 
-        for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_poller_metadata(self, client):
+        docs = [{"id": "56", "text": ":)"}]
 
-            results = task_results[0].results
-            self.assertEqual(len(results), len(docs))
-
-            # self.assertEqual(results.statistics.document_count, 5)
-            # self.assertEqual(results.statistics.transaction_count, 4)
-            # self.assertEqual(results.statistics.valid_document_count, 4)
-            # self.assertEqual(results.statistics.erroneous_document_count, 1)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_whole_batch_language_hint(self, client):
-        docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
-        ]
-
-        response = list(client.begin_analyze(
+        poller = client.begin_analyze_actions(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en",
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            for r in results:
-                self.assertFalse(r.is_error)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_whole_batch_dont_use_language_hint(self, client):
-        docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
-        ]
-
-        response = list(client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="",
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            for r in results:
-                self.assertFalse(r.is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_per_item_dont_use_language_hint(self, client):
-        docs = [{"id": "1", "language": "", "text": "I will go to the park."},
-                {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = list(client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            for r in results:
-                self.assertFalse(r.is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_whole_batch_language_hint_and_obj_input(self, client):
-        def callback(resp):
-            language_str = "\"language\": \"de\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 3)
-
-        docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian."),
-            TextDocumentInput(id="4", text="Este es un document escrito en Español."),
-            TextDocumentInput(id="3", text="猫は幸せ"),
-        ]
-
-        response = list(client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en",
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            for r in results:
-                self.assertFalse(r.is_error)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_whole_batch_language_hint_and_dict_input(self, client):
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = list(client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en",
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            for r in results:
-                self.assertFalse(r.is_error)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="en"),
-            TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="en"),
-            TextDocumentInput(id="3", text="猫は幸せ"),
-        ]
-
-        response = list(client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en",
-            polling_interval=self._interval(),
-        ).result())
-
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            for r in results:
-                self.assertFalse(r.is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
-        docs = [{"id": "1", "language": "en", "text": "I will go to the park."},
-                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = list(client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en",
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            task_results = getattr(response[0], task_type)
-            self.assertEqual(len(task_results), 1)
-
-            results = task_results[0].results
-            for r in results:
-                self.assertFalse(r.is_error)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "default_language": "en"
-    })
-    def test_client_passed_default_language_hint(self, client):
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = list(client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
-            self.assertEqual(len(tasks), 1)
-            self.assertEqual(len(tasks[0].results), 3)
-
-            for r in tasks[0].results:
-                self.assertFalse(r.is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_invalid_language_hint_method(self, client):
-        response = list(client.begin_analyze(
-            ["This should fail because we're passing in an invalid language hint"],
-            language="notalanguage",
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
-            self.assertEqual(len(tasks), 1)
-
-            for r in tasks[0].results:
-                self.assertTrue(r.is_error)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_invalid_language_hint_docs(self, client):
-        response = list(client.begin_analyze(
-            [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}],
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result())
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
-            self.assertEqual(len(tasks), 1)
-
-            for r in tasks[0].results:
-                self.assertTrue(r.is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-
-        credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3)
-
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result()
-
-        self.assertIsNotNone(response)
-
-        credential.update("xxx")  # Make authentication fail
-        with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze(
-                docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                polling_interval=self._interval(),
-            ).result()
-
-        credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            polling_interval=self._interval(),
-        ).result()
-        self.assertIsNotNone(response)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_user_agent(self, client):
-        def callback(resp):
-            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()),
-                resp.http_request.headers["User-Agent"]
-            )
-
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        poller = client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            actions=[
+                RecognizeEntitiesAction(model_version="latest")
+            ],
+            show_stats=True,
             polling_interval=self._interval(),
         )
 
-        self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()),
-                poller._polling_method._initial_response.http_request.headers["User-Agent"]
-            )
+        poller.result()
 
-        poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
+        assert isinstance(poller.created_on, datetime.datetime)
+        assert not poller.display_name
+        assert isinstance(poller.expires_on, datetime.datetime)
+        assert poller.actions_failed_count == 0
+        assert poller.actions_in_progress_count == 0
+        assert poller.actions_succeeded_count == 1
+        assert isinstance(poller.last_modified_on, datetime.datetime)
+        assert poller.total_actions_count == 1
+        assert poller.id
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_empty_document_failure(self, client):
-        docs = [{"id": "1", "text": ""}]
+    ### TODO: Commenting out language tests. Right now analyze only supports language 'en', so no point to these tests yet
 
-        with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze(
-                docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                polling_interval=self._interval(),
-            )
+    # @TextAnalyticsPreparer()
+    # @TextAnalyticsClientPreparer()
+    # def test_whole_batch_language_hint(self, client):
+    #     def callback(resp):
+    #         language_str = "\"language\": \"fr\""
+    #         if resp.http_request.body:
+    #             language = resp.http_request.body.count(language_str)
+    #             self.assertEqual(language, 3)
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_bad_model_version_error_single_task(self, client):  # TODO: verify behavior of service
+    #     docs = [
+    #         u"This was the best day of my life.",
+    #         u"I did not like the hotel we stayed at. It was too expensive.",
+    #         u"The restaurant was not as good as I hoped."
+    #     ]
+
+    #     response = list(client.begin_analyze_actions(
+    #         docs,
+    #         actions=[
+    #             RecognizeEntitiesAction(),
+    #             ExtractKeyPhrasesAction(),
+    #             RecognizePiiEntitiesAction()
+    #         ],
+    #         language="fr",
+    #         polling_interval=self._interval(),
+    #         raw_response_hook=callback
+    #     ).result())
+
+    #     for document_result in response:
+    #         for doc in document_result.document_results:
+    #             self.assertFalse(doc.is_error)
+
+    # @TextAnalyticsPreparer()
+    # @TextAnalyticsClientPreparer(client_kwargs={
+    #     "default_language": "en"
+    # })
+    # def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
+    #     def callback(resp):
+    #         pass
+    #         # if resp.http_request.body:
+    #         #     language_str = "\"language\": \"es\""
+    #         #     language = resp.http_request.body.count(language_str)
+    #         #     self.assertEqual(language, 2)
+    #         #     language_str = "\"language\": \"en\""
+    #         #     language = resp.http_request.body.count(language_str)
+    #         #     self.assertEqual(language, 1)
+
+    #     docs = [
+    #         TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
+    #         TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="es"),
+    #         TextDocumentInput(id="3", text="猫は幸せ"),
+    #     ]
+
+    #     response = list(client.begin_analyze_actions(
+    #         docs,
+    #         actions=[
+    #             RecognizeEntitiesAction(),
+    #             ExtractKeyPhrasesAction(),
+    #             RecognizePiiEntitiesAction()
+    #         ],
+    #         polling_interval=self._interval(),
+    #     ).result())
+
+    #     for document_result in response:
+    #         for doc in document_result.document_results:
+    #             assert not doc.is_error
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_invalid_language_hint_method(self, client):
+        response = list(client.begin_analyze_actions(
+            ["This should fail because we're passing in an invalid language hint"],
+            language="notalanguage",
+            actions=[
+                RecognizeEntitiesAction(),
+                ExtractKeyPhrasesAction(),
+                RecognizePiiEntitiesAction(),
+                RecognizeLinkedEntitiesAction(),
+                AnalyzeSentimentAction(),
+                ExtractSummaryAction()
+            ],
+            polling_interval=self._interval(),
+        ).result())
+
+        for document_results in response:
+            for doc in document_results:
+                assert doc.is_error
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_bad_model_version_error_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
-        with self.assertRaises(HttpResponseError):
-            result = client.begin_analyze(
+        with pytest.raises(HttpResponseError):
+            client.begin_analyze_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
+                actions=[
+                    RecognizeEntitiesAction(model_version="latest"),
+                    ExtractKeyPhrasesAction(model_version="bad"),
+                    RecognizePiiEntitiesAction(model_version="bad"),
+                    RecognizeLinkedEntitiesAction(model_version="bad"),
+                    AnalyzeSentimentAction(model_version="bad"),
+                    ExtractSummaryAction(model_version="bad")
+                ],
                 polling_interval=self._interval(),
             ).result()
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
-        docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
-
-        response = client.begin_analyze(
-            docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")],
-            polling_interval=self._interval(),
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
-        ]
-
-        for task_type in task_types:
-            tasks = getattr(results_pages[0], task_type)  # only expecting a single page of results here
-            self.assertEqual(len(tasks), 1)
-
-            for r in tasks[0].results:
-                self.assertTrue(r.is_error)  # This is not the optimal way to represent this failure.  We are discussing a solution with the service team.
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze(
+            client.begin_analyze_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")],
+                actions=[
+                    RecognizeEntitiesAction(model_version="bad"),
+                    ExtractKeyPhrasesAction(model_version="bad"),
+                    RecognizePiiEntitiesAction(model_version="bad"),
+                    RecognizeLinkedEntitiesAction(model_version="bad"),
+                    AnalyzeSentimentAction(model_version="bad"),
+                    ExtractSummaryAction(model_version="bad")
+                ],
                 polling_interval=self._interval(),
             ).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_not_passing_list_for_docs(self, client):
-        docs = {"id": "1", "text": "hello world"}
-        with pytest.raises(TypeError) as excinfo:
-            client.begin_analyze(
-                docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                polling_interval=self._interval(),
-            )
-        assert "Input documents cannot be a dict" in str(excinfo.value)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze(
+            client.begin_analyze_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
+                ],
                 polling_interval=self._interval(),
             )
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze(None)
+            client.begin_analyze_actions(None, None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    def test_duplicate_ids_error(self, client):  # TODO: verify behavior of service
-        # Duplicate Ids
-        docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed at."}]
-
-        with self.assertRaises(HttpResponseError):
-            result = client.begin_analyze(
-                docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                polling_interval=self._interval(),
-            ).result()
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
-        res = client.begin_analyze(
+        res = client.begin_analyze_actions(
             documents=["Test passing cls to endpoint"],
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            actions=[
+                RecognizeEntitiesAction(),
+            ],
             cls=callback,
             polling_interval=self._interval(),
         ).result()
         assert res == "cls result"
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_multiple_pages_of_results_returned_successfully(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 25)))] # max number of documents is 25
 
-        result = client.begin_analyze(
+        result = client.begin_analyze_actions(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            actions=[
+                RecognizeEntitiesAction(),
+                ExtractKeyPhrasesAction(),
+                RecognizePiiEntitiesAction(),
+                RecognizeLinkedEntitiesAction(),
+                AnalyzeSentimentAction(),
+                ExtractSummaryAction()
+            ],
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
         pages = list(result)
-        self.assertEqual(len(pages), 2) # default page size is 20
-
-        # self.assertIsNotNone(result.statistics)  # statistics not working at the moment, but a bug has been filed on the service to correct this.
-
-        task_types = [
-            "entities_recognition_results",
-            "key_phrase_extraction_results",
-            "pii_entities_recognition_results"
+        assert len(pages) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.EXTRACT_SUMMARY
         ]
+        action_type_to_document_results = defaultdict(list)
 
-        expected_results_per_page = [20, 5]
+        for doc_idx, page in enumerate(pages):
+            for action_idx, document_result in enumerate(page):
+                self.assertEqual(document_result.id, str(doc_idx))
+                action_type = self.document_result_to_action_type(document_result)
+                self.assertEqual(action_type, action_order[action_idx])
+                action_type_to_document_results[action_type].append(document_result)
 
-        for idx, page in enumerate(pages):
-            for task_type in task_types:
-                task_results = getattr(page, task_type)
-                self.assertEqual(len(task_results), 1)
+        assert len(action_type_to_document_results) == len(action_order)
+        for document_results in action_type_to_document_results.values():
+            assert len(document_results) == len(docs)
 
-                results = task_results[0].results
-                self.assertEqual(len(results), expected_results_per_page[idx])
-
-                for doc in results:
-                    self.assertFalse(doc.is_error)
-                    #self.assertIsNotNone(doc.statistics)
-
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
     def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
 
         with pytest.raises(HttpResponseError) as excinfo:
-            client.begin_analyze(
+            client.begin_analyze_actions(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
+                ],
                 polling_interval=self._interval(),
             )
         assert excinfo.value.status_code == 400
 
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_disable_service_logs(self, client):
+        actions = [
+            RecognizeEntitiesAction(disable_service_logs=True),
+            ExtractKeyPhrasesAction(disable_service_logs=True),
+            RecognizePiiEntitiesAction(disable_service_logs=True),
+            RecognizeLinkedEntitiesAction(disable_service_logs=True),
+            AnalyzeSentimentAction(disable_service_logs=True),
+            ExtractSummaryAction(disable_service_logs=True),
+        ]
 
+        for action in actions:
+            assert action.disable_service_logs
 
+        def callback(resp):
+            tasks = json.loads(resp.http_request.body)["tasks"]
+            assert len(tasks) == len(actions)
+            for task in tasks.values():
+                assert task[0]["parameters"]["loggingOptOut"]
 
+        client.begin_analyze_actions(
+            documents=["Test for logging disable"],
+            actions=actions,
+            polling_interval=self._interval(),
+            raw_response_hook=callback,
+        ).result()
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_pii_action_categories_filter(self, client):
+
+        docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
+                {"id": "2",
+                 "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
+                {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
+
+        actions = [
+            RecognizePiiEntitiesAction(
+                categories_filter=[
+                    PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER,
+                    PiiEntityCategory.ABA_ROUTING_NUMBER,
+                ]
+            ),
+        ]
+
+        result = client.begin_analyze_actions(documents=docs, actions=actions, polling_interval=self._interval()).result()
+        action_results = list(result)
+        assert len(action_results) == 3
+
+        assert action_results[0][0].entities[0].text == "859-98-0987"
+        assert action_results[0][0].entities[0].category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER
+        assert action_results[1][0].entities[0].text == "111000025"
+        assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
+        assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_partial_success_for_actions(self, client):
+        docs = [{"id": "1", "language": "tr", "text": "I did not like the hotel we stayed at."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+
+        response = client.begin_analyze_actions(
+                docs,
+                actions=[
+                    AnalyzeSentimentAction(),
+                    RecognizePiiEntitiesAction(),
+                ],
+                polling_interval=self._interval(),
+            ).result()
+
+        action_results = list(response)
+        assert len(action_results) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+        ]
+
+        assert len(action_results[0]) == len(action_order)
+        assert len(action_results[1]) == len(action_order)
+
+        # first doc
+        assert isinstance(action_results[0][0], AnalyzeSentimentResult)
+        assert action_results[0][0].id == "1"
+        assert action_results[0][1].is_error
+        assert action_results[0][1].id == "1"
+
+        # second doc
+        assert isinstance(action_results[1][0], AnalyzeSentimentResult)
+        assert action_results[1][0].id == "2"
+        assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
+        assert action_results[1][1].id == "2"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_multiple_of_same_action_fail(self, client):
+        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+
+        with pytest.raises(ValueError) as e:
+            client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizePiiEntitiesAction(domain_filter="phi"),
+                    RecognizePiiEntitiesAction(),
+                ],
+                polling_interval=self._interval(),
+            ).result()
+        assert "Multiple of the same action is not currently supported." in str(e.value)
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_all_successful_passing_dict_extract_summary_action(self, client):
+        docs = [{"id": "1", "language": "en", "text":
+            "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
+            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
+            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
+            "appeared to have agreed a deal with herfractured Cabinet on the UK's post Brexit relationship with "
+            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
+            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
+            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
+            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
+            "Prime Minister's latest plitical drama began late on Sunday night when Davis quit, declaring he could "
+            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
+            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
+            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
+            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
+            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."},
+            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        assert len(document_results) == 2
+        for document_result in document_results:
+            assert len(document_result) == 1
+            for result in document_result:
+                assert isinstance(result, ExtractSummaryResult)
+                assert result.statistics
+                assert len(result.sentences) == 3 if result.id == 0 else 1
+                for sentence in result.sentences:
+                    assert sentence.text
+                    assert sentence.rank_score is not None
+                    assert sentence.offset is not None
+                    assert sentence.length is not None
+                assert result.id is not None
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_extract_summary_action_with_options(self, client):
+        docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
+            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
+            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
+            "appeared to have agreed a deal with herfractured Cabinet on the UK's post Brexit relationship with "
+            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
+            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
+            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
+            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
+            "Prime Minister's latest plitical drama began late on Sunday night when Davis quit, declaring he could "
+            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
+            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
+            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
+            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
+            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction(max_sentence_count=5, order_by="Rank")],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        assert len(document_results) == 1
+        for document_result in document_results:
+            assert len(document_result) == 1
+            for result in document_result:
+                assert isinstance(result, ExtractSummaryResult)
+                assert result.statistics
+                assert len(result.sentences) == 5
+                previous_score = 1.0
+                for sentence in result.sentences:
+                    assert sentence.rank_score <= previous_score
+                    previous_score = sentence.rank_score
+                    assert sentence.text
+                    assert sentence.offset is not None
+                    assert sentence.length is not None
+                assert result.id is not None
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_extract_summary_partial_results(self, client):
+        docs = [{"id": "1", "language": "en", "text": ""}, {"id": "2", "language": "en", "text": "hello world"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+        assert document_results[0][0].is_error
+        assert document_results[0][0].error.code == "InvalidDocument"
+
+        assert not document_results[1][0].is_error
+        assert isinstance(document_results[1][0], ExtractSummaryResult)

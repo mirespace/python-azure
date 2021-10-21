@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class PolicySetDefinitionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,9 +44,9 @@ class PolicySetDefinitionsOperations:
     async def create_or_update(
         self,
         policy_set_definition_name: str,
-        parameters: "models.PolicySetDefinition",
-        **kwargs
-    ) -> "models.PolicySetDefinition":
+        parameters: "_models.PolicySetDefinition",
+        **kwargs: Any
+    ) -> "_models.PolicySetDefinition":
         """Creates or updates a policy set definition.
 
         This operation creates or updates a policy set definition in the given subscription with the
@@ -61,7 +61,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,7 +113,7 @@ class PolicySetDefinitionsOperations:
     async def delete(
         self,
         policy_set_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy set definition.
 
@@ -166,8 +166,8 @@ class PolicySetDefinitionsOperations:
     async def get(
         self,
         policy_set_definition_name: str,
-        **kwargs
-    ) -> "models.PolicySetDefinition":
+        **kwargs: Any
+    ) -> "_models.PolicySetDefinition":
         """Retrieves a policy set definition.
 
         This operation retrieves the policy set definition in the given subscription with the given
@@ -180,7 +180,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -223,8 +223,8 @@ class PolicySetDefinitionsOperations:
     async def get_built_in(
         self,
         policy_set_definition_name: str,
-        **kwargs
-    ) -> "models.PolicySetDefinition":
+        **kwargs: Any
+    ) -> "_models.PolicySetDefinition":
         """Retrieves a built in policy set definition.
 
         This operation retrieves the built-in policy set definition with the given name.
@@ -236,7 +236,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -277,8 +277,8 @@ class PolicySetDefinitionsOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves the policy set definitions for a subscription.
 
         This operation retrieves a list of all the policy set definitions in the given subscription.
@@ -288,7 +288,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -345,8 +345,8 @@ class PolicySetDefinitionsOperations:
 
     def list_built_in(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves built-in policy set definitions.
 
         This operation retrieves a list of all the built-in policy set definitions.
@@ -356,7 +356,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -411,9 +411,9 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        parameters: "models.PolicySetDefinition",
-        **kwargs
-    ) -> "models.PolicySetDefinition":
+        parameters: "_models.PolicySetDefinition",
+        **kwargs: Any
+    ) -> "_models.PolicySetDefinition":
         """Creates or updates a policy set definition.
 
         This operation creates or updates a policy set definition in the given management group with
@@ -430,7 +430,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -483,7 +483,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy set definition.
 
@@ -540,8 +540,8 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        **kwargs
-    ) -> "models.PolicySetDefinition":
+        **kwargs: Any
+    ) -> "_models.PolicySetDefinition":
         """Retrieves a policy set definition.
 
         This operation retrieves the policy set definition in the given management group with the given
@@ -556,7 +556,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -599,8 +599,8 @@ class PolicySetDefinitionsOperations:
     def list_by_management_group(
         self,
         management_group_id: str,
-        **kwargs
-    ) -> AsyncIterable["models.PolicySetDefinitionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves all policy set definitions in management group.
 
         This operation retrieves a list of all the a policy set definition in the given management
@@ -613,7 +613,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

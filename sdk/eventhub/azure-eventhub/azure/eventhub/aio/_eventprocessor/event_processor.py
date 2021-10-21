@@ -20,14 +20,16 @@ import asyncio
 import logging
 from functools import partial
 
-from azure.eventhub import EventData
+from ..._common import EventData
 from ..._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
+from ..._utils import get_event_links
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .checkpoint_store import CheckpointStore
 from ._ownership_manager import OwnershipManager
 from .utils import get_running_loop
+from .._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -108,7 +110,7 @@ class EventProcessor(
             track_last_enqueued_event_properties
         )
         self._id = str(uuid.uuid4())
-        self._loop = loop or get_running_loop()
+        self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._running = False
 
         self._consumers = {}  # type: Dict[str, EventHubConsumer]
@@ -159,7 +161,7 @@ class EventProcessor(
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 if self._running:
-                    self._tasks[partition_id] = self._loop.create_task(
+                    self._tasks[partition_id] = get_running_loop().create_task(
                         self._receive(partition_id, checkpoint)
                     )
                     _LOGGER.info(
@@ -220,7 +222,8 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
-            with self._context(event):
+            links = get_event_links(event)
+            with self._context(links=links):
                 await self._event_handler(partition_context, event)
         else:
             await self._event_handler(partition_context, event)
@@ -380,7 +383,7 @@ class EventProcessor(
                     )
                     await self._process_error(None, err)  # type: ignore
 
-                await asyncio.sleep(load_balancing_interval, loop=self._loop)
+                await asyncio.sleep(load_balancing_interval, **self._internal_kwargs)
 
     async def stop(self) -> None:
         """Stop the EventProcessor.
@@ -399,5 +402,5 @@ class EventProcessor(
         await self._cancel_tasks_for_partitions(pids)
         _LOGGER.info("EventProcessor %r tasks have been cancelled.", self._id)
         while self._tasks:
-            await asyncio.sleep(1, loop=self._loop)
+            await asyncio.sleep(1, **self._internal_kwargs)
         _LOGGER.info("EventProcessor %r has been stopped.", self._id)

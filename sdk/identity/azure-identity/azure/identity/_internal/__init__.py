@@ -3,9 +3,31 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import TYPE_CHECKING
+
 from six.moves.urllib_parse import urlparse
 
 from .._constants import EnvironmentVariables, KnownAuthorities
+
+if TYPE_CHECKING:
+    from typing import Any, Optional
+
+try:
+    from contextvars import ContextVar
+
+    within_credential_chain = ContextVar("within_credential_chain", default=False)
+except ImportError:
+    # No ContextVar on Python < 3.7. Credentials will behave as if they're never in a chain i.e. they will log fully.
+
+    class AlwaysFalse:
+        # pylint:disable=no-self-use
+        def get(self):
+            return False
+
+        def set(self, _):
+            pass
+
+    within_credential_chain = AlwaysFalse()  # type: ignore
 
 
 def normalize_authority(authority):
@@ -33,8 +55,8 @@ VALID_TENANT_ID_CHARACTERS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn
 
 
 def validate_tenant_id(tenant_id):
-    """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant id"""
     # type: (str) -> None
+    """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant id"""
     if not tenant_id or any(c not in VALID_TENANT_ID_CHARACTERS for c in tenant_id):
         raise ValueError(
             "Invalid tenant id provided. You can locate your tenant id by following the instructions here: "
@@ -42,13 +64,24 @@ def validate_tenant_id(tenant_id):
         )
 
 
+def resolve_tenant(default_tenant, tenant_id=None, **_):
+    # type: (str, Optional[str], **Any) -> str
+    """Returns the correct tenant for a token request given a credential's configuration"""
+    if (
+        tenant_id is None
+        or default_tenant == "adfs"
+        or os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH)
+    ):
+        return default_tenant
+
+    return tenant_id
+
+
 # pylint:disable=wrong-import-position
 from .aad_client import AadClient
 from .aad_client_base import AadClientBase
 from .auth_code_redirect_handler import AuthCodeRedirectServer
 from .aadclient_certificate import AadClientCertificate
-from .certificate_credential_base import CertificateCredentialBase
-from .client_secret_credential_base import ClientSecretCredentialBase
 from .decorators import wrap_exceptions
 from .interactive import InteractiveCredential
 
@@ -72,10 +105,9 @@ __all__ = [
     "AadClientBase",
     "AuthCodeRedirectServer",
     "AadClientCertificate",
-    "CertificateCredentialBase",
-    "ClientSecretCredentialBase",
     "get_default_authority",
     "InteractiveCredential",
     "normalize_authority",
+    "resolve_tenant",
     "wrap_exceptions",
 ]

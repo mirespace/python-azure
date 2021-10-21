@@ -8,59 +8,34 @@ import pytest
 import functools
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_content_result
 from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalClientPreparer as _GlobalClientPreparer
+from testcase import FormRecognizerTest
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import FormRecognizerPreparer
 
 
-GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestContentFromUrl(FormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
-    def test_content_encoded_url(self, client):
-        with pytest.raises(HttpResponseError) as e:
-            poller = client.begin_recognize_content_from_url("https://fakeuri.com/blank%20space")
-        client.close()
-        self.assertIn("https://fakeuri.com/blank%20space", e.value.response.request.body)
-
-    @GlobalFormRecognizerAccountPreparer()
-    def test_content_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        with self.assertRaises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
-    def test_content_url_auth_successful_key(self, client):
-        poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
-        result = poller.result()
-
-    @GlobalFormRecognizerAccountPreparer()
-    def test_content_url_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
-    def test_content_bad_url(self, client):
-        with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_content_from_url("https://badurl.jpg")
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_url_pass_stream(self, client):
         with open(self.receipt_jpg, "rb") as receipt:
             with self.assertRaises(HttpResponseError):
                 poller = client.begin_recognize_content_from_url(receipt)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_url_transform_pdf(self, client):
         responses = []
 
@@ -80,8 +55,8 @@ class TestContentFromUrl(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_url_pdf(self, client):
         poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
         result = poller.result()
@@ -90,11 +65,11 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 3)
-        self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].column_count, 5)
         self.assertEqual(layout.tables[0].page_number, 1)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_url_transform_jpg(self, client):
         responses = []
 
@@ -114,8 +89,8 @@ class TestContentFromUrl(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_url_jpg(self, client):
         poller = client.begin_recognize_content_from_url(self.form_url_jpg)
         result = poller.result()
@@ -124,14 +99,14 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 5)
-        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[0].column_count, 4)
         self.assertEqual(layout.tables[1].row_count, 4)
         self.assertEqual(layout.tables[1].column_count, 2)
         self.assertEqual(layout.tables[0].page_number, 1)
         self.assertEqual(layout.tables[1].page_number, 1)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_multipage_url(self, client):
         poller = client.begin_recognize_content_from_url(self.multipage_url_pdf)
         result = poller.result()
@@ -139,8 +114,8 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(len(result), 3)
         self.assertFormPagesHasValues(result)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_multipage_transform_url(self, client):
         responses = []
 
@@ -160,8 +135,8 @@ class TestContentFromUrl(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     @pytest.mark.live_test_only
     def test_content_continuation_token(self, client):
         initial_poller = client.begin_recognize_content_from_url(self.form_url_jpg)
@@ -172,8 +147,8 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_multipage_table_span_pdf(self, client):
         poller = client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
         result = poller.result()
@@ -195,29 +170,8 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.tables[0].page_number, 2)
         self.assertFormPagesHasValues(result)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
-    def test_content_multipage_table_span_transform(self, client):
-        responses = []
-
-        def callback(raw_response, _, headers):
-            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_layout = prepare_content_result(analyze_result)
-            responses.append(analyze_result)
-            responses.append(extracted_layout)
-
-        poller = client.begin_recognize_content_from_url(self.multipage_table_url_pdf, cls=callback)
-        result = poller.result()
-        raw_response = responses[0]
-        layout = responses[1]
-        page_results = raw_response.analyze_result.page_results
-        read_results = raw_response.analyze_result.read_results
-
-        # Check form pages
-        self.assertFormPagesTransformCorrect(layout, read_results, page_results)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_selection_marks(self, client):
         poller = client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
         result = poller.result()
@@ -226,8 +180,8 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_content_selection_marks_v2(self, client):
         poller = client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
         result = poller.result()
@@ -236,8 +190,8 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_specify_pages(self, client):
         poller = client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1"])
         result = poller.result()
@@ -255,93 +209,33 @@ class TestContentFromUrl(FormRecognizerTest):
         result = poller.result()
         assert len(result) == 3
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
+    def test_content_reading_order(self, client):
+        poller = client.begin_recognize_content_from_url(self.form_url_jpg, reading_order="natural")
+
+        assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+        result = poller.result()
+        assert result
+
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_language_specified(self, client):
         poller = client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
         assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
-        poller.wait()
+        result = poller.result()
+        assert result
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer()
     def test_content_language_error(self, client):
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_content_from_url(self.form_url_jpg, language="not a language")
         assert "NotSupportedLanguage" == e.value.error.code
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerPreparer()
+    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_content_language_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_content_from_url(self.form_url_jpg, language="en")
-        assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(language="german")
-    def test_content_language_german(self, client, language_form):
-        poller = client.begin_recognize_content_from_url(language_form, language="de")
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertFormPagesHasValues(result)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(language="chinese_simplified")
-    def test_content_language_chinese_simplified(self, client, language_form):
-        poller = client.begin_recognize_content_from_url(language_form, language="zh-Hans")
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertFormPagesHasValues(result)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(language="dutch")
-    def test_content_language_dutch(self, client, language_form):
-        poller = client.begin_recognize_content_from_url(language_form, language="nl")
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertFormPagesHasValues(result)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(language="french")
-    def test_content_language_french(self, client, language_form):
-        poller = client.begin_recognize_content_from_url(language_form, language="fr")
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertFormPagesHasValues(result)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(language="italian")
-    def test_content_language_italian(self, client, language_form):
-        poller = client.begin_recognize_content_from_url(language_form, language="it")
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertFormPagesHasValues(result)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(language="portuguese")
-    def test_content_language_portuguese(self, client, language_form):
-        poller = client.begin_recognize_content_from_url(language_form, language="pt")
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertFormPagesHasValues(result)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(language="spanish")
-    def test_content_language_spanish(self, client, language_form):
-        poller = client.begin_recognize_content_from_url(language_form, language="es")
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertFormPagesHasValues(result)
+        assert "'language' is only available for API version V2_1 and up" in str(e.value)

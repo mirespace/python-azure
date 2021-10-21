@@ -28,7 +28,7 @@ class ConfigurationsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -49,7 +49,7 @@ class ConfigurationsOperations:
         server_name: str,
         configuration_name: str,
         parameters: "_models.Configuration",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Configuration"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Configuration"]]
         error_map = {
@@ -106,7 +106,7 @@ class ConfigurationsOperations:
         server_name: str,
         configuration_name: str,
         parameters: "_models.Configuration",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Configuration"]:
         """Updates a configuration of a server.
 
@@ -117,15 +117,15 @@ class ConfigurationsOperations:
         :param configuration_name: The name of the server configuration.
         :type configuration_name: str
         :param parameters: The required parameters for updating a server configuration.
-        :type parameters: ~maria_db_management_client.models.Configuration
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.Configuration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Configuration or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~maria_db_management_client.models.Configuration]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.rdbms.mariadb.models.Configuration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -181,7 +181,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Configuration":
         """Gets information about a configuration of server.
 
@@ -193,7 +193,7 @@ class ConfigurationsOperations:
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Configuration, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.Configuration
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.Configuration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Configuration"]
@@ -242,7 +242,7 @@ class ConfigurationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ConfigurationListResult"]:
         """List all the configurations in a given server.
 
@@ -252,7 +252,7 @@ class ConfigurationsOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ConfigurationListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.ConfigurationListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.ConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationListResult"]

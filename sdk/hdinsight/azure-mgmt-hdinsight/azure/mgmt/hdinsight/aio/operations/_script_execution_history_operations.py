@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ScriptExecutionHistoryOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,8 +45,8 @@ class ScriptExecutionHistoryOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ScriptActionExecutionHistoryList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ScriptActionExecutionHistoryList"]:
         """Lists all scripts' execution history for the specified cluster.
 
         :param resource_group_name: The name of the resource group.
@@ -58,12 +58,12 @@ class ScriptExecutionHistoryOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hdinsight.models.ScriptActionExecutionHistoryList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScriptActionExecutionHistoryList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScriptActionExecutionHistoryList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -105,7 +105,7 @@ class ScriptExecutionHistoryOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -121,7 +121,7 @@ class ScriptExecutionHistoryOperations:
         resource_group_name: str,
         cluster_name: str,
         script_execution_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Promotes the specified ad-hoc script execution to a persisted script.
 
@@ -141,7 +141,7 @@ class ScriptExecutionHistoryOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -168,7 +168,7 @@ class ScriptExecutionHistoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

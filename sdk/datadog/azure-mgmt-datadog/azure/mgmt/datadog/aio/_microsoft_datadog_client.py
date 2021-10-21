@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -17,13 +18,8 @@ if TYPE_CHECKING:
 
 from ._configuration import MicrosoftDatadogClientConfiguration
 from .operations import MarketplaceAgreementsOperations
-from .operations import ApiKeysOperations
-from .operations import HostsOperations
-from .operations import LinkedResourcesOperations
-from .operations import MonitoredResourcesOperations
-from .operations import Operations
 from .operations import MonitorsOperations
-from .operations import RefreshSetPasswordOperations
+from .operations import Operations
 from .operations import TagRulesOperations
 from .operations import SingleSignOnConfigurationsOperations
 from .. import models
@@ -34,27 +30,17 @@ class MicrosoftDatadogClient(object):
 
     :ivar marketplace_agreements: MarketplaceAgreementsOperations operations
     :vartype marketplace_agreements: microsoft_datadog_client.aio.operations.MarketplaceAgreementsOperations
-    :ivar api_keys: ApiKeysOperations operations
-    :vartype api_keys: microsoft_datadog_client.aio.operations.ApiKeysOperations
-    :ivar hosts: HostsOperations operations
-    :vartype hosts: microsoft_datadog_client.aio.operations.HostsOperations
-    :ivar linked_resources: LinkedResourcesOperations operations
-    :vartype linked_resources: microsoft_datadog_client.aio.operations.LinkedResourcesOperations
-    :ivar monitored_resources: MonitoredResourcesOperations operations
-    :vartype monitored_resources: microsoft_datadog_client.aio.operations.MonitoredResourcesOperations
-    :ivar operations: Operations operations
-    :vartype operations: microsoft_datadog_client.aio.operations.Operations
     :ivar monitors: MonitorsOperations operations
     :vartype monitors: microsoft_datadog_client.aio.operations.MonitorsOperations
-    :ivar refresh_set_password: RefreshSetPasswordOperations operations
-    :vartype refresh_set_password: microsoft_datadog_client.aio.operations.RefreshSetPasswordOperations
+    :ivar operations: Operations operations
+    :vartype operations: microsoft_datadog_client.aio.operations.Operations
     :ivar tag_rules: TagRulesOperations operations
     :vartype tag_rules: microsoft_datadog_client.aio.operations.TagRulesOperations
     :ivar single_sign_on_configurations: SingleSignOnConfigurationsOperations operations
     :vartype single_sign_on_configurations: microsoft_datadog_client.aio.operations.SingleSignOnConfigurationsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Microsoft Azure subscription ID.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -79,24 +65,31 @@ class MicrosoftDatadogClient(object):
 
         self.marketplace_agreements = MarketplaceAgreementsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.api_keys = ApiKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.hosts = HostsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.linked_resources = LinkedResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.monitored_resources = MonitoredResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.monitors = MonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.refresh_set_password = RefreshSetPasswordOperations(
+        self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.tag_rules = TagRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.single_sign_on_configurations = SingleSignOnConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

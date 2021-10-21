@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class TopicTypesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,8 +43,8 @@ class TopicTypesOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.TopicTypesListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TopicTypesListResult"]:
         """List topic types.
 
         List all registered topic types.
@@ -54,12 +54,12 @@ class TopicTypesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.TopicTypesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TopicTypesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicTypesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -108,8 +108,8 @@ class TopicTypesOperations:
     async def get(
         self,
         topic_type_name: str,
-        **kwargs
-    ) -> "models.TopicTypeInfo":
+        **kwargs: Any
+    ) -> "_models.TopicTypeInfo":
         """Get a topic type.
 
         Get information about a topic type.
@@ -121,12 +121,12 @@ class TopicTypesOperations:
         :rtype: ~azure.mgmt.eventgrid.models.TopicTypeInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TopicTypeInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicTypeInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -163,8 +163,8 @@ class TopicTypesOperations:
     def list_event_types(
         self,
         topic_type_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.EventTypesListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventTypesListResult"]:
         """List event types.
 
         List event types for a topic type.
@@ -176,12 +176,12 @@ class TopicTypesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventTypesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventTypesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventTypesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

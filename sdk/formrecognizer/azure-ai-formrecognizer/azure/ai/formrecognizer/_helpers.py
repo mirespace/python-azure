@@ -7,30 +7,37 @@
 import re
 import six
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
+from azure.core.exceptions import HttpResponseError
+
 
 POLLING_INTERVAL = 5
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
+
 def _get_deserialize(api_version):
     if api_version == "2.0":
         from ._generated.v2_0 import FormRecognizerClient
-    else:
-        from ._generated.v2_1_preview_2 import FormRecognizerClient
-    return FormRecognizerClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
+    elif api_version == "2.1":
+        from ._generated.v2_1 import FormRecognizerClient
+    elif api_version == "2021-09-30-preview":
+        from ._generated.v2021_09_30_preview import FormRecognizerClient
+    return FormRecognizerClient(  # pylint: disable=protected-access
+        "dummy", "dummy"
+    )._deserialize
 
 
 def get_element_type(element_pointer):
-    word_ref = re.compile(r'/readResults/\d+/lines/\d+/words/\d+')
+    word_ref = re.compile(r"/readResults/\d+/lines/\d+/words/\d+")
     if re.search(word_ref, element_pointer):
         return "word"
 
-    line_ref = re.compile(r'/readResults/\d+/lines/\d+')
+    line_ref = re.compile(r"/readResults/\d+/lines/\d+")
     if re.search(line_ref, element_pointer):
         return "line"
 
-    selection_mark_ref = re.compile(r'/readResults/\d+/selectionMarks/\d+')
+    selection_mark_ref = re.compile(r"/readResults/\d+/selectionMarks/\d+")
     if re.search(selection_mark_ref, element_pointer):
         return "selectionMark"
 
@@ -45,17 +52,17 @@ def get_element(element_pointer, read_result):
         line = indices[1]
         word = indices[2]
         ocr_word = read_result[read].lines[line].words[word]
-        return "word", ocr_word, read+1
+        return "word", ocr_word, read + 1
 
     if get_element_type(element_pointer) == "line":
         line = indices[1]
         ocr_line = read_result[read].lines[line]
-        return "line", ocr_line, read+1
+        return "line", ocr_line, read + 1
 
     if get_element_type(element_pointer) == "selectionMark":
         mark = indices[1]
         selection_mark = read_result[read].selection_marks[mark]
-        return "selectionMark", selection_mark, read+1
+        return "selectionMark", selection_mark, read + 1
 
     return None, None, None
 
@@ -71,16 +78,14 @@ def adjust_value_type(value_type):
 
 
 def adjust_confidence(score):
-    """Adjust confidence when not returned.
-    """
+    """Adjust confidence when not returned."""
     if score is None:
         return 1.0
     return score
 
 
 def adjust_text_angle(text_angle):
-    """Adjust to (-180, 180]
-    """
+    """Adjust to (-180, 180]"""
     if text_angle > 180:
         text_angle -= 360
     return text_angle
@@ -95,15 +100,16 @@ def get_authentication_policy(credential):
             name=COGNITIVE_KEY_HEADER, credential=credential
         )
     elif credential is not None and not hasattr(credential, "get_token"):
-        raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
-                        "or a token credential from azure.identity".format(type(credential)))
+        raise TypeError(
+            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
+        )
 
     return authentication_policy
 
 
 def get_content_type(form):
-    """Source: https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files
-    """
+    """Source: https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files"""
 
     if isinstance(form, six.binary_type):
         return check_beginning_bytes(form)
@@ -113,8 +119,10 @@ def get_content_type(form):
         form.seek(0)
         return check_beginning_bytes(beginning_bytes)
 
-    raise ValueError("Content type could not be auto-detected because the stream was not readable/seekable. "
-                     "Please pass the content_type keyword argument.")
+    raise ValueError(
+        "Content type could not be auto-detected because the stream was not readable/seekable. "
+        "Please pass the content_type keyword argument."
+    )
 
 
 def check_beginning_bytes(form):
@@ -132,7 +140,9 @@ def check_beginning_bytes(form):
             return "image/tiff"
         if form[:2] == b"\x42\x4D":
             return "image/bmp"
-    raise ValueError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
+    raise ValueError(
+        "Content type could not be auto-detected. Please pass the content_type keyword argument."
+    )
 
 
 class TransportWrapper(HttpTransport):
@@ -140,6 +150,7 @@ class TransportWrapper(HttpTransport):
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
+
     def __init__(self, transport):
         self._transport = transport
 
@@ -157,3 +168,26 @@ class TransportWrapper(HttpTransport):
 
     def __exit__(self, *args):  # pylint: disable=arguments-differ
         pass
+
+
+class QuotaExceededPolicy(SansIOHTTPPolicy):
+    """Raises an exception immediately when the call quota volume has been exceeded in a F0
+    tier form recognizer resource. This is to avoid waiting the Retry-After time returned in
+    the response.
+    """
+
+    def on_response(self, request, response):
+        """Is executed after the request comes back from the policy.
+
+        :param request: Request to be modified after returning from the policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: Pipeline response object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
+        http_response = response.http_response
+        if (
+            http_response.status_code in [403, 429]
+            and "Out of call volume quota for FormRecognizer F0 pricing tier"
+            in http_response.text()
+        ):
+            raise HttpResponseError(http_response.text(), response=http_response)

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class AssessmentsMetadataOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,8 +43,8 @@ class AssessmentsMetadataOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.SecurityAssessmentMetadataList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SecurityAssessmentMetadataList"]:
         """Get metadata information on all assessment types.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,7 +52,7 @@ class AssessmentsMetadataOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.SecurityAssessmentMetadataList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadataList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadataList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,8 +106,8 @@ class AssessmentsMetadataOperations:
     async def get(
         self,
         assessment_metadata_name: str,
-        **kwargs
-    ) -> "models.SecurityAssessmentMetadata":
+        **kwargs: Any
+    ) -> "_models.SecurityAssessmentMetadata":
         """Get metadata information on an assessment type.
 
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
@@ -117,7 +117,7 @@ class AssessmentsMetadataOperations:
         :rtype: ~azure.mgmt.security.models.SecurityAssessmentMetadata
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadata"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -158,8 +158,8 @@ class AssessmentsMetadataOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.SecurityAssessmentMetadataList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SecurityAssessmentMetadataList"]:
         """Get metadata information on all assessment types in a specific subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -167,7 +167,7 @@ class AssessmentsMetadataOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.SecurityAssessmentMetadataList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadataList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadataList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -225,8 +225,8 @@ class AssessmentsMetadataOperations:
     async def get_in_subscription(
         self,
         assessment_metadata_name: str,
-        **kwargs
-    ) -> "models.SecurityAssessmentMetadata":
+        **kwargs: Any
+    ) -> "_models.SecurityAssessmentMetadata":
         """Get metadata information on an assessment type in a specific subscription.
 
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
@@ -236,7 +236,7 @@ class AssessmentsMetadataOperations:
         :rtype: ~azure.mgmt.security.models.SecurityAssessmentMetadata
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadata"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -279,9 +279,9 @@ class AssessmentsMetadataOperations:
     async def create_in_subscription(
         self,
         assessment_metadata_name: str,
-        assessment_metadata: "models.SecurityAssessmentMetadata",
-        **kwargs
-    ) -> "models.SecurityAssessmentMetadata":
+        assessment_metadata: "_models.SecurityAssessmentMetadata",
+        **kwargs: Any
+    ) -> "_models.SecurityAssessmentMetadata":
         """Create metadata information on an assessment type in a specific subscription.
 
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
@@ -293,7 +293,7 @@ class AssessmentsMetadataOperations:
         :rtype: ~azure.mgmt.security.models.SecurityAssessmentMetadata
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityAssessmentMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityAssessmentMetadata"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -341,7 +341,7 @@ class AssessmentsMetadataOperations:
     async def delete_in_subscription(
         self,
         assessment_metadata_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete metadata information on an assessment type in a specific subscription, will cause the
         deletion of all the assessments of that type in that subscription.

@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -14,7 +14,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,7 +28,11 @@ extends:
   parameters:
     ServiceDirectory: compute
     Artifacts:
-    - name: azure_mgmt_compute
+    - name: azure-mgmt-compute
       safeName: azuremgmtcompute
-    - name: azure_mgmt_imagebuilder
+    - name: azure-mgmt-imagebuilder
       safeName: azuremgmtimagebuilder
+    - name: azure-mgmt-vmwarecloudsimple
+      safeName: azuremgmtvmwarecloudsimple
+    - name: azure-mgmt-avs
+      safeName: azuremgmtavs

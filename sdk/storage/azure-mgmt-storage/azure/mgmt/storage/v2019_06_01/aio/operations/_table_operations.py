@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class TableOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,16 +46,16 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        **kwargs
-    ) -> "models.Table":
+        **kwargs: Any
+    ) -> "_models.Table":
         """Creates a new table with the specified table name, under the specified account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param table_name: A table name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
@@ -66,7 +66,7 @@ class TableOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.Table
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Table"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Table"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,16 +113,16 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        **kwargs
-    ) -> "models.Table":
+        **kwargs: Any
+    ) -> "_models.Table":
         """Creates a new table with the specified table name, under the specified account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param table_name: A table name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
@@ -133,7 +133,7 @@ class TableOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.Table
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Table"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Table"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -180,16 +180,16 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        **kwargs
-    ) -> "models.Table":
+        **kwargs: Any
+    ) -> "_models.Table":
         """Gets the table with the specified table name, under the specified account if it exists.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param table_name: A table name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
@@ -200,7 +200,7 @@ class TableOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.Table
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Table"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Table"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -247,7 +247,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the table with the specified table name, under the specified account if it exists.
 
@@ -255,8 +255,8 @@ class TableOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param table_name: A table name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
@@ -310,23 +310,23 @@ class TableOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ListTableResource"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ListTableResource"]:
         """Gets a list of all the tables under the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ListTableResource or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storage.v2019_06_01.models.ListTableResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListTableResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListTableResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

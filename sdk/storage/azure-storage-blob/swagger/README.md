@@ -3,23 +3,20 @@
 > see https://aka.ms/autorest
 
 ### Setup
+Install Autorest v3
 ```ps
-cd C:\work
-git clone --recursive https://github.com/Azure/autorest.python.git
-cd autorest.python
-git checkout azure-core
-npm install
+npm install -g autorest
 ```
 
 ### Generation
 ```ps
 cd <swagger-folder>
-autorest --use=C:/work/autorest.python --version=2.0.4280
+autorest --v3 --python
 ```
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-dataplane-preview/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-04-08/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-dataplane-preview/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-10-02/blob.json
 output-folder: ../azure/storage/blob/_generated
 namespace: azure.storage.blob
 no-namespace-folders: true
@@ -99,4 +96,47 @@ directive:
   where: $.parameters.AccessTierOptional
   transform: >
     $["x-ms-enum"].name = "AccessTierOptional";
+```
+
+### EncryptionAlgorithm workaround until Modeler is fixed
+``` yaml
+directive:
+- from: swagger-document
+  where: $.parameters
+  transform: >
+    delete $.EncryptionAlgorithm.enum;
+    $.EncryptionAlgorithm.enum = [
+      "None",
+      "AES256"
+    ];
+```
+
+### Remove ContainerName and BlobName from parameter list since they are not needed
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        if (property.includes('/{containerName}/{blob}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName") && false == param['$ref'].endsWith("#/parameters/Blob"))});
+        } 
+        else if (property.includes('/{containerName}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName"))});
+        }
+    }
+```
+
+### Change to OrMetadata
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions.BlobItemInternal
+  transform: |
+    $.properties.OrMetadata = $.properties.ObjectReplicationMetadata;
+    $.properties.OrMetadata["x-ms-client-name"] = "ObjectReplicationMetadata";
+    delete $.properties.ObjectReplicationMetadata;
 ```

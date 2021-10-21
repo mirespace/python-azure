@@ -553,7 +553,7 @@ class BaseManagedCluster(msrest.serialization.Model):
     :type disk_encryption_set_id: str
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_09_01.models.UserAssignedIdentity]
+     ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterPropertiesIdentityProfileValue]
     """
 
     _validation = {
@@ -586,7 +586,7 @@ class BaseManagedCluster(msrest.serialization.Model):
         'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
         'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{UserAssignedIdentity}'},
+        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ManagedClusterPropertiesIdentityProfileValue}'},
     }
 
     def __init__(
@@ -608,7 +608,7 @@ class BaseManagedCluster(msrest.serialization.Model):
         auto_scaler_profile: Optional["ManagedClusterPropertiesAutoScalerProfile"] = None,
         api_server_access_profile: Optional["ManagedClusterAPIServerAccessProfile"] = None,
         disk_encryption_set_id: Optional[str] = None,
-        identity_profile: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        identity_profile: Optional[Dict[str, "ManagedClusterPropertiesIdentityProfileValue"]] = None,
         **kwargs
     ):
         super(BaseManagedCluster, self).__init__(**kwargs)
@@ -1188,7 +1188,7 @@ class ManagedCluster(Resource, BaseManagedCluster):
     :type disk_encryption_set_id: str
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_09_01.models.UserAssignedIdentity]
+     ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterPropertiesIdentityProfileValue]
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
@@ -1237,7 +1237,7 @@ class ManagedCluster(Resource, BaseManagedCluster):
         'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
         'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{UserAssignedIdentity}'},
+        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ManagedClusterPropertiesIdentityProfileValue}'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -1266,7 +1266,7 @@ class ManagedCluster(Resource, BaseManagedCluster):
         auto_scaler_profile: Optional["ManagedClusterPropertiesAutoScalerProfile"] = None,
         api_server_access_profile: Optional["ManagedClusterAPIServerAccessProfile"] = None,
         disk_encryption_set_id: Optional[str] = None,
-        identity_profile: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        identity_profile: Optional[Dict[str, "ManagedClusterPropertiesIdentityProfileValue"]] = None,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["ManagedClusterSKU"] = None,
         **kwargs
@@ -1416,7 +1416,8 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     :param config: Key-value pairs for configuring an add-on.
     :type config: dict[str, str]
     :ivar identity: Information of user assigned identity used by this add-on.
-    :vartype identity: ~azure.mgmt.containerservice.v2020_09_01.models.UserAssignedIdentity
+    :vartype identity:
+     ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterAddonProfileIdentity
     """
 
     _validation = {
@@ -1427,7 +1428,7 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'config': {'key': 'config', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedIdentity'},
+        'identity': {'key': 'identity', 'type': 'ManagedClusterAddonProfileIdentity'},
     }
 
     def __init__(
@@ -2498,8 +2499,8 @@ class ManagedClusterWindowsProfile(msrest.serialization.Model):
      character :code:`<br>`:code:`<br>` **Max-length:** 20 characters.
     :type admin_username: str
     :param admin_password: Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>` **Max-
-     length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
+     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
+     **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
      conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
      characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
      :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",

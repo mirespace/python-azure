@@ -6,6 +6,7 @@ import os
 import sys
 
 import pytest
+import six
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
 
@@ -13,8 +14,12 @@ if sys.version_info < (3, 5, 3):
     collect_ignore_glob = ["*_async.py"]
 
 
+RECORD_IMDS = "--record-imds"
+
+
 def pytest_addoption(parser):
     parser.addoption("--manual", action="store_true", default=False, help="run manual tests")
+    parser.addoption(RECORD_IMDS, action="store_true", default=False, help="record IMDS live tests")
 
 
 def pytest_configure(config):
@@ -38,8 +43,19 @@ def pytest_collection_modifyitems(config, items):
             test.add_marker(skip_prints)
 
 
+@pytest.fixture(scope="class")
+def record_imds_test(request):
+    """Fixture to control recording IMDS managed identity tests
+
+    Recorded IMDS tests run as expected in playback. However, because they require particular live environments, a
+    custom pytest option ("--record-imds") controls whether they're included in a live test run.
+    """
+    if request.instance.is_live and not request.session.config.getoption(RECORD_IMDS):
+        pytest.skip('Run "pytest {}" to record a live run of this test'.format(RECORD_IMDS))
+
+
 @pytest.fixture()
-def live_service_principal():  # pylint:disable=inconsistent-return-statements
+def live_service_principal():
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
 
     missing_variables = [
@@ -61,44 +77,58 @@ def live_service_principal():  # pylint:disable=inconsistent-return-statements
         }
 
 
-@pytest.fixture()
-def live_certificate(live_service_principal):  # pylint:disable=inconsistent-return-statements,redefined-outer-name
-    """Provides a path to a PEM-encoded certificate with no password"""
+def get_certificate_parameters(content, password_protected_content, password, extension):
+    # type: (bytes, bytes, str, str) -> dict
+    current_directory = os.path.dirname(__file__)
+    parameters = {
+        "cert_bytes": six.ensure_binary(content),
+        "cert_path": os.path.join(current_directory, "certificate." + extension),
+        "cert_with_password_bytes": six.ensure_binary(password_protected_content),
+        "cert_with_password_path": os.path.join(current_directory, "certificate-with-password." + extension),
+        "password": password,
+    }
 
-    pem_content = os.environ.get("PEM_CONTENT")
-    if not pem_content:
-        pytest.skip("Expected PEM content in environment variable 'PEM_CONTENT'")
-        return
-
-    pem_path = os.path.join(os.path.dirname(__file__), "certificate.pem")
     try:
-        with open(pem_path, "w") as pem_file:
-            pem_file.write(pem_content)
-        return dict(live_service_principal, cert_path=pem_path)
+        with open(parameters["cert_path"], "wb") as f:
+            f.write(parameters["cert_bytes"])
+        with open(parameters["cert_with_password_path"], "wb") as f:
+            f.write(parameters["cert_with_password_bytes"])
     except IOError as ex:
-        pytest.skip("Failed to write file '{}': {}".format(pem_path, ex))
+        pytest.skip("Failed to write a file: {}".format(ex))
+
+    return parameters
 
 
 @pytest.fixture()
-def live_certificate_with_password(live_service_principal):
-    """Provides a path to a PEM-encoded, password-protected certificate, and its password"""
-
-    pem_content = os.environ.get("PEM_CONTENT_PASSWORD_PROTECTED")
+def live_pem_certificate(live_service_principal):
+    content = os.environ.get("PEM_CONTENT")
+    password_protected_content = os.environ.get("PEM_CONTENT_PASSWORD_PROTECTED")
     password = os.environ.get("CERTIFICATE_PASSWORD")
-    if not (pem_content and password):
-        pytest.skip(
-            "Expected password-protected PEM content in environment variable 'PEM_CONTENT_PASSWORD_PROTECTED'"
-            + " and the password in 'CERTIFICATE_PASSWORD'"
-        )
-        return
 
-    pem_path = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
-    try:
-        with open(pem_path, "w") as pem_file:
-            pem_file.write(pem_content)
-        return dict(live_service_principal, cert_path=pem_path, password=password)
-    except IOError as ex:
-        pytest.skip("Failed to write file '{}': {}".format(pem_path, ex))
+    if content and password_protected_content and password:
+        parameters = get_certificate_parameters(content, password_protected_content, password, "pem")
+        return dict(live_service_principal, **parameters)
+
+    pytest.skip("Missing PEM certificate configuration")
+
+
+@pytest.fixture()
+def live_pfx_certificate(live_service_principal):
+    # PFX bytes arrive base64 encoded because Key Vault secrets have string values
+    encoded_content = os.environ.get("PFX_CONTENT")
+    encoded_password_protected_content = os.environ.get("PFX_CONTENT_PASSWORD_PROTECTED")
+    password = os.environ.get("CERTIFICATE_PASSWORD")
+
+    if encoded_content and encoded_password_protected_content and password:
+        import base64
+
+        content = base64.b64decode(six.ensure_binary(encoded_content))
+        password_protected_content = base64.b64decode(six.ensure_binary(encoded_password_protected_content))
+
+        parameters = get_certificate_parameters(content, password_protected_content, password, "pfx")
+        return dict(live_service_principal, **parameters)
+
+    pytest.skip("Missing PFX certificate configuration")
 
 
 @pytest.fixture()
@@ -113,6 +143,7 @@ def live_user_details():
         pytest.skip("To test username/password authentication, set $AZURE_USERNAME, $AZURE_PASSWORD, $USER_TENANT")
     else:
         return user_details
+
 
 @pytest.fixture()
 def event_loop():

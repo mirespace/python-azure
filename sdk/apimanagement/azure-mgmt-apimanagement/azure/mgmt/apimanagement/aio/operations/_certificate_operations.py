@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class CertificateOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,9 @@ class CertificateOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.CertificateCollection"]:
+        is_key_vault_refresh_failed: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.CertificateCollection"]:
         """Lists a collection of all certificates in the specified service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -67,17 +68,20 @@ class CertificateOperations:
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param is_key_vault_refresh_failed: When set to true, the response contains only certificates
+         entities which failed refresh.
+        :type is_key_vault_refresh_failed: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateCollection or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.CertificateCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -102,6 +106,8 @@ class CertificateOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if is_key_vault_refresh_failed is not None:
+                    query_parameters['isKeyVaultRefreshFailed'] = self._serialize.query("is_key_vault_refresh_failed", is_key_vault_refresh_failed, 'bool')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -125,7 +131,7 @@ class CertificateOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -141,7 +147,7 @@ class CertificateOperations:
         resource_group_name: str,
         service_name: str,
         certificate_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the certificate specified by its identifier.
 
@@ -162,7 +168,7 @@ class CertificateOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -189,7 +195,7 @@ class CertificateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -206,8 +212,8 @@ class CertificateOperations:
         resource_group_name: str,
         service_name: str,
         certificate_id: str,
-        **kwargs
-    ) -> "models.CertificateContract":
+        **kwargs: Any
+    ) -> "_models.CertificateContract":
         """Gets the details of the certificate specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -222,12 +228,12 @@ class CertificateOperations:
         :rtype: ~azure.mgmt.apimanagement.models.CertificateContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -254,7 +260,7 @@ class CertificateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -272,10 +278,10 @@ class CertificateOperations:
         resource_group_name: str,
         service_name: str,
         certificate_id: str,
-        parameters: "models.CertificateCreateOrUpdateParameters",
+        parameters: "_models.CertificateCreateOrUpdateParameters",
         if_match: Optional[str] = None,
-        **kwargs
-    ) -> "models.CertificateContract":
+        **kwargs: Any
+    ) -> "_models.CertificateContract":
         """Creates or updates the certificate being used for authentication with the backend.
 
         :param resource_group_name: The name of the resource group.
@@ -295,12 +301,12 @@ class CertificateOperations:
         :rtype: ~azure.mgmt.apimanagement.models.CertificateContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -334,7 +340,7 @@ class CertificateOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -358,7 +364,7 @@ class CertificateOperations:
         service_name: str,
         certificate_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specific certificate.
 
@@ -382,7 +388,7 @@ class CertificateOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -410,10 +416,76 @@ class CertificateOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}'}  # type: ignore
+
+    async def refresh_secret(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        certificate_id: str,
+        **kwargs: Any
+    ) -> "_models.CertificateContract":
+        """From KeyVault, Refresh the certificate being used for authentication with the backend.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param certificate_id: Identifier of the certificate entity. Must be unique in the current API
+         Management service instance.
+        :type certificate_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CertificateContract, or the result of cls(response)
+        :rtype: ~azure.mgmt.apimanagement.models.CertificateContract
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateContract"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-12-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.refresh_secret.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'certificateId': self._serialize.url("certificate_id", certificate_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        deserialized = self._deserialize('CertificateContract', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    refresh_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}/refreshSecret'}  # type: ignore

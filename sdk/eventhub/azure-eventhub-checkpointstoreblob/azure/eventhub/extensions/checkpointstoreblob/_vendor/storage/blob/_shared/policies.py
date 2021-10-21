@@ -13,7 +13,6 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
 import types
-import platform
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
@@ -40,7 +39,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
-from .._version import VERSION
 from .models import LocationMode
 
 try:
@@ -77,7 +75,7 @@ def retry_hook(settings, **kwargs):
 
 
 def is_retry(response, mode):
-    """Is this method/status code retryable? (Based on whitelists and control
+    """Is this method/status code retryable? (Based on allowlists and control
     variables such as the number of total retries to allow, whether to
     respect the Retry-After header, whether this header is present, and
     whether the returned status code is on the list of status codes to
@@ -257,32 +255,6 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                         _LOGGER.debug(response.http_response.text())
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log response: %s", repr(err))
-
-
-class StorageUserAgentPolicy(SansIOHTTPPolicy):
-
-    _USERAGENT = "User-Agent"
-
-    def __init__(self, **kwargs):
-        self._application = kwargs.pop('user_agent', None)
-        storage_sdk = kwargs.pop('storage_sdk')
-        self._user_agent = "azsdk-python-storage-{}/{} Python/{} ({})".format(
-            storage_sdk,
-            VERSION,
-            platform.python_version(),
-            platform.platform())
-        super(StorageUserAgentPolicy, self).__init__()
-
-    def on_request(self, request):
-        existing = request.http_request.headers.get(self._USERAGENT, "")
-        app_string = request.context.options.pop('user_agent', None) or self._application
-        if app_string:
-            request.http_request.headers[self._USERAGENT] = "{} {}".format(
-                app_string, self._user_agent)
-        else:
-            request.http_request.headers[self._USERAGENT] = self._user_agent
-        if existing:
-            request.http_request.headers[self._USERAGENT] += " " + existing
 
 
 class StorageRequestHook(SansIOHTTPPolicy):
@@ -484,7 +456,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
         else:
             # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the whitelist
+            # status_forcelist and a the given method is in the allowlist
             if response:
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(request, http_response=response))

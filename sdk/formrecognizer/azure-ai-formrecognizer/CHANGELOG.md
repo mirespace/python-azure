@@ -1,6 +1,97 @@
 # Release History
 
-## 3.1.0b2 (Unreleased)
+## 3.2.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 3.2.0b1 (2021-10-07)
+
+This version of the SDK defaults to the latest supported API version, which is currently 2021-09-30-preview.
+
+> Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features of the Form Recognizer service. Please see the [Migration Guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md) for detailed instructions on how to update application code from client library version 3.1.X or lower to the latest version. Also, please refer to the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md) for more information about the library. 
+
+### Features Added
+- Added new `DocumentAnalysisClient` with  `begin_analyze_document` and `begin_analyze_document_from_url` methods. Use these methods with the latest Form Recognizer 
+API version to analyze documents, with prebuilt and custom models.
+- Added new models to use with the new `DocumentAnalysisClient`: `AnalyzeResult`, `AnalyzedDocument`, `BoundingRegion`, `DocumentElement`, `DocumentEntity`, `DocumentField`, `DocumentKeyValuePair`, `DocumentKeyValueElement`, `DocumentLine`, `DocumentPage`, `DocumentSelectionMark`, `DocumentSpan`, `DocumentStyle`, `DocumentTable`, `DocumentTableCell`, `DocumentWord`.
+- Added new `DocumentModelAdministrationClient` with methods: `begin_build_model`, `begin_create_composed_model`, `begin_copy_model`, `get_copy_authorization`, `get_model`, `delete_model`, `list_models`, `get_operation`, `list_operations`, `get_account_info`, `get_document_analysis_client`.
+- Added new models to use with the new `DocumentModelAdministrationClient`: `DocumentModel`, `DocumentModelInfo`, `DocTypeInfo`, `ModelOperation`, `ModelOperationInfo`, `AccountInfo`, `DocumentAnalysisError`, `DocumentAnalysisInnerError`.
+- Added samples using the `DocumentAnalysisClient` and `DocumentModelAdministrationClient` under `/samples/v3.2-beta`.
+- Added `DocumentAnalysisApiVersion` to be used with `DocumentAnalysisClient` and `DocumentModelAdministrationClient`.
+
+### Other Changes
+- Python 3.5 is no longer supported in this release.
+
+## 3.1.2 (2021-08-10)
+
+### Bugs Fixed
+- A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Form Recognizer
+resource.
+
+### Other Changes
+- Bumped `azure-core` minimum dependency version from `1.8.2` to `1.13.0`
+
+## 3.1.1 (2021-06-08)
+
+**Bug Fixes**
+
+- Handles invoices that do not have sub-line item fields detected.
+
+## 3.1.0 (2021-05-26)
+
+This version of the SDK defaults to the latest supported API version, which currently is v2.1
+
+Note: this version will be the last to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+
+
+**Breaking Changes**
+
+- `begin_recognize_id_documents` renamed to `begin_recognize_identity_documents`.
+- `begin_recognize_id_documents_from_url` renamed to `begin_recognize_identity_documents_from_url`.
+- The model `TextAppearance` now includes the properties `style_name` and `style_confidence` that were part of the `TextStyle` object.
+- Removed the model `TextStyle`.
+- Removed field value types "gender" and "country" from the `FieldValueType` enum.
+- Added field value type "countryRegion" to the `FieldValueType` enum.
+- Renamed field name for identity documents from "Country" to "CountryRegion".
+
+**New features**
+
+- Added `to_dict` and `from_dict` methods to all of the models
+
+## 3.1.0b4 (2021-04-06)
+
+**New features**
+
+- New methods `begin_recognize_id_documents` and `begin_recognize_id_documents_from_url` introduced to the SDK. Use these methods to recognize data from identity documents.
+- New field value types "gender" and "country" described in the `FieldValueType` enum.
+- Content-type `image/bmp` now supported by custom forms and training methods.
+- Added keyword argument `pages` for business cards, receipts, custom forms, and invoices
+to specify which page to process of the document.
+- Added keyword argument `reading_order` to `begin_recognize_content` and `begin_recognize_content_from_url`.
+
+**Dependency Updates**
+
+- Bumped `msrest` requirement from `0.6.12` to `0.6.21`.
+
+## 3.1.0b3 (2021-02-09)
+
+**Breaking Changes**
+
+- `Appearance` is renamed to `TextAppearance`
+- `Style` is renamed to `TextStyle`
+- Client property `api_version` is no longer exposed. Pass keyword argument `api_version` into the client to select the
+API version
+
+**Dependency Updates**
+
+- Bumped `six` requirement from `1.6` to `1.11.0`.
+
+## 3.1.0b2 (2021-01-12)
 
 **Bug Fixes**
 
@@ -124,15 +215,15 @@ CustomFormModel` and `CustomFormModelInfo`
 - `models` property of `CustomFormModel` is renamed to `submodels`
 - `CustomFormSubModel` is renamed to `CustomFormSubmodel`
 - `begin_recognize_receipts` APIs now return a list of `RecognizedReceipt` instead of `USReceipt`
-- Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
-- Removed `USReceiptItem`. To see how to access the individual items on a receipt, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
-- Removed `USReceiptType` and the `receipt_type` property from `RecognizedReceipt`. See the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceiptItem`. To see how to access the individual items on a receipt, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceiptType` and the `receipt_type` property from `RecognizedReceipt`. See the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
 
 **New features**
 
 - Support to copy a custom model from one Form Recognizer resource to another
 - Authentication using `azure-identity` credentials now supported
-  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
+  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) for more information
 - `page_number` attribute has been added to `FormTable`
 - All long running operation methods now accept the keyword argument `continuation_token` to restart the poller from a saved state
 

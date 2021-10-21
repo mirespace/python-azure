@@ -9,7 +9,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties
+from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties, ImmutabilityPolicy
 from ._shared.models import get_enum_value
 
 from ._shared.response_handlers import deserialize_metadata
@@ -20,10 +20,18 @@ if TYPE_CHECKING:
     from ._generated.models import PageList
 
 
+def deserialize_pipeline_response_into_cls(cls_method, response, obj, headers):
+    try:
+        deserialized_response = response.http_response
+    except AttributeError:
+        deserialized_response = response
+    return cls_method(deserialized_response, obj, headers)
+
+
 def deserialize_blob_properties(response, obj, headers):
     blob_properties = BlobProperties(
         metadata=deserialize_metadata(response, obj, headers),
-        object_replication_source_properties=deserialize_ors_policies(response.headers),
+        object_replication_source_properties=deserialize_ors_policies(response.http_response.headers),
         **headers
     )
     if 'Content-Range' in headers:
@@ -64,7 +72,7 @@ def deserialize_ors_policies(policy_dictionary):
 def deserialize_blob_stream(response, obj, headers):
     blob_properties = deserialize_blob_properties(response, obj, headers)
     obj.properties = blob_properties
-    return response.location_mode, obj
+    return response.http_response.location_mode, obj
 
 
 def deserialize_container_properties(response, obj, headers):
@@ -145,6 +153,9 @@ def get_blob_properties_from_generated_code(generated):
     blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
     blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
     blob.last_accessed_on = generated.properties.last_accessed_on
+    blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
+    blob.has_legal_hold = generated.properties.legal_hold
+    blob.has_versions_only = generated.has_versions_only
     return blob
 
 

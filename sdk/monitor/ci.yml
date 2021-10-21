@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -14,7 +14,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -29,7 +29,9 @@ extends:
     ServiceDirectory: monitor
     BuildTargetingString: '*'
     Artifacts:
-    - name: azure_mgmt_monitor
+    - name: azure-mgmt-monitor
       safeName: azuremgmtmonitor
-    - name: microsoft_opentelemetry_exporter_azuremonitor
-      safeName: microsoftopentelemetryexporterazuremonitor
+    - name: azure-monitor-opentelemetry-exporter
+      safeName: azuremonitoropentelemetryexporter
+    - name: azure-monitor-query
+      safeName: azuremonitorquery

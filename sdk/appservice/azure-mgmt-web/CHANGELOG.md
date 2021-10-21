@@ -1,6 +1,661 @@
 # Release History
 
+## 5.0.0 (2021-09-08)
+
+**Features**
+
+  - Model AppServicePlan has a new parameter zone_redundant
+  - Model AppServicePlanPatchResource has a new parameter zone_redundant
+  - Model AppServiceEnvironmentPatchResource has a new parameter zone_redundant
+  - Model AppServiceEnvironmentResource has a new parameter zone_redundant
+  - Model AzureActiveDirectoryRegistration has a new parameter client_secret_certificate_issuer
+  - Model AzureActiveDirectoryRegistration has a new parameter client_secret_certificate_subject_alternative_name
+  - Model AseV3NetworkingConfiguration has a new parameter external_inbound_ip_addresses
+  - Model AseV3NetworkingConfiguration has a new parameter internal_inbound_ip_addresses
+  - Model AppServiceEnvironment has a new parameter zone_redundant
+  - Model ErrorEntity has a new parameter target
+  - Model ErrorEntity has a new parameter details
+
+**Breaking changes**
+
+  - Model TokenStore no longer has parameter kind
+  - Model TokenStore no longer has parameter id
+  - Model TokenStore no longer has parameter name
+  - Model TokenStore no longer has parameter type
+  - Model IdentityProviders no longer has parameter kind
+  - Model IdentityProviders no longer has parameter id
+  - Model IdentityProviders no longer has parameter name
+  - Model IdentityProviders no longer has parameter type
+  - Model Google no longer has parameter kind
+  - Model Google no longer has parameter id
+  - Model Google no longer has parameter name
+  - Model Google no longer has parameter type
+  - Model Nonce no longer has parameter kind
+  - Model Nonce no longer has parameter id
+  - Model Nonce no longer has parameter name
+  - Model Nonce no longer has parameter type
+  - Model AppleRegistration no longer has parameter kind
+  - Model AppleRegistration no longer has parameter id
+  - Model AppleRegistration no longer has parameter name
+  - Model AppleRegistration no longer has parameter type
+  - Model ForwardProxy no longer has parameter kind
+  - Model ForwardProxy no longer has parameter id
+  - Model ForwardProxy no longer has parameter name
+  - Model ForwardProxy no longer has parameter type
+  - Model OpenIdConnectLogin no longer has parameter kind
+  - Model OpenIdConnectLogin no longer has parameter id
+  - Model OpenIdConnectLogin no longer has parameter name
+  - Model OpenIdConnectLogin no longer has parameter type
+  - Model AzureActiveDirectoryRegistration no longer has parameter kind
+  - Model AzureActiveDirectoryRegistration no longer has parameter id
+  - Model AzureActiveDirectoryRegistration no longer has parameter name
+  - Model AzureActiveDirectoryRegistration no longer has parameter type
+  - Model AzureActiveDirectoryLogin no longer has parameter kind
+  - Model AzureActiveDirectoryLogin no longer has parameter id
+  - Model AzureActiveDirectoryLogin no longer has parameter name
+  - Model AzureActiveDirectoryLogin no longer has parameter type
+  - Model TriggeredJobRun no longer has parameter kind
+  - Model TriggeredJobRun no longer has parameter id
+  - Model TriggeredJobRun no longer has parameter name
+  - Model TriggeredJobRun no longer has parameter type
+  - Model AppRegistration no longer has parameter kind
+  - Model AppRegistration no longer has parameter id
+  - Model AppRegistration no longer has parameter name
+  - Model AppRegistration no longer has parameter type
+  - Model VnetInfo no longer has parameter kind
+  - Model VnetInfo no longer has parameter id
+  - Model VnetInfo no longer has parameter name
+  - Model VnetInfo no longer has parameter type
+  - Model CustomOpenIdConnectProvider no longer has parameter kind
+  - Model CustomOpenIdConnectProvider no longer has parameter id
+  - Model CustomOpenIdConnectProvider no longer has parameter name
+  - Model CustomOpenIdConnectProvider no longer has parameter type
+  - Model TwitterRegistration no longer has parameter kind
+  - Model TwitterRegistration no longer has parameter id
+  - Model TwitterRegistration no longer has parameter name
+  - Model TwitterRegistration no longer has parameter type
+  - Model OpenIdConnectConfig no longer has parameter kind
+  - Model OpenIdConnectConfig no longer has parameter id
+  - Model OpenIdConnectConfig no longer has parameter name
+  - Model OpenIdConnectConfig no longer has parameter type
+  - Model AzureStaticWebApps no longer has parameter kind
+  - Model AzureStaticWebApps no longer has parameter id
+  - Model AzureStaticWebApps no longer has parameter name
+  - Model AzureStaticWebApps no longer has parameter type
+  - Model LegacyMicrosoftAccount no longer has parameter kind
+  - Model LegacyMicrosoftAccount no longer has parameter id
+  - Model LegacyMicrosoftAccount no longer has parameter name
+  - Model LegacyMicrosoftAccount no longer has parameter type
+  - Model AzureActiveDirectory no longer has parameter kind
+  - Model AzureActiveDirectory no longer has parameter id
+  - Model AzureActiveDirectory no longer has parameter name
+  - Model AzureActiveDirectory no longer has parameter type
+  - Model GitHub no longer has parameter kind
+  - Model GitHub no longer has parameter id
+  - Model GitHub no longer has parameter name
+  - Model GitHub no longer has parameter type
+  - Model HttpSettings no longer has parameter kind
+  - Model HttpSettings no longer has parameter id
+  - Model HttpSettings no longer has parameter name
+  - Model HttpSettings no longer has parameter type
+  - Model DetectorDefinition no longer has parameter kind
+  - Model DetectorDefinition no longer has parameter id
+  - Model DetectorDefinition no longer has parameter name
+  - Model DetectorDefinition no longer has parameter type
+  - Model Twitter no longer has parameter kind
+  - Model Twitter no longer has parameter id
+  - Model Twitter no longer has parameter name
+  - Model Twitter no longer has parameter type
+  - Model JwtClaimChecks no longer has parameter kind
+  - Model JwtClaimChecks no longer has parameter id
+  - Model JwtClaimChecks no longer has parameter name
+  - Model JwtClaimChecks no longer has parameter type
+  - Model CookieExpiration no longer has parameter kind
+  - Model CookieExpiration no longer has parameter id
+  - Model CookieExpiration no longer has parameter name
+  - Model CookieExpiration no longer has parameter type
+  - Model Apple no longer has parameter kind
+  - Model Apple no longer has parameter id
+  - Model Apple no longer has parameter name
+  - Model Apple no longer has parameter type
+  - Model OpenIdConnectRegistration no longer has parameter kind
+  - Model OpenIdConnectRegistration no longer has parameter id
+  - Model OpenIdConnectRegistration no longer has parameter name
+  - Model OpenIdConnectRegistration no longer has parameter type
+  - Model Login no longer has parameter kind
+  - Model Login no longer has parameter id
+  - Model Login no longer has parameter name
+  - Model Login no longer has parameter type
+  - Model Facebook no longer has parameter kind
+  - Model Facebook no longer has parameter id
+  - Model Facebook no longer has parameter name
+  - Model Facebook no longer has parameter type
+  - Model ClientRegistration no longer has parameter kind
+  - Model ClientRegistration no longer has parameter id
+  - Model ClientRegistration no longer has parameter name
+  - Model ClientRegistration no longer has parameter type
+  - Model GlobalValidation no longer has parameter kind
+  - Model GlobalValidation no longer has parameter id
+  - Model GlobalValidation no longer has parameter name
+  - Model GlobalValidation no longer has parameter type
+  - Model AuthPlatform no longer has parameter kind
+  - Model AuthPlatform no longer has parameter id
+  - Model AuthPlatform no longer has parameter name
+  - Model AuthPlatform no longer has parameter type
+  - Model FileSystemTokenStore has a new signature
+  - Model AzureActiveDirectoryValidation has a new signature
+  - Model LoginRoutes has a new signature
+  - Model BlobStorageTokenStore has a new signature
+  - Model OpenIdConnectClientCredential has a new signature
+  - Model HttpSettingsRoutes has a new signature
+  - Model LoginScopes has a new signature
+  - Model AllowedAudiencesValidation has a new signature
+  - Model AzureStaticWebAppsRegistration has a new signature
+
+## 4.0.0 (2021-08-03)
+
+**Features**
+
+  - Model AppServicePlan has a new parameter elastic_scale_enabled
+  - Added operation WebAppsOperations.update_swift_virtual_network_connection_with_check_slot
+  - Added operation WebAppsOperations.create_or_update_swift_virtual_network_connection_with_check_slot
+  - Added operation WebAppsOperations.update_swift_virtual_network_connection_with_check
+  - Added operation WebAppsOperations.list_basic_publishing_credentials_policies
+  - Added operation WebAppsOperations.list_basic_publishing_credentials_policies_slot
+
+**Breaking changes**
+
+  - Removed operation WebAppsOperations.get_basic_publishing_credentials_policies_slot
+  - Removed operation WebAppsOperations.get_basic_publishing_credentials_policies
+
+## 3.0.0 (2021-05-25)
+
+**Features**
+
+  - Model SiteAuthSettings has a new parameter config_version
+  - Model CertificatePatchResource has a new parameter domain_validation_method
+  - Model StaticSiteBuildProperties has a new parameter github_action_secret_name_override
+  - Model StaticSiteBuildProperties has a new parameter output_location
+  - Model StaticSiteBuildProperties has a new parameter api_build_command
+  - Model StaticSiteBuildProperties has a new parameter skip_github_action_workflow_generation
+  - Model StaticSiteBuildProperties has a new parameter app_build_command
+  - Model DetectorResponse has a new parameter status
+  - Model DetectorResponse has a new parameter data_providers_metadata
+  - Model DetectorResponse has a new parameter suggested_utterances
+  - Model StaticSitePatchResource has a new parameter key_vault_reference_identity
+  - Model StaticSitePatchResource has a new parameter private_endpoint_connections
+  - Model StaticSitePatchResource has a new parameter user_provided_function_apps
+  - Model StaticSitePatchResource has a new parameter allow_config_file_updates
+  - Model StaticSitePatchResource has a new parameter template_properties
+  - Model StaticSitePatchResource has a new parameter staging_environment_policy
+  - Model StaticSitePatchResource has a new parameter content_distribution_endpoint
+  - Model StaticSitePatchResource has a new parameter provider
+  - Model SiteConfigResource has a new parameter key_vault_reference_identity
+  - Model SiteConfigResource has a new parameter functions_runtime_scale_monitoring_enabled
+  - Model SiteConfigResource has a new parameter acr_user_managed_identity_id
+  - Model SiteConfigResource has a new parameter public_network_access
+  - Model SiteConfigResource has a new parameter website_time_zone
+  - Model SiteConfigResource has a new parameter acr_use_managed_identity_creds
+  - Model SiteConfigResource has a new parameter minimum_elastic_instance_count
+  - Model SiteConfigResource has a new parameter function_app_scale_limit
+  - Model SiteConfigResource has a new parameter azure_storage_accounts
+  - Model ValidateRequest has a new parameter app_service_environment
+  - Model StaticSiteCustomDomainOverviewARMResource has a new parameter status
+  - Model StaticSiteCustomDomainOverviewARMResource has a new parameter error_message
+  - Model StaticSiteCustomDomainOverviewARMResource has a new parameter validation_token
+  - Model AppServicePlan has a new parameter extended_location
+  - Model AppServicePlan has a new parameter kube_environment_profile
+  - Model StaticSiteBuildARMResource has a new parameter user_provided_function_apps
+  - Model AppServiceCertificateOrder has a new parameter contact
+  - Model VnetParameters has a new parameter subnet_resource_id
+  - Model SkuCapacity has a new parameter elastic_maximum
+  - Model ApplicationStackResource has a new parameter is_deprecated
+  - Model StackMajorVersion has a new parameter site_config_properties_dictionary
+  - Model StackMajorVersion has a new parameter app_settings_dictionary
+  - Model StatusCodesBasedTrigger has a new parameter path
+  - Model AppServiceCertificateOrderPatchResource has a new parameter contact
+  - Model BillingMeter has a new parameter multiplier
+  - Model IdentityProviders has a new parameter legacy_microsoft_account
+  - Model IdentityProviders has a new parameter apple
+  - Model IdentityProviders has a new parameter azure_static_web_apps
+  - Model StaticSiteARMResource has a new parameter key_vault_reference_identity
+  - Model StaticSiteARMResource has a new parameter private_endpoint_connections
+  - Model StaticSiteARMResource has a new parameter user_provided_function_apps
+  - Model StaticSiteARMResource has a new parameter identity
+  - Model StaticSiteARMResource has a new parameter allow_config_file_updates
+  - Model StaticSiteARMResource has a new parameter template_properties
+  - Model StaticSiteARMResource has a new parameter staging_environment_policy
+  - Model StaticSiteARMResource has a new parameter content_distribution_endpoint
+  - Model StaticSiteARMResource has a new parameter provider
+  - Model SitePatchResource has a new parameter virtual_network_subnet_id
+  - Model SitePatchResource has a new parameter storage_account_required
+  - Model SitePatchResource has a new parameter key_vault_reference_identity
+  - Model ApiKVReference has a new parameter name
+  - Model ApiKVReference has a new parameter active_version
+  - Model ApiKVReference has a new parameter type
+  - Model ApiKVReference has a new parameter id
+  - Model ApiKVReference has a new parameter kind
+  - Model VnetValidationFailureDetails has a new parameter message
+  - Model VnetValidationFailureDetails has a new parameter warnings
+  - Model Site has a new parameter virtual_network_subnet_id
+  - Model Site has a new parameter storage_account_required
+  - Model Site has a new parameter extended_location
+  - Model Site has a new parameter key_vault_reference_identity
+  - Model Certificate has a new parameter domain_validation_method
+  - Model CsmOperationDescription has a new parameter is_data_action
+  - Model AutoHealTriggers has a new parameter slow_requests_with_path
+  - Model AutoHealTriggers has a new parameter status_codes_range
+  - Model SiteConfig has a new parameter key_vault_reference_identity
+  - Model SiteConfig has a new parameter functions_runtime_scale_monitoring_enabled
+  - Model SiteConfig has a new parameter acr_user_managed_identity_id
+  - Model SiteConfig has a new parameter public_network_access
+  - Model SiteConfig has a new parameter website_time_zone
+  - Model SiteConfig has a new parameter acr_use_managed_identity_creds
+  - Model SiteConfig has a new parameter minimum_elastic_instance_count
+  - Model SiteConfig has a new parameter function_app_scale_limit
+  - Model SiteConfig has a new parameter azure_storage_accounts
+  - Model SlowRequestsBasedTrigger has a new parameter path
+  - Model AppServicePlanPatchResource has a new parameter elastic_scale_enabled
+  - Model AppServicePlanPatchResource has a new parameter kube_environment_profile
+  - Model ApplicationStack has a new parameter is_deprecated
+  - Model SiteSourceControl has a new parameter git_hub_action_configuration
+  - Added operation ProviderOperations.get_function_app_stacks
+  - Added operation ProviderOperations.get_web_app_stacks_for_location
+  - Added operation ProviderOperations.get_web_app_stacks
+  - Added operation ProviderOperations.get_function_app_stacks_for_location
+  - Added operation StaticSitesOperations.get_private_endpoint_connection_list
+  - Added operation StaticSitesOperations.detach_user_provided_function_app_from_static_site_build
+  - Added operation StaticSitesOperations.begin_create_or_update_static_site
+  - Added operation StaticSitesOperations.create_or_update_static_site_build_app_settings
+  - Added operation StaticSitesOperations.begin_create_or_update_static_site_custom_domain
+  - Added operation StaticSitesOperations.list_static_site_app_settings
+  - Added operation StaticSitesOperations.begin_delete_private_endpoint_connection
+  - Added operation StaticSitesOperations.detach_user_provided_function_app_from_static_site
+  - Added operation StaticSitesOperations.begin_register_user_provided_function_app_with_static_site
+  - Added operation StaticSitesOperations.begin_create_zip_deployment_for_static_site
+  - Added operation StaticSitesOperations.begin_register_user_provided_function_app_with_static_site_build
+  - Added operation StaticSitesOperations.list_static_site_configured_roles
+  - Added operation StaticSitesOperations.begin_create_zip_deployment_for_static_site_build
+  - Added operation StaticSitesOperations.begin_detach_static_site
+  - Added operation StaticSitesOperations.get_private_endpoint_connection
+  - Added operation StaticSitesOperations.begin_validate_custom_domain_can_be_added_to_static_site
+  - Added operation StaticSitesOperations.create_or_update_static_site_app_settings
+  - Added operation StaticSitesOperations.begin_delete_static_site_custom_domain
+  - Added operation StaticSitesOperations.get_user_provided_function_app_for_static_site_build
+  - Added operation StaticSitesOperations.get_user_provided_function_app_for_static_site
+  - Added operation StaticSitesOperations.begin_approve_or_reject_private_endpoint_connection
+  - Added operation StaticSitesOperations.begin_delete_static_site_build
+  - Added operation StaticSitesOperations.get_static_site_custom_domain
+  - Added operation StaticSitesOperations.begin_delete_static_site
+  - Added operation StaticSitesOperations.get_user_provided_function_apps_for_static_site
+  - Added operation StaticSitesOperations.get_user_provided_function_apps_for_static_site_build
+  - Added operation StaticSitesOperations.get_private_link_resources
+  - Added operation StaticSitesOperations.list_static_site_build_app_settings
+  - Added operation AppServiceEnvironmentsOperations.get_private_endpoint_connection_list
+  - Added operation AppServiceEnvironmentsOperations.get_private_link_resources
+  - Added operation AppServiceEnvironmentsOperations.get_ase_v3_networking_configuration
+  - Added operation AppServiceEnvironmentsOperations.get_private_endpoint_connection
+  - Added operation AppServiceEnvironmentsOperations.begin_approve_or_reject_private_endpoint_connection
+  - Added operation AppServiceEnvironmentsOperations.begin_delete_private_endpoint_connection
+  - Added operation AppServiceEnvironmentsOperations.update_ase_networking_configuration
+  - Added operation WebAppsOperations.update_ftp_allowed_slot
+  - Added operation WebAppsOperations.get_private_endpoint_connection_list
+  - Added operation WebAppsOperations.get_private_link_resources_slot
+  - Added operation WebAppsOperations.get_site_connection_string_key_vault_reference
+  - Added operation WebAppsOperations.get_ftp_allowed_slot
+  - Added operation WebAppsOperations.get_site_connection_string_key_vault_reference_slot
+  - Added operation WebAppsOperations.get_app_settings_key_vault_references
+  - Added operation WebAppsOperations.get_site_connection_string_key_vault_references_slot
+  - Added operation WebAppsOperations.get_app_settings_key_vault_references_slot
+  - Added operation WebAppsOperations.get_app_setting_key_vault_reference_slot
+  - Added operation WebAppsOperations.get_app_setting_key_vault_reference
+  - Added operation WebAppsOperations.update_scm_allowed_slot
+  - Added operation WebAppsOperations.get_private_endpoint_connection_list_slot
+  - Added operation WebAppsOperations.get_scm_allowed_slot
+  - Added operation WebAppsOperations.get_basic_publishing_credentials_policies_slot
+  - Added operation WebAppsOperations.create_or_update_swift_virtual_network_connection_with_check
+  - Added operation WebAppsOperations.get_private_endpoint_connection_slot
+  - Added operation WebAppsOperations.begin_approve_or_reject_private_endpoint_connection_slot
+  - Added operation WebAppsOperations.get_site_connection_string_key_vault_references
+  - Added operation WebAppsOperations.begin_delete_private_endpoint_connection_slot
+  - Added operation group KubeEnvironmentsOperations
+  - Added operation group GlobalOperations
+  - Added operation group CertificateOrdersDiagnosticsOperations
+
+**Breaking changes**
+
+  - Parameter id of model VirtualNetworkProfile is now required
+  - Operation StaticSitesOperations.list_static_site_build_function_app_settings has a new signature
+  - Operation StaticSitesOperations.list_static_site_build_functions has a new signature
+  - Operation StaticSitesOperations.create_or_update_static_site_build_function_app_settings has a new signature
+  - Operation StaticSitesOperations.get_static_site_build has a new signature
+  - Operation CertificatesOperations.list has a new signature
+  - Operation WebAppsOperations.delete_source_control has a new signature
+  - Operation WebAppsOperations.delete_source_control_slot has a new signature
+  - Model SwiftVirtualNetwork no longer has parameter system_data
+  - Model CertificateOrderAction no longer has parameter system_data
+  - Model GeoRegion no longer has parameter system_data
+  - Model SiteAuthSettings no longer has parameter system_data
+  - Model CsmPublishingCredentialsPoliciesCollection no longer has parameter system_data
+  - Model AddressResponse no longer has parameter system_data
+  - Model SiteLogsConfig no longer has parameter system_data
+  - Model PrivateLinkConnectionApprovalRequestResource no longer has parameter system_data
+  - Model PublicCertificate no longer has parameter system_data
+  - Model Nonce no longer has parameter system_data
+  - Model CertificatePatchResource no longer has parameter system_data
+  - Model StorageMigrationOptions no longer has parameter system_data
+  - Model DiagnosticCategory no longer has parameter system_data
+  - Model DetectorResponse no longer has parameter system_data
+  - Model CustomOpenIdConnectProvider no longer has parameter system_data
+  - Model StaticSitePatchResource no longer has parameter system_data
+  - Model CookieExpiration no longer has parameter system_data
+  - Model MSDeployStatus no longer has parameter system_data
+  - Model StaticSiteResetPropertiesARMResource no longer has parameter system_data
+  - Model MSDeploy no longer has parameter system_data
+  - Model DiagnosticDetectorResponse no longer has parameter system_data
+  - Model DiagnosticAnalysis no longer has parameter system_data
+  - Model SiteConfigResource no longer has parameter system_data
+  - Model Recommendation no longer has parameter system_data
+  - Model DeletedAppRestoreRequest no longer has parameter system_data
+  - Model SlotConfigNamesResource no longer has parameter system_data
+  - Model Domain no longer has parameter system_data
+  - Model StorageMigrationResponse no longer has parameter system_data
+  - Model VnetInfo no longer has parameter system_data
+  - Model AzureActiveDirectoryLogin no longer has parameter system_data
+  - Model SlotDifference no longer has parameter system_data
+  - Model StaticSiteUserInvitationRequestResource no longer has parameter system_data
+  - Model BackupRequest no longer has parameter system_data
+  - Model PushSettings no longer has parameter system_data
+  - Model StaticSiteCustomDomainOverviewARMResource no longer has parameter system_data
+  - Model AppServicePlan no longer has parameter system_data
+  - Model Google no longer has parameter system_data
+  - Model Twitter no longer has parameter system_data
+  - Model DomainOwnershipIdentifier no longer has parameter system_data
+  - Model OpenIdConnectClientCredential no longer has parameter system_data
+  - Model Identifier no longer has parameter system_data
+  - Model RestoreRequest no longer has parameter system_data
+  - Model SiteConfigurationSnapshotInfo no longer has parameter system_data
+  - Model VnetRoute no longer has parameter system_data
+  - Model StaticSiteBuildARMResource no longer has parameter system_data
+  - Model SourceControl no longer has parameter system_data
+  - Model AppServiceCertificateOrder no longer has parameter system_data
+  - Model AzureActiveDirectory no longer has parameter system_data
+  - Model DomainPatchResource no longer has parameter system_data
+  - Model Resource no longer has parameter system_data
+  - Model SiteAuthSettingsV2 no longer has parameter system_data
+  - Model VnetParameters no longer has parameter system_data
+  - Model ResourceMetricDefinition no longer has parameter system_data
+  - Model LoginScopes no longer has parameter system_data
+  - Model CertificateEmail no longer has parameter system_data
+  - Model PremierAddOn no longer has parameter system_data
+  - Model TriggeredJobRun no longer has parameter system_data
+  - Model WebJob no longer has parameter system_data
+  - Model StaticSiteUserARMResource no longer has parameter system_data
+  - Model HybridConnectionKey no longer has parameter system_data
+  - Model Deployment no longer has parameter system_data
+  - Model PrivateAccess no longer has parameter system_data
+  - Model VnetValidationTestFailure no longer has parameter system_data
+  - Model StaticSitesWorkflowPreview no longer has parameter system_data
+  - Model OpenIdConnectRegistration no longer has parameter system_data
+  - Model ProxyOnlyResource no longer has parameter system_data
+  - Model ApplicationStackResource no longer has parameter system_data
+  - Model AzureStoragePropertyDictionaryResource no longer has parameter system_data
+  - Model TwitterRegistration no longer has parameter system_data
+  - Model RelayServiceConnectionEntity no longer has parameter system_data
+  - Model CsmPublishingCredentialsPoliciesEntity no longer has parameter system_data
+  - Model LoginRoutes no longer has parameter system_data
+  - Model AnalysisDefinition no longer has parameter system_data
+  - Model ReissueCertificateOrderRequest no longer has parameter system_data
+  - Model User no longer has parameter system_data
+  - Model AppServiceCertificateOrderPatchResource no longer has parameter system_data
+  - Model TriggeredWebJob no longer has parameter system_data
+  - Model HybridConnection no longer has parameter system_data
+  - Model HttpSettingsRoutes no longer has parameter system_data
+  - Model BillingMeter no longer has parameter system_data
+  - Model SiteExtensionInfo no longer has parameter system_data
+  - Model IdentityProviders no longer has parameter system_data
+  - Model Snapshot no longer has parameter system_data
+  - Model StaticSitesWorkflowPreviewRequest no longer has parameter system_data
+  - Model HostNameBinding no longer has parameter system_data
+  - Model AzureActiveDirectoryRegistration no longer has parameter system_data
+  - Model StaticSiteARMResource no longer has parameter system_data
+  - Model MigrateMySqlRequest no longer has parameter system_data
+  - Model VnetGateway no longer has parameter system_data
+  - Model ProcessInfo no longer has parameter system_data
+  - Model WebSiteInstanceStatus no longer has parameter system_data
+  - Model SitePatchResource no longer has parameter system_data
+  - Model GitHub no longer has parameter system_data
+  - Model TokenStore no longer has parameter system_data
+  - Model ContinuousWebJob no longer has parameter system_data
+  - Model FunctionEnvelope no longer has parameter system_data
+  - Model BlobStorageTokenStore no longer has parameter system_data
+  - Model PremierAddOnOffer no longer has parameter system_data
+  - Model ProcessThreadInfo no longer has parameter system_data
+  - Model ApiKVReference no longer has parameter location
+  - Model AzureActiveDirectoryValidation no longer has parameter system_data
+  - Model SnapshotRestoreRequest no longer has parameter system_data
+  - Model DeletedSite no longer has parameter system_data
+  - Model VnetValidationFailureDetails no longer has parameter system_data
+  - Model Site no longer has parameter system_data
+  - Model StaticSiteFunctionOverviewARMResource no longer has parameter system_data
+  - Model RenewCertificateOrderRequest no longer has parameter system_data
+  - Model Certificate no longer has parameter system_data
+  - Model NetworkFeatures no longer has parameter system_data
+  - Model ResourceHealthMetadata no longer has parameter system_data
+  - Model DetectorDefinition no longer has parameter system_data
+  - Model BackupItem no longer has parameter system_data
+  - Model TriggeredJobHistory no longer has parameter system_data
+  - Model Usage no longer has parameter system_data
+  - Model MigrateMySqlStatus no longer has parameter system_data
+  - Model ConnectionStringDictionary no longer has parameter system_data
+  - Model CustomHostnameAnalysisResult no longer has parameter system_data
+  - Model StringDictionary no longer has parameter system_data
+  - Model TopLevelDomain no longer has parameter system_data
+  - Model PremierAddOnPatchResource no longer has parameter system_data
+  - Model AppServiceCertificatePatchResource no longer has parameter system_data
+  - Model AllowedAudiencesValidation no longer has parameter system_data
+  - Model Facebook no longer has parameter system_data
+  - Model ClientRegistration no longer has parameter system_data
+  - Model StaticSiteUserInvitationResponseResource no longer has parameter system_data
+  - Model HybridConnectionLimits no longer has parameter system_data
+  - Model RecommendationRule no longer has parameter system_data
+  - Model ForwardProxy no longer has parameter system_data
+  - Model Login no longer has parameter system_data
+  - Model OpenIdConnectConfig no longer has parameter system_data
+  - Model AppServiceCertificateResource no longer has parameter system_data
+  - Model MSDeployLog no longer has parameter system_data
+  - Model WorkerPoolResource no longer has parameter system_data
+  - Model SitePhpErrorLogFlag no longer has parameter system_data
+  - Model AppServicePlanPatchResource no longer has parameter system_data
+  - Model OpenIdConnectLogin no longer has parameter system_data
+  - Model SiteSourceControl no longer has parameter system_data
+  - Model AuthPlatform no longer has parameter system_data
+  - Model FileSystemTokenStore no longer has parameter system_data
+  - Model AppRegistration no longer has parameter system_data
+  - Model ProcessModuleInfo no longer has parameter system_data
+  - Model HttpSettings no longer has parameter system_data
+  - Model GlobalValidation no longer has parameter system_data
+  - Model JwtClaimChecks no longer has parameter system_data
+  - Model AppServiceEnvironmentResource has a new signature
+  - Model AppServiceEnvironment has a new signature
+  - Model DetectorInfo has a new signature
+  - Model AppServiceEnvironmentPatchResource has a new signature
+  - Removed operation StaticSitesOperations.create_or_update_static_site
+  - Removed operation StaticSitesOperations.validate_custom_domain_can_be_added_to_static_site
+  - Removed operation StaticSitesOperations.delete_static_site_custom_domain
+  - Removed operation StaticSitesOperations.delete_static_site_build
+  - Removed operation StaticSitesOperations.delete_static_site
+  - Removed operation StaticSitesOperations.create_or_update_static_site_custom_domain
+  - Removed operation StaticSitesOperations.detach_static_site
+  - Removed operation WebAppsOperations.update_swift_virtual_network_connection
+  - Removed operation WebAppsOperations.begin_copy_production_slot
+  - Removed operation WebAppsOperations.create_or_update_swift_virtual_network_connection_slot
+  - Removed operation WebAppsOperations.update_swift_virtual_network_connection_slot
+  - Removed operation WebAppsOperations.create_or_update_swift_virtual_network_connection
+  - Removed operation WebAppsOperations.begin_copy_slot
+
+## 2.0.0 (2021-02-25)
+
+**Features**
+
+  - Model Usage has a new parameter system_data
+  - Model StaticSiteFunctionOverviewARMResource has a new parameter system_data
+  - Model HybridConnection has a new parameter system_data
+  - Model GeoRegion has a new parameter system_data
+  - Model IpSecurityRestriction has a new parameter headers
+  - Model StaticSiteBuildARMResource has a new parameter system_data
+  - Model PushSettings has a new parameter system_data
+  - Model SlotDifference has a new parameter system_data
+  - Model AppServiceCertificatePatchResource has a new parameter system_data
+  - Model DiagnosticDetectorResponse has a new parameter system_data
+  - Model MetricSpecification has a new parameter supported_aggregation_types
+  - Model PremierAddOnPatchResource has a new parameter system_data
+  - Model SitePatchResource has a new parameter custom_domain_verification_id
+  - Model SitePatchResource has a new parameter system_data
+  - Model SitePatchResource has a new parameter client_cert_mode
+  - Model HostNameBinding has a new parameter system_data
+  - Model CustomHostnameAnalysisResult has a new parameter system_data
+  - Model VnetGateway has a new parameter system_data
+  - Model MSDeployLog has a new parameter system_data
+  - Model Site has a new parameter custom_domain_verification_id
+  - Model Site has a new parameter system_data
+  - Model Site has a new parameter client_cert_mode
+  - Model PrivateEndpointConnectionResource has a new parameter system_data
+  - Model ResourceHealthMetadata has a new parameter system_data
+  - Model CertificatePatchResource has a new parameter system_data
+  - Model WorkerPoolResource has a new parameter system_data
+  - Model AppServiceEnvironmentResource has a new parameter system_data
+  - Model DetectorResponse has a new parameter system_data
+  - Model TriggeredWebJob has a new parameter system_data
+  - Model SiteSourceControl has a new parameter is_git_hub_action
+  - Model SiteSourceControl has a new parameter system_data
+  - Model MSDeploy has a new parameter system_data
+  - Model TriggeredJobHistory has a new parameter system_data
+  - Model SiteConfigResource has a new parameter vnet_route_all_enabled
+  - Model SiteConfigResource has a new parameter system_data
+  - Model SiteConfigResource has a new parameter scm_min_tls_version
+  - Model SiteConfigResource has a new parameter vnet_private_ports_count
+  - Model BackupRequest has a new parameter system_data
+  - Model DeletedSite has a new parameter system_data
+  - Model RenewCertificateOrderRequest has a new parameter system_data
+  - Model StorageMigrationResponse has a new parameter system_data
+  - Model CsmPublishingCredentialsPoliciesCollection has a new parameter system_data
+  - Model AddressResponse has a new parameter system_data
+  - Model BillingMeter has a new parameter system_data
+  - Model Deployment has a new parameter system_data
+  - Model ProcessModuleInfo has a new parameter system_data
+  - Model CertificateEmail has a new parameter system_data
+  - Model Certificate has a new parameter system_data
+  - Model StaticSitePatchResource has a new parameter system_data
+  - Model SitePhpErrorLogFlag has a new parameter system_data
+  - Model CsmPublishingCredentialsPoliciesEntity has a new parameter system_data
+  - Model SwiftVirtualNetwork has a new parameter system_data
+  - Model VnetRoute has a new parameter system_data
+  - Model ConnectionStringDictionary has a new parameter system_data
+  - Model WebSiteInstanceStatus has a new parameter system_data
+  - Model WebSiteInstanceStatus has a new parameter health_check_url
+  - Model HybridConnectionKey has a new parameter system_data
+  - Model PremierAddOnOffer has a new parameter system_data
+  - Model ContinuousWebJob has a new parameter system_data
+  - Model SnapshotRestoreRequest has a new parameter system_data
+  - Model SiteAuthSettings has a new parameter git_hub_client_id
+  - Model SiteAuthSettings has a new parameter microsoft_account_client_secret_setting_name
+  - Model SiteAuthSettings has a new parameter git_hub_client_secret
+  - Model SiteAuthSettings has a new parameter is_auth_from_file
+  - Model SiteAuthSettings has a new parameter auth_file_path
+  - Model SiteAuthSettings has a new parameter google_client_secret_setting_name
+  - Model SiteAuthSettings has a new parameter git_hub_client_secret_setting_name
+  - Model SiteAuthSettings has a new parameter aad_claims_authorization
+  - Model SiteAuthSettings has a new parameter system_data
+  - Model SiteAuthSettings has a new parameter git_hub_o_auth_scopes
+  - Model SiteAuthSettings has a new parameter client_secret_setting_name
+  - Model SiteAuthSettings has a new parameter twitter_consumer_secret_setting_name
+  - Model SiteAuthSettings has a new parameter facebook_app_secret_setting_name
+  - Model DetectorDefinition has a new parameter system_data
+  - Model SiteConfigurationSnapshotInfo has a new parameter system_data
+  - Model PublicCertificate has a new parameter system_data
+  - Model DomainOwnershipIdentifier has a new parameter system_data
+  - Model StringDictionary has a new parameter system_data
+  - Model PrivateLinkConnectionApprovalRequestResource has a new parameter system_data
+  - Model SlotConfigNamesResource has a new parameter system_data
+  - Model WebJob has a new parameter system_data
+  - Model ApplicationStackResource has a new parameter system_data
+  - Model ReissueCertificateOrderRequest has a new parameter system_data
+  - Model User has a new parameter system_data
+  - Model RestoreRequest has a new parameter system_data
+  - Model StaticSiteUserInvitationRequestResource has a new parameter system_data
+  - Model StorageMigrationOptions has a new parameter system_data
+  - Model HybridConnectionLimits has a new parameter system_data
+  - Model StaticSiteUserARMResource has a new parameter system_data
+  - Model AppServiceCertificateResource has a new parameter system_data
+  - Model AnalysisDefinition has a new parameter system_data
+  - Model VnetInfo has a new parameter system_data
+  - Model DomainPatchResource has a new parameter system_data
+  - Model MSDeployStatus has a new parameter system_data
+  - Model MigrateMySqlRequest has a new parameter system_data
+  - Model Identifier has a new parameter system_data
+  - Model SiteLogsConfig has a new parameter system_data
+  - Model AppServiceCertificateOrder has a new parameter system_data
+  - Model BackupItem has a new parameter system_data
+  - Model ProcessInfo has a new parameter system_data
+  - Model MigrateMySqlStatus has a new parameter system_data
+  - Model StaticSiteResetPropertiesARMResource has a new parameter system_data
+  - Model NetworkFeatures has a new parameter system_data
+  - Model Recommendation has a new parameter system_data
+  - Model ProcessThreadInfo has a new parameter system_data
+  - Model AzureStoragePropertyDictionaryResource has a new parameter system_data
+  - Model Domain has a new parameter system_data
+  - Model StaticSiteARMResource has a new parameter system_data
+  - Model ResourceMetricDefinition has a new parameter system_data
+  - Model VnetValidationTestFailure has a new parameter system_data
+  - Model StaticSiteUserInvitationResponseResource has a new parameter system_data
+  - Model PrivateAccess has a new parameter system_data
+  - Model SiteConfig has a new parameter vnet_route_all_enabled
+  - Model SiteConfig has a new parameter vnet_private_ports_count
+  - Model SiteConfig has a new parameter scm_min_tls_version
+  - Model FunctionEnvelope has a new parameter system_data
+  - Model TopLevelDomain has a new parameter system_data
+  - Model RecommendationRule has a new parameter system_data
+  - Model RelayServiceConnectionEntity has a new parameter system_data
+  - Model ProxyOnlyResource has a new parameter system_data
+  - Model Snapshot has a new parameter system_data
+  - Model VnetParameters has a new parameter system_data
+  - Model DiagnosticAnalysis has a new parameter system_data
+  - Model CertificateOrderAction has a new parameter system_data
+  - Model DeletedAppRestoreRequest has a new parameter system_data
+  - Model AppServicePlan has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model StaticSiteCustomDomainOverviewARMResource has a new parameter system_data
+  - Model PremierAddOn has a new parameter system_data
+  - Model TriggeredJobRun has a new parameter system_data
+  - Model LogSpecification has a new parameter log_filter_pattern
+  - Model DiagnosticCategory has a new parameter system_data
+  - Model SourceControl has a new parameter system_data
+  - Model VnetValidationFailureDetails has a new parameter system_data
+  - Model AppServiceEnvironmentPatchResource has a new parameter system_data
+  - Model AppServiceCertificateOrderPatchResource has a new parameter system_data
+  - Model SiteExtensionInfo has a new parameter system_data
+  - Model AppServicePlanPatchResource has a new parameter system_data
+  - Added operation WebAppsOperations.update_auth_settings_v2
+  - Added operation WebAppsOperations.update_auth_settings_v2_slot
+  - Added operation WebAppsOperations.get_auth_settings_v2
+  - Added operation WebAppsOperations.get_auth_settings_v2_slot
+  - Added operation StaticSitesOperations.preview_workflow
+  - Added operation WebSiteManagementClientOperationsMixin.generate_github_access_token_for_appservice_cli_async
+
+**Breaking changes**
+
+  - Model SiteConfigResource no longer has parameter acr_use_managed_identity_creds
+  - Model SiteConfigResource no longer has parameter acr_user_managed_identity_id
+  - Model SiteConfig no longer has parameter acr_use_managed_identity_creds
+  - Model SiteConfig no longer has parameter acr_user_managed_identity_id
+  - Model FunctionSecrets has a new signature
+  - Removed operation WebAppsOperations.get_app_settings_key_vault_references
+  - Removed operation WebAppsOperations.get_app_setting_key_vault_reference
+
 ## 1.0.0 (2020-11-23)
+
+- GA release
 
 ## 1.0.0b1 (2020-10-13)
 
@@ -16,7 +671,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -24,13 +679,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.48.0 (2020-09-22)
 

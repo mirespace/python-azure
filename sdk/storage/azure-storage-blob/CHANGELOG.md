@@ -1,5 +1,66 @@
 # Release History
 
+## 12.9.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
+## 12.9.0b1 (2021-07-27)
+**New Features**
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
+**Fixes**
+- Fixed a bug for get_block_list (#16314)
+- Ensured that download fails if blob modified mid download
+- Enabled exists() for CPK encrypted blobs (#18041)
+
+**Notes**
+- Deprecated new_name in for undelete container operation
+
+## 12.8.1 (2021-04-20)
+**Fixes**
+- Fixed retry on large block upload
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed downloader.chunks() return chunks in different size (#9419, #15648)
+- Enabled `exists()` for CPK encrypted blobs (#18041)
+- Fixed the ability to upload from a generator (#17418)
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
+- Fixed retries for blob download streams (#18164, #17974, #10572 (comment))
+- Added chunk streaming docstrings and samples (#17149, #11009)
+- Added retry for blob download (#17974, #10572)
+- Fixed encryption algorithm hardcoded setting (#17835)
+
+## 12.8.0 (2021-03-01)
+**Stable release of preview features**
+- Added `ContainerClient.exists()` method
+- Added container SAS support for blob batch operations
+
+**Fixes**
+- Fixed `delete_blob()` method signature (#15891)
+- Fixed Content-MD5 throwing when passed (#15919)
+
+## 12.8.0b1 (2021-02-10)
+**New Features**
+- Added `ContainerClient.exists()` method
+- Added container SAS support for blob batch operations
+
+## 12.7.1 (2021-01-20)
+**Fixes**
+- Fixed msrest dependency issue (#16250)
+
+## 12.7.0 (2021-01-13)
+**Stable release of preview features**
+- Added `upload_blob_from_url` api on `BlobClient`.
+- Added support for leasing blob when get/set tags, listing all tags when find blobs by tags.
+- Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
+
+**Fixes**
+- Fixed url parsing for blob emulator/localhost (#15882)
+
 ## 12.7.0b1 (2020-12-07)
 **New features**
 - Added `upload_blob_from_url` api on `BlobClient`
@@ -60,7 +121,7 @@
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 - For replication enabled account, users can get replication policies when get blob properties.
 
-## 12.3.2 (2020-6-12)
+## 12.3.2
 **Fixes**
 - Fixed issue where batch requests could not be combined with SAS (#9534)
 - Batch requests now support applying parameters to individual blobs within the request via passing in a dictionary.
@@ -277,7 +338,7 @@ https://aka.ms/azure-sdk-preview1-python.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 - New error hierarchy:
     - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`

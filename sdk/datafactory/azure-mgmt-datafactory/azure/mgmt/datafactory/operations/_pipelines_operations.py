@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PipelinesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class PipelinesOperations(object):
         factory_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PipelineListResponse"]
+        # type: (...) -> Iterable["_models.PipelineListResponse"]
         """Lists pipelines.
 
         :param resource_group_name: The resource group name.
@@ -63,7 +63,7 @@ class PipelinesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.PipelineListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -125,11 +125,11 @@ class PipelinesOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         pipeline_name,  # type: str
-        pipeline,  # type: "models.PipelineResource"
+        pipeline,  # type: "_models.PipelineResource"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PipelineResource"
+        # type: (...) -> "_models.PipelineResource"
         """Creates or updates a pipeline.
 
         :param resource_group_name: The resource group name.
@@ -148,7 +148,7 @@ class PipelinesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.PipelineResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -205,7 +205,7 @@ class PipelinesOperations(object):
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.PipelineResource"]
+        # type: (...) -> Optional["_models.PipelineResource"]
         """Gets a pipeline.
 
         :param resource_group_name: The resource group name.
@@ -222,7 +222,7 @@ class PipelinesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.PipelineResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PipelineResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PipelineResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -337,10 +337,10 @@ class PipelinesOperations(object):
         is_recovery=None,  # type: Optional[bool]
         start_activity_name=None,  # type: Optional[str]
         start_from_failure=None,  # type: Optional[bool]
-        parameters=None,  # type: Optional[Dict[str, object]]
+        parameters=None,  # type: Optional[Dict[str, Any]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CreateRunResponse"
+        # type: (...) -> "_models.CreateRunResponse"
         """Creates a run of a pipeline.
 
         :param resource_group_name: The resource group name.
@@ -363,13 +363,13 @@ class PipelinesOperations(object):
         :type start_from_failure: bool
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
          runId is not specified.
-        :type parameters: dict[str, object]
+        :type parameters: dict[str, any]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.CreateRunResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CreateRunResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CreateRunResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -34,12 +34,15 @@ Use the Azure.Search.Documents client library to:
 * Create and manage analyzers for advanced text analysis or multi-lingual content.
 * Optimize results through scoring profiles to factor in business logic or freshness.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents) |
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents) |
 [Package (PyPI)](https://pypi.org/project/azure-search-documents/) |
 [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html) |
 [Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search) |
-[Samples](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples)
+[Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -106,40 +109,6 @@ client = SearchClient(endpoint=endpoint,
                       credential=credential)
 ```
 
-
-### Send your first search request
-
-To get running immediately, we're going to connect to a well known sandbox
-Search service provided by Microsoft.  This means you do not need an Azure
-subscription or Azure Cognitive Search service to try out this query.
-
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-
-# We'll connect to the Azure Cognitive Search public sandbox and send a
-# query to its "nycjobs" index built from a public dataset of available jobs
-# in New York.
-service_name = "azs-playground"
-index_name = "nycjobs"
-api_key = "252044BE3886FE4A8E3BAA4F595114BB"
-
-# Create a SearchClient to send queries
-endpoint = "https://{}.search.windows.net/".format(service_name)
-credential = AzureKeyCredential(api_key)
-client = SearchClient(endpoint=endpoint,
-                      index_name=index_name,
-                      credential=credential)
-
-# Let's get the top 5 jobs related to Microsoft
-results = client.search(search_text="Microsoft", top=5)
-
-for result in results:
-    # Print out the title and job description
-    print("{}\n{}\n)".format(result["business_title"], result["job_description"]))
-```
-
 ## Key concepts
 
 An Azure Cognitive Search service contains one or more indexes that provide
@@ -177,9 +146,9 @@ exploring online resources._
 
 ## Examples
 
-The following examples all use a simple [Hotel data set](https://docs.microsoft.com/samples/azure-samples/azure-search-sample-data/azure-search-sample-data/)
+The following examples all use a simple [Hotel data set](https://github.com/Azure-Samples/azure-search-sample-data/blob/master/README.md)
 that you can [import into your own index from the Azure portal.](https://docs.microsoft.com/azure/search/search-get-started-portal#step-1---start-the-import-data-wizard-and-create-a-data-source)
-These are just a few of the basics - please [check out our Samples](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples) for
+These are just a few of the basics - please [check out our Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples) for
 much more.
 
 
@@ -235,14 +204,14 @@ models. Indexes can also define suggesters, lexical analyzers, and more.
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.indexes.models import ( 
-    ComplexField, 
-    CorsOptions, 
-    SearchIndex, 
-    ScoringProfile, 
-    SearchFieldDataType, 
-    SimpleField, 
-    SearchableField 
+from azure.search.documents.indexes.models import (
+    ComplexField,
+    CorsOptions,
+    SearchIndex,
+    ScoringProfile,
+    SearchFieldDataType,
+    SimpleField,
+    SearchableField
 )
 
 endpoint = os.environ["SEARCH_ENDPOINT"]
@@ -338,7 +307,7 @@ print("    Category: {}".format(result["Category"]))
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#transport)
 for more information.
 
 
@@ -398,7 +367,7 @@ result =  client.search(search_text="spa", logging_enable=True)
 
 ## Next steps
 
-* Go further with Azure.Search.Documents and our [https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples)
+* Go further with Azure.Search.Documents and our [https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 * Watch a [demo or deep dive video](https://azure.microsoft.com/resources/videos/index/?services=search)
 * Read more about the [Azure Cognitive Search service](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 
@@ -428,7 +397,7 @@ additional questions or comments.
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fsearch%2Fazure-search-documents%2FREADME.png)
 
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
 [search_resource]: https://docs.microsoft.com/azure/search/search-create-service-portal
 [azure_portal]: https://portal.azure.com
@@ -436,7 +405,7 @@ additional questions or comments.
 [create_search_service_docs]: https://docs.microsoft.com/azure/search/search-create-service-portal
 [create_search_service_ps]: https://docs.microsoft.com/azure/search/search-manage-powershell#create-or-delete-a-service
 [create_search_service_cli]: https://docs.microsoft.com/cli/azure/search/service?view=azure-cli-latest#az-search-service-create
-[search_contrib]: https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md
+[search_contrib]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 
 [cla]: https://cla.microsoft.com

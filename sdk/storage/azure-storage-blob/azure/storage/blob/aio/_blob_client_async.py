@@ -4,23 +4,24 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method
-
+from functools import partial
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
 
-from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline import AsyncPipeline
 
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
+
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result, parse_tags
+from .._deserialize import get_page_ranges_result, parse_tags, deserialize_pipeline_response_into_cls
 from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
-from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageErrorException, CpkInfo
+from .._generated.models import CpkInfo
 from .._deserialize import deserialize_blob_properties
 from .._blob_client import BlobClient as BlobClientBase
 from ._upload_helpers import (
@@ -58,12 +59,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         or the response returned from :func:`create_snapshot`.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -117,8 +120,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
-        self._loop = kwargs.get('loop', None)
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -133,7 +135,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         try:
             return await self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -226,13 +228,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
             **kwargs)
         try:
             return await self._client.block_blob.put_blob_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -315,6 +320,20 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
@@ -375,7 +394,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
-        a stream.
+        a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
@@ -461,7 +480,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return downloader
 
     @distributed_trace_async
-    async def delete_blob(self, delete_snapshots=False, **kwargs):
+    async def delete_blob(self, delete_snapshots=None, **kwargs):
         # type: (str, Any) -> None
         """Marks the specified blob for deletion.
 
@@ -531,7 +550,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
         try:
             await self._client.blob.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -557,7 +576,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         try:
             await self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -567,10 +586,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
 
-        :param str version_id:
+        :kwarg str version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to check if it exists.
-        :param int timeout:
+        :kwarg int timeout:
             The timeout parameter is expressed in seconds.
         :returns: boolean
         """
@@ -579,7 +598,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 snapshot=self.snapshot,
                 **kwargs)
             return True
-        except StorageErrorException as error:
+        # Encrypted with CPK
+        except ResourceExistsError:
+            return True
+        except HttpResponseError as error:
             try:
                 process_storage_error(error)
             except ResourceNotFoundError:
@@ -654,6 +676,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         try:
+            cls_method = kwargs.pop('cls', None)
+            if cls_method:
+                kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = await self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
                 version_id=kwargs.pop('version_id', None),
@@ -663,7 +688,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
                 cpk_info=cpk_info,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
         if isinstance(blob_props, BlobProperties):
@@ -716,7 +741,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
             return await self._client.blob.set_http_headers(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -776,8 +801,66 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.set_metadata(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace_async
+    async def set_immutability_policy(self, immutability_policy, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+        """The Set Immutability Policy operation sets the immutability policy on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :param ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
+        kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
+        return await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
+
+    @distributed_trace_async()
+    async def delete_immutability_policy(self, **kwargs):
+        # type: (**Any) -> None
+        """The Delete Immutability Policy operation deletes the immutability policy on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        await self._client.blob.delete_immutability_policy(**kwargs)
+
+    @distributed_trace_async
+    async def set_legal_hold(self, legal_hold, **kwargs):
+        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
+        """The Set Legal Hold operation sets a legal hold on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :param bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, Union[str, datetime, bool]]
+        """
+
+        return await self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)
 
     @distributed_trace_async
     async def create_page_blob(  # type: ignore
@@ -821,6 +904,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -864,7 +959,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.page_blob.create(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -888,6 +983,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             .. versionadded:: 12.4.0
 
         :paramtype tags: dict(str, str)
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -933,7 +1040,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.append_blob.create(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1009,7 +1116,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.create_snapshot(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1081,6 +1188,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             .. versionadded:: 12.4.0
 
         :paramtype tags: dict(str, str)
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1152,8 +1271,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string. This option is only available when `incremental_copy` is
+            set to False and `requires_sync` is set to True.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: dict[str, str or ~datetime.datetime]
+        :rtype: dict[str, Union[str, ~datetime.datetime]]
 
         .. admonition:: Example:
 
@@ -1173,7 +1296,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             if incremental_copy:
                 return await self._client.page_blob.copy_incremental(**options)
             return await self._client.blob.start_copy_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1202,7 +1325,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._abort_copy_options(copy_id, **kwargs)
         try:
             await self._client.blob.abort_copy_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1306,7 +1429,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1363,12 +1486,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.block_blob.stage_block(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def stage_block_from_url(
-            self, block_id,  # type: str
+            self, block_id,  # type: Union[str, int]
             source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]
@@ -1409,6 +1532,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         :rtype: None
         """
         options = self._stage_block_from_url_options(
@@ -1420,7 +1546,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.block_blob.stage_block_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1458,7 +1584,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return self._get_block_list_result(blocks)
 
@@ -1495,6 +1621,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+            Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -1553,7 +1691,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.block_blob.commit_block_list(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1593,7 +1731,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1638,7 +1776,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._set_blob_tags_options(tags=tags, **kwargs)
         try:
             return await self._client.blob.set_tags(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1668,7 +1806,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         try:
             _, tags = await self._client.blob.get_tags(**options)
             return parse_tags(tags)  # pylint: disable=protected-access
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1744,7 +1882,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 ranges = await self._client.page_blob.get_page_ranges_diff(**options)
             else:
                 ranges = await self._client.page_blob.get_page_ranges(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -1817,7 +1955,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             ranges = await self._client.page_blob.get_page_ranges_diff(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -1873,7 +2011,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
             return await self._client.page_blob.update_sequence_number(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1926,7 +2064,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._resize_blob_options(size, **kwargs)
         try:
             return await self._client.page_blob.resize(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -2021,7 +2159,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.page_blob.upload_pages(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -2122,6 +2260,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
 
         options = self._upload_pages_from_url_options(
@@ -2133,7 +2274,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -2200,7 +2341,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._clear_page_options(offset, length, **kwargs)
         try:
             return await self._client.page_blob.clear_pages(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -2289,7 +2430,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.append_blob.append_block(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async()
@@ -2382,6 +2523,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._append_block_from_url_options(
             copy_source_url=self._encode_source_url(copy_source_url),
@@ -2391,7 +2535,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async()
@@ -2436,5 +2580,38 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._seal_append_blob_options(**kwargs)
         try:
             return await self._client.append_blob.seal(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
+
+    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
+        # type: (...) -> ContainerClient
+        """Get a client to interact with the blob's parent container.
+
+        The container need not already exist. Defaults to current blob's credentials.
+
+        :returns: A ContainerClient.
+        :rtype: ~azure.storage.blob.ContainerClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
+                :start-after: [START get_container_client_from_blob_client]
+                :end-before: [END get_container_client_from_blob_client]
+                :language: python
+                :dedent: 12
+                :caption: Get container client from blob object.
+        """
+        from ._container_client_async import ContainerClient
+        if not isinstance(self._pipeline._transport, AsyncTransportWrapper): # pylint: disable = protected-access
+            _pipeline = AsyncPipeline(
+                transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+                policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            )
+        else:
+            _pipeline = self._pipeline  # pylint: disable = protected-access
+        return ContainerClient(
+            "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
+            credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
+            _pipeline=_pipeline, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)

@@ -32,6 +32,7 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
+    from ._models_py3 import ExpressionEvaluationOptions
     from ._models_py3 import GenericResource
     from ._models_py3 import GenericResourceExpanded
     from ._models_py3 import GenericResourceFilter
@@ -77,6 +78,7 @@ try:
     from ._models_py3 import WhatIfChange
     from ._models_py3 import WhatIfOperationResult
     from ._models_py3 import WhatIfPropertyChange
+    from ._models_py3 import ZoneMapping
 except (SyntaxError, ImportError):
     from ._models import Alias  # type: ignore
     from ._models import AliasPath  # type: ignore
@@ -103,6 +105,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import ExportTemplateRequest  # type: ignore
+    from ._models import ExpressionEvaluationOptions  # type: ignore
     from ._models import GenericResource  # type: ignore
     from ._models import GenericResourceExpanded  # type: ignore
     from ._models import GenericResourceFilter  # type: ignore
@@ -148,6 +151,7 @@ except (SyntaxError, ImportError):
     from ._models import WhatIfChange  # type: ignore
     from ._models import WhatIfOperationResult  # type: ignore
     from ._models import WhatIfPropertyChange  # type: ignore
+    from ._models import ZoneMapping  # type: ignore
 
 from ._resource_management_client_enums import (
     AliasPathAttributes,
@@ -156,6 +160,7 @@ from ._resource_management_client_enums import (
     AliasType,
     ChangeType,
     DeploymentMode,
+    ExpressionEvaluationOptionsScopeType,
     OnErrorDeploymentType,
     PropertyChangeType,
     ProvisioningOperation,
@@ -191,6 +196,7 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorResponse',
     'ExportTemplateRequest',
+    'ExpressionEvaluationOptions',
     'GenericResource',
     'GenericResourceExpanded',
     'GenericResourceFilter',
@@ -236,12 +242,14 @@ __all__ = [
     'WhatIfChange',
     'WhatIfOperationResult',
     'WhatIfPropertyChange',
+    'ZoneMapping',
     'AliasPathAttributes',
     'AliasPathTokenType',
     'AliasPatternType',
     'AliasType',
     'ChangeType',
     'DeploymentMode',
+    'ExpressionEvaluationOptionsScopeType',
     'OnErrorDeploymentType',
     'PropertyChangeType',
     'ProvisioningOperation',

@@ -1,5 +1,115 @@
 # Release History
 
+## 16.3.0 (2021-10-18)
+
+**Features**
+
+  - Model ManagedClusterWindowsProfile has a new parameter gmsa_profile
+  - Model Snapshot has a new parameter vm_size
+  - Model Snapshot has a new parameter os_type
+  - Model Snapshot has a new parameter os_sku
+  - Model Snapshot has a new parameter kubernetes_version
+  - Model Snapshot has a new parameter node_image_version
+  - Model Snapshot has a new parameter enable_fips
+
+## 16.2.0 (2021-09-09)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter creation_data
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter workload_runtime
+  - Model ManagedClusterLoadBalancerProfile has a new parameter enable_multiple_standard_load_balancers
+  - Model ManagedClusterAgentPoolProfile has a new parameter creation_data
+  - Model ManagedClusterAgentPoolProfile has a new parameter workload_runtime
+  - Model ManagedCluster has a new parameter public_network_access
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter disable_run_command
+  - Model AgentPool has a new parameter creation_data
+  - Model AgentPool has a new parameter workload_runtime
+  - Added operation group SnapshotsOperations
+
+## 16.1.0 (2021-08-06)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter scale_down_mode
+  - Model ContainerServiceNetworkProfile has a new parameter nat_gateway_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter scale_down_mode
+  - Model ManagedCluster has a new parameter security_profile
+  - Model AgentPool has a new parameter scale_down_mode
+
+## 16.0.0 (2021-06-17)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_ultra_ssd
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_private_cluster_public_fqdn
+  - Model AgentPool has a new parameter enable_ultra_ssd
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_ultra_ssd
+  - Added operation ManagedClustersOperations.list_outbound_network_dependencies_endpoints
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_monitoring_user_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_user_credentials has a new signature
+
+## 15.1.0 (2021-04-07)
+
+**Features**
+
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter private_link_resources
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter disable_local_accounts
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter http_proxy_config
+  - Model ManagedClusterPodIdentity has a new parameter binding_selector
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter gpu_instance_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_fips
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter os_sku
+  - Model AgentPool has a new parameter gpu_instance_profile
+  - Model AgentPool has a new parameter enable_fips
+  - Model AgentPool has a new parameter os_sku
+  - Model ManagedCluster has a new parameter extended_location
+  - Model ManagedCluster has a new parameter private_link_resources
+  - Model ManagedCluster has a new parameter disable_local_accounts
+  - Model ManagedCluster has a new parameter http_proxy_config
+  - Model ManagedClusterAgentPoolProfile has a new parameter gpu_instance_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_fips
+  - Model ManagedClusterAgentPoolProfile has a new parameter os_sku
+  - Model ManagedClusterWindowsProfile has a new parameter enable_csi_proxy
+  - Added operation ManagedClustersOperations.get_command_result
+  - Added operation ManagedClustersOperations.begin_run_command
+  - Added operation ManagedClustersOperations.get_os_options
+
+## 15.0.0 (2021-03-03)
+
+**Features**
+
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter max_node_provision_time
+  - Model ManagedClusterPodIdentityProfile has a new parameter allow_network_plugin_kubenet
+  - Model KubeletConfig has a new parameter container_log_max_size_mb
+  - Model KubeletConfig has a new parameter pod_max_pids
+  - Model KubeletConfig has a new parameter container_log_max_files
+  - Model SysctlConfig has a new parameter net_core_rmem_default
+  - Model SysctlConfig has a new parameter net_core_wmem_default
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter azure_portal_fqdn
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter fqdn_subdomain
+  - Model ManagedCluster has a new parameter azure_portal_fqdn
+  - Model ManagedCluster has a new parameter fqdn_subdomain
+  - Model ManagedClusterAgentPoolProfile has a new parameter kubelet_disk_type
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_encryption_at_host
+  - Model ManagedClusterAgentPoolProfile has a new parameter node_public_ip_prefix_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter kubelet_disk_type
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_encryption_at_host
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter node_public_ip_prefix_id
+  - Model AgentPool has a new parameter kubelet_disk_type
+  - Model AgentPool has a new parameter enable_encryption_at_host
+  - Model AgentPool has a new parameter node_public_ip_prefix_id
+  - Added operation group MaintenanceConfigurationsOperations
+
+**Breaking changes**
+
+  - Model SysctlConfig no longer has parameter net_ipv4_tcp_rmem
+  - Model SysctlConfig no longer has parameter net_ipv4_tcp_wmem
+
 ## 14.0.0 (2020-11-23)
 
 **Features**
@@ -32,20 +142,20 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
 - Most of the operation kwarg have changed. Some of the most noticeable:
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
-  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
 ## 9.4.0 (2020-09-11)
@@ -81,7 +191,7 @@ This version uses a next-generation code generator that introduces important bre
 ## 9.2.0 (2020-06-24)
 
 **Features**
- 
+
   - Model ManagedClusterIdentity has a new parameter user_assigned_identities
   - Model ManagedClusterAADProfile has a new parameter enable_azure_rbac
   - Model ManagedClusterAgentPoolProfile has a new parameter proximity_placement_group_id
@@ -104,8 +214,8 @@ This version uses a next-generation code generator that introduces important bre
 ## 9.0.1 (2020-04-09)
 
 **Bugfixes**
-  
-  - Switch field type to string to avoid unmarshal errors 
+
+  - Switch field type to string to avoid unmarshal errors
 
 ## 9.0.0 (2020-03-24)
 

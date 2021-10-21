@@ -18,11 +18,12 @@ Example to show managing subscription entities under a ServiceBus namespace, inc
 
 import os
 import asyncio
+import uuid
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-TOPIC_NAME = "sb_mgmt_demo_topic"
-SUBSCRIPTION_NAME = "sb_mgmt_demo_subscription"
+TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
+SUBSCRIPTION_NAME = "sb_mgmt_sub" + str(uuid.uuid4())
 
 
 async def create_subscription(servicebus_mgmt_client):
@@ -52,8 +53,13 @@ async def get_and_update_subscription(servicebus_mgmt_client):
     print("Subscription Name:", subscription_properties.name)
     print("Please refer to SubscriptionDescription for complete available settings.")
     print("")
+    # update by updating the properties in the model
     subscription_properties.max_delivery_count = 5
     await servicebus_mgmt_client.update_subscription(TOPIC_NAME, subscription_properties)
+
+    # update by passing keyword arguments
+    subscription_properties = await servicebus_mgmt_client.get_subscription(TOPIC_NAME, SUBSCRIPTION_NAME)
+    await servicebus_mgmt_client.update_subscription(TOPIC_NAME, subscription_properties, max_delivery_count=3)
 
 
 async def get_subscription_runtime_properties(servicebus_mgmt_client):

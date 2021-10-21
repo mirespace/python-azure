@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
+from datetime import datetime
 from enum import Enum
 
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
@@ -17,12 +18,16 @@ from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
+from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
+    RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
 from ._shared.models import DictMixin
 
 
-class FileSystemProperties(object):
+class FileSystemProperties(DictMixin):
     """File System properties class.
 
+    :ivar str name:
+        Name of the filesystem.
     :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the file system was modified.
     :ivar str etag:
@@ -38,6 +43,10 @@ class FileSystemProperties(object):
         Represents whether the file system has a legal hold.
     :ivar dict metadata: A dict with name-value pairs to associate with the
         file system as metadata.
+    :ivar bool deleted:
+        Whether this file system was deleted.
+    :ivar str deleted_version:
+        The version of a deleted file system.
 
     Returned ``FileSystemProperties`` instances expose these values through a
     dictionary interface, for example: ``file_system_props["last_modified"]``.
@@ -53,12 +62,16 @@ class FileSystemProperties(object):
         self.has_immutability_policy = None
         self.has_legal_hold = None
         self.metadata = None
+        self.deleted = None
+        self.deleted_version = None
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
+        props.deleted = generated.deleted
+        props.deleted_version = generated.version
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
@@ -173,7 +186,7 @@ class FileProperties(DictMixin):
         self.content_settings = ContentSettings(**kwargs)
 
 
-class PathProperties(object):
+class PathProperties(DictMixin):
     """Path properties listed by get_paths api.
 
     :ivar str name: the full path for a file or directory.
@@ -192,9 +205,6 @@ class PathProperties(object):
     """
 
     def __init__(self, **kwargs):
-        super(PathProperties, self).__init__(
-            **kwargs
-        )
         self.name = kwargs.pop('name', None)
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)
@@ -211,7 +221,7 @@ class PathProperties(object):
         path_prop.owner = generated.owner
         path_prop.group = generated.group
         path_prop.permissions = generated.permissions
-        path_prop.last_modified = generated.last_modified
+        path_prop.last_modified = datetime.strptime(generated.last_modified, "%a, %d %b %Y %H:%M:%S %Z")
         path_prop.is_directory = bool(generated.is_directory)
         path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length
@@ -250,7 +260,7 @@ class ContentSettings(BlobContentSettings):
     :ivar str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :ivar str content_md5:
+    :ivar bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
@@ -271,7 +281,7 @@ class ContentSettings(BlobContentSettings):
     :keyword str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :keyword str content_md5:
+    :keyword bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
@@ -713,6 +723,14 @@ class ArrowDialect(BlobArrowDialect):
     """
 
 
+class QuickQueryDialect(str, Enum):
+    """Specifies the quick query input/output dialect."""
+
+    DelimitedText = 'DelimitedTextDialect'
+    DelimitedJson = 'DelimitedJsonDialect'
+    Parquet = 'ParquetDialect'
+
+
 class ArrowType(str, Enum):
 
     INT64 = "int64"
@@ -818,3 +836,203 @@ class AccessControlChanges(DictMixin):
         self.aggregate_counters = aggregate_counters
         self.batch_failures = batch_failures
         self.continuation = continuation
+
+
+class DeletedPathProperties(DictMixin):
+    """
+    Properties populated for a deleted path.
+
+    :ivar str name:
+        The name of the file in the path.
+    :ivar ~datetime.datetime deleted_time:
+        A datetime object representing the time at which the path was deleted.
+    :ivar int remaining_retention_days:
+        The number of days that the path will be retained before being permanently deleted by the service.
+    :ivar str deletion_id:
+        The id associated with the deleted path.
+    """
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.deletion_id = None
+
+
+class AnalyticsLogging(GenLogging):
+    """Azure Analytics Logging settings.
+
+    :keyword str version:
+        The version of Storage Analytics to configure. The default value is 1.0.
+    :keyword bool delete:
+        Indicates whether all delete requests should be logged. The default value is `False`.
+    :keyword bool read:
+        Indicates whether all read requests should be logged. The default value is `False`.
+    :keyword bool write:
+        Indicates whether all write requests should be logged. The default value is `False`.
+    :keyword ~azure.storage.filedatalake.RetentionPolicy retention_policy:
+        Determines how long the associated data should persist. If not specified the retention
+        policy will be disabled by default.
+    """
+
+    def __init__(self, **kwargs):
+        self.version = kwargs.get('version', u'1.0')
+        self.delete = kwargs.get('delete', False)
+        self.read = kwargs.get('read', False)
+        self.write = kwargs.get('write', False)
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            version=generated.version,
+            delete=generated.delete,
+            read=generated.read,
+            write=generated.write,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
+
+
+class Metrics(GenMetrics):
+    """A summary of request statistics grouped by API in hour or minute aggregates.
+
+    :keyword str version:
+        The version of Storage Analytics to configure. The default value is 1.0.
+    :keyword bool enabled:
+        Indicates whether metrics are enabled for the Datalake service.
+        The default value is `False`.
+    :keyword bool include_apis:
+        Indicates whether metrics should generate summary statistics for called API operations.
+    :keyword ~azure.storage.filedatalake.RetentionPolicy retention_policy:
+        Determines how long the associated data should persist. If not specified the retention
+        policy will be disabled by default.
+    """
+
+    def __init__(self, **kwargs):
+        self.version = kwargs.get('version', u'1.0')
+        self.enabled = kwargs.get('enabled', False)
+        self.include_apis = kwargs.get('include_apis')
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            version=generated.version,
+            enabled=generated.enabled,
+            include_apis=generated.include_apis,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
+
+
+class RetentionPolicy(GenRetentionPolicy):
+    """The retention policy which determines how long the associated data should
+    persist.
+
+    :param bool enabled:
+        Indicates whether a retention policy is enabled for the storage service.
+        The default value is False.
+    :param int days:
+        Indicates the number of days that metrics or logging or
+        soft-deleted data should be retained. All data older than this value will
+        be deleted. If enabled=True, the number of days must be specified.
+    """
+
+    def __init__(self, enabled=False, days=None):
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
+
+
+class StaticWebsite(GenStaticWebsite):
+    """The properties that enable an account to host a static website.
+
+    :keyword bool enabled:
+        Indicates whether this account is hosting a static website.
+        The default value is `False`.
+    :keyword str index_document:
+        The default name of the index page under each directory.
+    :keyword str error_document404_path:
+        The absolute path of the custom 404 page.
+    :keyword str default_index_document_path:
+        Absolute path of the default index page.
+    """
+
+    def __init__(self, **kwargs):
+        self.enabled = kwargs.get('enabled', False)
+        if self.enabled:
+            self.index_document = kwargs.get('index_document')
+            self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
+        else:
+            self.index_document = None
+            self.error_document404_path = None
+            self.default_index_document_path = None
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            index_document=generated.index_document,
+            error_document404_path=generated.error_document404_path,
+            default_index_document_path=generated.default_index_document_path
+        )
+
+
+class CorsRule(GenCorsRule):
+    """CORS is an HTTP feature that enables a web application running under one
+    domain to access resources in another domain. Web browsers implement a
+    security restriction known as same-origin policy that prevents a web page
+    from calling APIs in a different domain; CORS provides a secure way to
+    allow one domain (the origin domain) to call APIs in another domain.
+
+    :param list(str) allowed_origins:
+        A list of origin domains that will be allowed via CORS, or "*" to allow
+        all domains. The list of must contain at least one entry. Limited to 64
+        origin domains. Each allowed origin can have up to 256 characters.
+    :param list(str) allowed_methods:
+        A list of HTTP methods that are allowed to be executed by the origin.
+        The list of must contain at least one entry. For Azure Storage,
+        permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
+    :keyword list(str) allowed_headers:
+        Defaults to an empty list. A list of headers allowed to be part of
+        the cross-origin request. Limited to 64 defined headers and 2 prefixed
+        headers. Each header can be up to 256 characters.
+    :keyword list(str) exposed_headers:
+        Defaults to an empty list. A list of response headers to expose to CORS
+        clients. Limited to 64 defined headers and two prefixed headers. Each
+        header can be up to 256 characters.
+    :keyword int max_age_in_seconds:
+        The number of seconds that the client/browser should cache a
+        preflight response.
+    """
+
+    def __init__(self, allowed_origins, allowed_methods, **kwargs):
+        self.allowed_origins = ','.join(allowed_origins)
+        self.allowed_methods = ','.join(allowed_methods)
+        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
+        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
+        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            [generated.allowed_origins],
+            [generated.allowed_methods],
+            allowed_headers=[generated.allowed_headers],
+            exposed_headers=[generated.exposed_headers],
+            max_age_in_seconds=generated.max_age_in_seconds,
+        )

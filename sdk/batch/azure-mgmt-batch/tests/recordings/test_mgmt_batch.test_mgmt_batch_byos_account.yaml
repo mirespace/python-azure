@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"location": "westcentralus", "properties": {"poolAllocationMode": "UserSubscription",
+    body: '{"location": "eastus", "properties": {"poolAllocationMode": "UserSubscription",
       "publicNetworkAccess": "Enabled"}}'
     headers:
       Accept:
@@ -10,17 +10,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '121'
+      - '114'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2020-09-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2021-06-01
   response:
     body:
       string: '{"error":{"code":"InvalidRequestBody","message":"The specified Request
-        Body is not syntactically valid.\nRequestId:bffc0dfe-8dc2-4dc2-a630-071d321df091\nTime:2020-10-23T07:24:35.8280213Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
+        Body is not syntactically valid.\nRequestId:fc9a4bdb-6107-464f-9a2d-f35d3a1e41f5\nTime:2021-07-17T22:07:05.8140797Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
         must be set if poolAllocationMode is specified as ''UserSubscription'' on
         a PUT request"}]}}'
     headers:
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 07:24:37 GMT
+      - Sat, 17 Jul 2021 22:07:06 GMT
       expires:
       - '-1'
       pragma:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 400
       message: The specified Request Body is not syntactically valid.

@@ -2,18 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from azure.keyvault.secrets import SecretClient, parse_key_vault_secret_id
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from azure.keyvault.secrets import KeyVaultSecretIdentifier
+from devtools_testutils import PowerShellPreparer
 
-from _shared.preparer import KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
+from _test_case import SecretsTestCase
 
 
-class TestParseId(KeyVaultTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @KeyVaultClientPreparer(SecretClient)
-    def test_parse_secret_id_with_version(self, client):
+class TestParseId(SecretsTestCase, KeyVaultTestCase):
+    @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
+    def test_parse_secret_id_with_version(self, azure_keyvault_url):
+        client = self.create_client(azure_keyvault_url)
+
         secret_name = self.get_resource_name("secret")
         secret_value = "secret_value"
         # create secret
@@ -21,7 +21,7 @@ class TestParseId(KeyVaultTestCase):
 
         # [START parse_key_vault_secret_id]
         secret = client.get_secret(secret_name)
-        parsed_secret_id = parse_key_vault_secret_id(secret.id)
+        parsed_secret_id = KeyVaultSecretIdentifier(secret.id)
 
         print(parsed_secret_id.name)
         print(parsed_secret_id.vault_url)
@@ -36,7 +36,7 @@ class TestParseId(KeyVaultTestCase):
 
 def test_parse_secret_id_with_pending_version():
     source_id = "https://keyvault-name.vault.azure.net/secrets/secret-name/pending"
-    parsed_secret_id = parse_key_vault_secret_id(source_id)
+    parsed_secret_id = KeyVaultSecretIdentifier(source_id)
 
     assert parsed_secret_id.name == "secret-name"
     assert parsed_secret_id.vault_url == "https://keyvault-name.vault.azure.net"
@@ -46,7 +46,7 @@ def test_parse_secret_id_with_pending_version():
 
 def test_parse_deleted_secret_id():
     source_id = "https://keyvault-name.vault.azure.net/deletedsecrets/deleted-secret"
-    parsed_secret_id = parse_key_vault_secret_id(source_id)
+    parsed_secret_id = KeyVaultSecretIdentifier(source_id)
 
     assert parsed_secret_id.name == "deleted-secret"
     assert parsed_secret_id.vault_url == "https://keyvault-name.vault.azure.net"

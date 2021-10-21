@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import BytesIO
+from typing import Any, TypeVar
 
 try:
     from urllib.parse import quote, unquote
@@ -12,19 +13,21 @@ except ImportError:
 
 import six
 
+from azure.core.exceptions import HttpResponseError
 from ._quick_query_helper import DataLakeFileQueryReader
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import IterStreamer
 from ._upload_helper import upload_datalake_file
-from ._generated.models import StorageErrorException
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers, \
     convert_datetime_to_rfc1123
 from ._deserialize import process_storage_error, deserialize_file_properties
 from ._models import FileProperties, DataLakeFileQueryError
+
+ClassType = TypeVar("ClassType")
 
 
 class DataLakeFileClient(PathClient):
@@ -47,9 +50,11 @@ class DataLakeFileClient(PathClient):
     :type file_path: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -73,12 +78,13 @@ class DataLakeFileClient(PathClient):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             file_system_name,  # type: str
             file_path,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> DataLakeFileClient
+        ):  # type: (...) -> ClassType
         """
         Create DataLakeFileClient from a Connection String.
 
@@ -93,7 +99,8 @@ class DataLakeFileClient(PathClient):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :return a DataLakeFileClient
@@ -314,6 +321,7 @@ class DataLakeFileClient(PathClient):
         kwargs['validate_content'] = validate_content
         kwargs['max_concurrency'] = max_concurrency
         kwargs['client'] = self._client.path
+        kwargs['file_settings'] = self._config
 
         return kwargs
 
@@ -361,6 +369,15 @@ class DataLakeFileClient(PathClient):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash for each chunk of the file. The storage
+            service checks the hash of the content that has arrived with the hash
+            that was sent. This is primarily valuable for detecting bitflips on
+            the wire if using http instead of https, as https (the default), will
+            already validate. Note that this MD5 hash is not stored with the
+            blob. Also note that if enabled, the memory-efficient upload algorithm
+            will not be used because computing the MD5 hash requires buffering
+            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
@@ -445,7 +462,7 @@ class DataLakeFileClient(PathClient):
             **kwargs)
         try:
             return self._client.path.append_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -536,14 +553,14 @@ class DataLakeFileClient(PathClient):
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return self._client.path.flush_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def download_file(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content, or readinto() must be used to download the file into
-        a stream.
+        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -593,9 +610,19 @@ class DataLakeFileClient(PathClient):
         downloader = self._blob_client.download_blob(offset=offset, length=length, **kwargs)
         return StorageStreamDownloader(downloader)
 
-    def rename_file(self, new_name,  # type: str
-                    **kwargs):
-        # type: (**Any) -> DataLakeFileClient
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a file exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._exists(**kwargs)
+
+    def rename_file(self, new_name, **kwargs):
+        # type: (str, **Any) -> DataLakeFileClient
         """
         Rename the source file.
 
@@ -700,16 +727,20 @@ class DataLakeFileClient(PathClient):
         :keyword file_format:
             Optional. Defines the serialization of the data currently stored in the file. The default is to
             treat the file data as CSV data formatted in the default dialect. This can be overridden with
-            a custom DelimitedTextDialect, or alternatively a DelimitedJsonDialect.
+            a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
         :paramtype file_format:
-            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect or
+            ~azure.storage.filedatalake.QuickQueryDialect or str
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
-            as it is represented in the file. By providing an output format, the file data will be reformatted
-            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
+            as it is represented in the file. By providing an output format,
+            the file data will be reformatted according to that profile.
+            This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
         :paramtype output_format:
-            ~azure.storage.filedatalake.DelimitedTextDialect, ~azure.storage.filedatalake.DelimitedJsonDialect
-            or list[~azure.storage.filedatalake.ArrowDialect]
+            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+            or list[~azure.storage.filedatalake.ArrowDialect] or ~azure.storage.filedatalake.QuickQueryDialect or str
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
