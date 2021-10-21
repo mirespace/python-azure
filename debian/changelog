@@ -1,3 +1,15 @@
+python-azure (20211021+gitubuntu1) impish; urgency=medium
+
+  * New upstream version 20211021+git.
+  * Removed the following patches since they have been
+    applied by upstream:
+    - d/p/duplicated-named-function.patch
+    - resources-16.0.0.patch
+  * d/p/removing-azure-monitor-folder.patch: It's
+    deprecated and avoiding BFS.
+
+ -- Miriam España Acebal <miriam.espana@canonical.com>  Thu, 21 Oct 2021 12:16:59 +0200
+
 python-azure (20201208+git-6) unstable; urgency=medium
 
   * Skip test_mgmt_compute_vmss.py::MgmtComputeTest::test_compute_vmss_rol
