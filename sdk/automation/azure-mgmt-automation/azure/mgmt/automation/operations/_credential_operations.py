@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class CredentialOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -71,7 +71,7 @@ class CredentialOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -98,7 +98,7 @@ class CredentialOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -113,7 +113,7 @@ class CredentialOperations(object):
         credential_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Credential"
+        # type: (...) -> "_models.Credential"
         """Retrieve the credential identified by credential name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -127,12 +127,12 @@ class CredentialOperations(object):
         :rtype: ~azure.mgmt.automation.models.Credential
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Credential"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Credential"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -159,7 +159,7 @@ class CredentialOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Credential', pipeline_response)
@@ -175,10 +175,10 @@ class CredentialOperations(object):
         resource_group_name,  # type: str
         automation_account_name,  # type: str
         credential_name,  # type: str
-        parameters,  # type: "models.CredentialCreateOrUpdateParameters"
+        parameters,  # type: "_models.CredentialCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Credential"
+        # type: (...) -> "_models.Credential"
         """Create a credential.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -194,12 +194,12 @@ class CredentialOperations(object):
         :rtype: ~azure.mgmt.automation.models.Credential
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Credential"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Credential"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -231,7 +231,7 @@ class CredentialOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -251,10 +251,10 @@ class CredentialOperations(object):
         resource_group_name,  # type: str
         automation_account_name,  # type: str
         credential_name,  # type: str
-        parameters,  # type: "models.CredentialUpdateParameters"
+        parameters,  # type: "_models.CredentialUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Credential"
+        # type: (...) -> "_models.Credential"
         """Update a credential.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -270,12 +270,12 @@ class CredentialOperations(object):
         :rtype: ~azure.mgmt.automation.models.Credential
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Credential"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Credential"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -307,7 +307,7 @@ class CredentialOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Credential', pipeline_response)
@@ -324,7 +324,7 @@ class CredentialOperations(object):
         automation_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CredentialListResult"]
+        # type: (...) -> Iterable["_models.CredentialListResult"]
         """Retrieve a list of credentials.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -336,12 +336,12 @@ class CredentialOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.automation.models.CredentialListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CredentialListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CredentialListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

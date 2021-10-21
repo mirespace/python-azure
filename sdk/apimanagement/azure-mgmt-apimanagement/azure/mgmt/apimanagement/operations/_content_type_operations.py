@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ContentTypeOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,8 +51,9 @@ class ContentTypeOperations(object):
         service_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ContentTypeCollection"]
-        """Returns list of content types.
+        # type: (...) -> Iterable["_models.ContentTypeCollection"]
+        """Lists the developer portal's content types. Content types describe content items' properties,
+        validation rules, and constraints.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -63,12 +64,12 @@ class ContentTypeOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ContentTypeCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContentTypeCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContentTypeCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -110,7 +111,7 @@ class ContentTypeOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -128,8 +129,9 @@ class ContentTypeOperations(object):
         content_type_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ContentTypeContract"
-        """Gets API Management content type details.
+        # type: (...) -> "_models.ContentTypeContract"
+        """Gets the details of the developer portal's content type. Content types describe content items'
+        properties, validation rules, and constraints.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -142,12 +144,12 @@ class ContentTypeOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.ContentTypeContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContentTypeContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContentTypeContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -174,7 +176,7 @@ class ContentTypeOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -195,8 +197,10 @@ class ContentTypeOperations(object):
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ContentTypeContract"
-        """Creates or updates an Content Type.
+        # type: (...) -> "_models.ContentTypeContract"
+        """Creates or updates the developer portal's content type. Content types describe content items'
+        properties, validation rules, and constraints. Custom content types' identifiers need to start
+        with the ``c-`` prefix. Built-in content types can't be modified.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -212,12 +216,12 @@ class ContentTypeOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.ContentTypeContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContentTypeContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContentTypeContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -246,7 +250,7 @@ class ContentTypeOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -273,7 +277,9 @@ class ContentTypeOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Removes specified content type.
+        """Removes the specified developer portal's content type. Content types describe content items'
+        properties, validation rules, and constraints. Built-in content types (with identifiers
+        starting with the ``c-`` prefix) can't be removed.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -294,7 +300,7 @@ class ContentTypeOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -322,7 +328,7 @@ class ContentTypeOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

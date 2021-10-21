@@ -6,7 +6,7 @@
 The Azure Core pipeline is a re-structuring of the msrest pipeline introduced in msrest 0.6.0.
 Further discussions on the msrest implementation can be found in the [msrest wiki](https://github.com/Azure/msrest-for-python/wiki/msrest-0.6.0---Pipeline).
 
-The Azure Core Pipeline is an implementation of chained policies as described in the [Azure SDK guidelines](https://github.com/Azure/azure-sdk/blob/master/docs/general/design.md).
+The Azure Core Pipeline is an implementation of chained policies as described in the [Azure SDK guidelines](https://github.com/Azure/azure-sdk/blob/main/docs/general/design.md).
 
 The Python implementation of the pipeline has some mechanisms specific to Python. This is due to the fact that both synchronous and asynchronous implementations of the pipeline must be supported independently.
 
@@ -52,6 +52,7 @@ class FooServiceClient:
 ```
 
 An end user consuming this SDK may write code like so:
+
 ```python
 from azure.core.credentials import FooCredentials
 from azure.foo import FooServiceClient
@@ -88,12 +89,24 @@ client = FooServiceClient(
 response = client.get_foo_properties()
 ```
 
+### Pipeline client configurations
+
+| Parameters | Description |
+| --- | --- |
+| `pipeline` | While `PipelineClient` will create a default pipeline, users can opt to use their own pipeline by passing in a `Pipeline` object. If passed in, the other configurations will be ignored.  |
+| `policies` | While `PipelineClient` will create a default list of `policies`, users can opt to use their own policies by passing in a `policies` object. If passed in, `config` will be ignored |
+| `config` | While `PipelineClient` will create a default `Configuration`, users can opt to use their own configuration by passing in a `Configuration` object. If passed in, it will be used to create a `Pipeline` object. |
+| `per_call_policies` | If a default `pipeline` is needed and no `policies` is passed in, `per_call_policies` will be added before the `Retry` policy |
+| `per_retry_policies` | If a default `pipeline` is needed and no `policies` is passed in, `per_retry_policies` will be added after the `Retry` policy. If there is no `RetryPolicy` in the pipeline, a `ValueError` will be raised |
+| `transport` | While `PipelineClient` will create a default `RequestsTransport`, users can opt to use their own transport by passing in a `RequestsTransport` object. If it is omitted, `PipelineClient` will honor the other described [transport customizations](#transport). |
+
 ### Transport
 
 Various combinations of sync/async HTTP libraries as well as alternative event loop implementations are available. Therefore to support the widest range of customer scenarios, we must allow a customer to easily swap out the HTTP transport layer to one of those supported.
 
 The transport is the last node in the pipeline, and adheres to the same basic API as any policy within the pipeline.
 The only currently available transport for synchronous pipelines uses the `Requests` library:
+
 ```python
 from azure.core.pipeline.transport import RequestsTransport
 synchronous_transport = RequestsTransport()
@@ -101,6 +114,7 @@ synchronous_transport = RequestsTransport()
 
 For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
 should easily be able to specify their chosen transport. SDK developers should use the `aiohttp` transport as the default for asynchronous pipelines where the user has not specified an alternative.
+
 ```python
 from azure.foo.aio import FooServiceClient
 from azure.core.pipeline.transport import (
@@ -122,6 +136,7 @@ response = await client.get_foo_properties()
 
 Some common properties can be configured on all transports. They must be passed
 as kwargs arguments while building the transport instance. These include the following properties:
+
 ```python
 transport = AioHttpTransport(
         # The connect and read timeout value. Defaults to 100 seconds.
@@ -142,19 +157,6 @@ transport = AioHttpTransport(
 )
 ```
 
-#### Transport configurations
-
-| Parameters | Description |
-| --- | --- |
-| connection_timeout | A single float in seconds for the connection timeout. Defaults to 300 seconds. |
-| read_timeout | A single float in seconds for the read timeout. Defaults to 300 seconds. |
-| connection_verify | SSL certificate verification. Enabled by default. Set to False to disable, alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs. |
-| connection_cert | Client-side certificates. You can specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths. |
-| proxies | Dictionary mapping protocol or protocol and hostname to the URL of the proxy. |
-| cookies | Dict or CookieJar object to send with the `Request`. |
-| stream | whether to immediately download the response content. Defaults to ``False``. |
-| connection_data_block_size | The block size of data sent over the connection. Defaults to 4096 bytes. |
-
 ### Proxy Settings
 
 There are two ways to configure proxy settings.
@@ -167,7 +169,7 @@ When creating the transport, "use_env_settings" parameter can be used to enable 
 synchronous_transport = RequestsTransport(use_env_settings=True)
 ```
 
-If "use_env_settings" is set to True(by default), the transport will look for environment variables 
+If "use_env_settings" is set to True(by default), the transport will look for environment variables
 
 - HTTP_PROXY
 - HTTPS_PROXY
@@ -194,6 +196,7 @@ proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
 The HttpRequest and HttpResponse objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
 
 The HttpRequest has the following API. It does not vary between transports:
+
 ```python
 class HttpRequest(object):
 
@@ -244,6 +247,7 @@ This is to accomodate how the data is extracted for the object returned by the H
 There is also an async flavor: AsyncHttpResponse. This is to allow for the asynchronous streaming of
 data from the response.
 For example:
+
 ```python
 from azure.core.pipeline.transport import (
     RequestsTransportResponse,  # HttpResponse
@@ -252,10 +256,12 @@ from azure.core.pipeline.transport import (
     AsyncioRequestsTransportResponse,  # AsyncHttpResponse
 )
 ```
+
 The API for each of these response types is identical, so the consumer of the Response need not know about these
 particular types.
 
 The HttpResponse has the following API. It does not vary between transports:
+
 ```python
 class HttpResponse(object):
 
@@ -273,7 +279,7 @@ class HttpResponse(object):
     def text(self, encoding=None):
         """Return the whole body as a string."""
 
-    def stream_download(self, chunk_size=None, callback=None):
+    def stream_download(self, pipeline, **kwargs):
         """Generator for streaming request body data.
         Should be implemented by sub-classes if streaming download
         is supported.
@@ -301,6 +307,7 @@ transport specific and can contain data persisted between pipeline requests (for
 pool or "session"), as well as used by the SDK developer to carry arbitrary data through the pipeline.
 
 The API for PipelineRequest and PipelineResponse is as follows:
+
 ```python
 class PipelineRequest(object):
 
@@ -331,6 +338,7 @@ This is a simple abstract class, that can act before the request is done, or aft
 - Logging the request and/or response
 
 A SansIOHTTPPolicy should implement one or more of the following methods:
+
 ```python
 def on_request(self, request):
     """Is executed before sending the request to next policy."""
@@ -349,6 +357,7 @@ def on_exception(self, request):
 SansIOHTTPPolicy methods can be declared as coroutines, but then they can only be used with a AsyncPipeline.
 
 Current provided sans IO policies include:
+
 ```python
 from azure.core.pipeline.policies import (
     HeadersPolicy,  # Add custom headers to all requests
@@ -368,6 +377,7 @@ Some policies are more complex, like retry strategy, and need to have control of
 In the current version, they are subclasses of HTTPPolicy or AsyncHTTPPolicy, and can be used only their corresponding synchronous or asynchronous pipeline type.
 
 An HTTPPolicy or AsyncHTTPPolicy must implement the `send` method, and this implementation must in include a call to process the next policy in the pipeline:
+
 ```python
 class CustomPolicy(HTTPPolicy):
 
@@ -388,6 +398,7 @@ class CustomAsyncPolicy(AsyncHTTPPolicy):
 ```
 
 Currently provided HTTP policies include:
+
 ```python
 from azure.core.pipeline.policies import (
     RetryPolicy,
@@ -399,50 +410,59 @@ from azure.core.pipeline.policies import (
 
 #### Available Policies
 
-| Name | Policy Flavor | Parameters accepted in Init | Parameters accepted in Request |
-| --- | --- | --- | --- |
-| HeadersPolicy | SansIOHTTPPolicy | base_headers | headers |
-|  |  | headers | |
-| RequestIdPolicy | SansIOHTTPPolicy | request_id | request_id |
-|  |  | auto_request_id | |
-| UserAgentPolicy | SansIOHTTPPolicy | base_user_agent | user_agent |
-|  |  | user_agent_overwrite | |
-|  |  | user_agent_use_env | |
-|  |  | user_agent | |
-|  |  | sdk_moniker | |
-| NetworkTraceLoggingPolicy | SansIOHTTPPolicy | logging_enable | logging_enable |
-| HttpLoggingPolicy | SansIOHTTPPolicy | logger | logger |
-| ContentDecodePolicy | SansIOHTTPPolicy | response_encoding | response_encoding |
-| ProxyPolicy | SansIOHTTPPolicy | proxies | proxies |
-| CustomHookPolicy | SansIOHTTPPolicy | raw_request_hook | raw_request_hook |
-|  |  | raw_response_hook | raw_response_hook |
-| DistributedTracingPolicy | SansIOHTTPPolicy | network_span_namer | network_span_namer |
-|  |  | tracing_attributes | |
-| --- | --- | --- | --- |
-| RedirectPolicy | HTTPPolicy | permit_redirects | permit_redirects |
-|  |  | redirect_max | redirect_max |
-|  |  | redirect_remove_headers | |
-|  |  | redirect_on_status_codes | |
-| AsyncRedirectPolicy | AsyncHTTPPolicy | permit_redirects | permit_redirects |
-|  |  | redirect_max | redirect_max |
-|  |  | redirect_remove_headers | |
-|  |  | redirect_on_status_codes | |
-| RetryPolicy | HTTPPolicy | retry_total | retry_total |
-|  |  | retry_connect | retry_connect |
-|  |  | retry_read | retry_read |
-|  |  | retry_status | retry_status |
-|  |  | retry_backoff_factor | retry_backoff_factor |
-|  |  | retry_backoff_max | retry_backoff_max |
-|  |  | retry_mode | retry_mode |
-|  |  | retry_on_status_codes | retry_on_status_codes |
-| AsyncRetryPolicy | AsyncHTTPPolicy | retry_total | retry_total |
-|  |  | retry_connect | retry_connect |
-|  |  | retry_read | retry_read |
-|  |  | retry_status | retry_status |
-|  |  | retry_backoff_factor | retry_backoff_factor |
-|  |  | retry_backoff_max | retry_backoff_max |
-|  |  | retry_mode | retry_mode |
-|  |  | retry_on_status_codes | retry_on_status_codes |
+| Name | Policy Flavor | Parameters | Accepted in Init? | Accepted in Request? | Description |
+| --- | --- | --- | --- | --- | --- |
+| HeadersPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | base_headers | x |  | Headers to send with the request. |
+|  |  | headers | x | x | The HTTP Request headers. |
+| RequestIdPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | request_id | x | x | The request id to be added into header. |
+|  |  | auto_request_id | x |  | Auto generates a unique request ID per call if `True` which is by default. |
+| UserAgentPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | base_user_agent | x |  | Sets the base user agent value. |
+|  |  | user_agent_overwrite | x |  | Overwrites User-Agent when True. Defaults to `False`. |
+|  |  | user_agent_use_env | x |  | Gets user-agent from environment. Defaults to `True`. |
+|  |  | user_agent | x | x | If specified, this will be added in front of the user agent string. |
+|  |  | sdk_moniker | x |  | If specified, the user agent string will be `azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])` |
+| NetworkTraceLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | logging_enable | x | x | Use to enable per operation. Defaults to `False`. |
+| HttpLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | logger | x | x | If specified, it will be used to log information |
+| ContentDecodePolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | response_encoding | x | x | The encoding to use if known for this service (will disable auto-detection). |
+| ProxyPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | proxies | x | x | Maps protocol or protocol and hostname to the URL of the proxy. |
+| CustomHookPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | raw_request_hook | x | x | Callback function. Will be invoked on request. |
+|  |  | raw_response_hook | x | x | Callback function. Will be invoked on response. |
+| DistributedTracingPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | network_span_namer | x | x | A callable to customize the span name. |
+|  |  | tracing_attributes | x | x | Attributes to set on all created spans. |
+| --- | --- | --- | --- | --- | --- |
+| RedirectPolicy | HTTPPolicy |  |  |  |  |
+|  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |
+|  |  | redirect_max | x | x | The maximum allowed redirects. Defaults to `30`. |
+| AsyncRedirectPolicy | AsyncHTTPPolicy |  |  |  |  |
+|  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |
+|  |  | redirect_max | x | x | The maximum allowed redirects. Defaults to `30`. |
+| RetryPolicy | HTTPPolicy |  |  |  |  |
+|  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
+|  |  | retry_connect | x | x | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is `3`. |
+|  |  | retry_read | x | x | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is `3`. |
+|  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
+|  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
+|  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is `exponential`. |
+|  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
+| AsyncRetryPolicy | AsyncHTTPPolicy |  |  |  |  |
+|  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
+|  |  | retry_connect | x | x | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is `3`. |
+|  |  | retry_read | x | x | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is `3`. |
+|  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
+|  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
+|  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is exponential. |
+|  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 
 ### The Pipeline
 

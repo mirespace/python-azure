@@ -12,8 +12,9 @@ import time
 from datetime import datetime, timedelta
 
 from azure.common import AzureHttpError, AzureConflictHttpError
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.mgmt.servicebus.models import AccessRights
-from azure.servicebus import ServiceBusClient, ServiceBusSender
+from azure.servicebus import ServiceBusClient, ServiceBusSender, ServiceBusReceiver
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import ServiceBusMessage, ServiceBusReceivedMessage
 from azure.servicebus.exceptions import (
@@ -28,7 +29,9 @@ from servicebus_preparer import (
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
     ServiceBusQueueAuthorizationRulePreparer,
-    CachedServiceBusQueuePreparer
+    CachedServiceBusQueuePreparer,
+    CachedServiceBusTopicPreparer,
+    CachedServiceBusSubscriptionPreparer
 )
 
 class ServiceBusClientTests(AzureMgmtTestCase):
@@ -152,14 +155,21 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
         with client:
-            # Validate that the wrong queue with the right credentials fails.
+            # Validate that the wrong sender/receiver queues with the right credentials fail.
             with pytest.raises(ValueError):
                 with client.get_queue_sender(wrong_queue.name) as sender:
                     sender.send_messages(ServiceBusMessage("test"))
 
-            # But that the correct one works.
+            with pytest.raises(ValueError):
+                with client.get_queue_receiver(wrong_queue.name) as receiver:
+                    messages =  receiver.receive_messages(max_message_count=1, max_wait_time=1)
+
+            # But that the correct ones work.
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("test")) 
+
+            with client.get_queue_receiver(servicebus_queue.name) as receiver:
+               messages =  receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
             # Now do the same but with direct connstr initialization.
             with pytest.raises(ValueError):
@@ -167,7 +177,14 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                     servicebus_queue_authorization_rule_connection_string,
                     queue_name=wrong_queue.name,
                 ) as sender:
-                    sender.send_messages(ServiceBusMessage("test"))
+                        sender.send_messages(ServiceBusMessage("test"))
+
+            with pytest.raises(ValueError):
+                with ServiceBusReceiver._from_connection_string(
+                    servicebus_queue_authorization_rule_connection_string,
+                    queue_name=wrong_queue.name,
+                ) as receiver:
+                    messages =  receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
             with ServiceBusSender._from_connection_string(
                 servicebus_queue_authorization_rule_connection_string,
@@ -175,12 +192,20 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             ) as sender:
                 sender.send_messages(ServiceBusMessage("test"))
 
+            with ServiceBusReceiver._from_connection_string(
+                servicebus_queue_authorization_rule_connection_string,
+                queue_name=servicebus_queue.name,
+            ) as receiver:
+                messages =  receiver.receive_messages(max_message_count=1, max_wait_time=1)
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
+    @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    def test_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
 
         client.close()
@@ -216,6 +241,51 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         assert not sender._handler and not sender._running
         assert not receiver._handler and not receiver._running
         assert len(client._handlers) == 0
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        # the previous sender/receiver can not longer be referenced, there might be a delay in CPython
+        # to remove the reference, so len of handlers should be less than 4
+        assert len(client._handlers) < 4
+        client.close()
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        queue_sender = None
+        queue_receiver = None
+        assert len(client._handlers) < 2
+
+        client.close()
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        topic_sender = None
+        subscription_receiver = None
+        # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
+        assert len(client._handlers) < 4
+
+        client.close()
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
+        assert len(client._handlers) < 4
+
+        client.close()
+        for _ in range(5):
+            queue_sender = client.get_queue_sender(servicebus_queue.name)
+            queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+            topic_sender = client.get_topic_sender(servicebus_topic.name)
+            subscription_receiver = client.get_subscription_receiver(servicebus_topic.name,
+                                                                     servicebus_subscription.name)
+        assert len(client._handlers) < 15
+        client.close()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -290,5 +360,62 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient(hostname, credential)
         with client:
             assert len(client._handlers) == 0
+            with client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("foo"))
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_client_azure_named_key_credential(self,
+                                   servicebus_queue,
+                                   servicebus_namespace,
+                                   servicebus_namespace_key_name,
+                                   servicebus_namespace_primary_key,
+                                   servicebus_namespace_connection_string,
+                                   **kwargs):
+        # This should "just work" to validate known-good.
+        credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        auth_uri = "sb://{}/{}".format(hostname, servicebus_queue.name)
+        token = credential.get_token(auth_uri).token.decode()
+
+        # Finally let's do it with AzureSasCredential
+        credential = AzureSasCredential(token)
+
+        client = ServiceBusClient(hostname, credential)
+        with client:
+            assert len(client._handlers) == 0
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_client_azure_named_key_credential(self,
+                                   servicebus_queue,
+                                   servicebus_namespace,
+                                   servicebus_namespace_key_name,
+                                   servicebus_namespace_primary_key,
+                                   servicebus_namespace_connection_string,
+                                   **kwargs):
+        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+
+        client = ServiceBusClient(hostname, credential)
+        with client:
+            with client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("foo"))
+        
+        credential.update("foo", "bar")
+        with pytest.raises(Exception):
+            with client:
+                with client.get_queue_sender(servicebus_queue.name) as sender:
+                    sender.send_messages(ServiceBusMessage("foo"))
+
+        # update back to the right key again
+        credential.update(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+        with client:
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("foo"))

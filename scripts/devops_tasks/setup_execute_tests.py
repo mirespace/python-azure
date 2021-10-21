@@ -25,6 +25,7 @@ from common_tasks import (
     clean_coverage,
     is_error_code_5_allowed,
     create_code_coverage_params,
+    filter_packages_by_compatibility_override
 )
 from tox_harness import prep_and_run_tox
 
@@ -42,7 +43,7 @@ def combine_coverage_files(coverage_files):
     if os.path.isfile(tox_ini_file):
         # for every individual coverage file, run coverage combine to combine path
         for coverage_file in coverage_files:
-            cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
+            cov_cmd_array = [sys.executable, "-m", "coverage", "combine", "--append"]
             # tox.ini file has coverage paths to combine
             # Pas tox.ini as coverage config file
             cov_cmd_array.extend([config_file_flag, coverage_file])
@@ -222,7 +223,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--tparallel",
         default=False,
-        help=("Flag  that enables parallel tox invocation."),
+        help=("Flag that enables parallel tox invocation."),
         action="store_true",
     )
 
@@ -295,15 +296,20 @@ if __name__ == "__main__":
         target_dir = root_dir
 
     targeted_packages = process_glob_string(args.glob_string, target_dir, "", args.filter_type)
+    compatible_targeted_packages = filter_packages_by_compatibility_override(targeted_packages)
+
+    if targeted_packages != compatible_targeted_packages:
+        logging.info("At least one package incompatible with current platform was detected. Skipping: {}".format(set(targeted_packages) - set(compatible_targeted_packages)))
+
     extended_pytest_args = []
 
-    if len(targeted_packages) == 0:
+    if len(compatible_targeted_packages) == 0:
         exit(0)
 
     if args.xdist:
         extended_pytest_args.extend(["-n", "8", "--dist=loadscope"])
 
     if args.runtype != "none":
-        execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
+        execute_global_install_and_test(args, compatible_targeted_packages, extended_pytest_args)
     else:
-        prep_and_run_tox(targeted_packages, args, extended_pytest_args)
+        prep_and_run_tox(compatible_targeted_packages, args, extended_pytest_args)

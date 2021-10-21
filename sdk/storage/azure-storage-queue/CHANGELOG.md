@@ -1,7 +1,13 @@
 # Release History
 
-## 12.1.5 (Unreleased)
+## 12.1.6 (2021-04-20)
+**Fixes**
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
 
+## 12.1.5 (2021-01-13)
+**New features**
+- Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
 
 ## 12.1.4 (2020-11-10)
 **New feature**
@@ -13,9 +19,9 @@
 
 ## 12.1.3 (2020-09-10)
 **Fixes**
-- Fixed QueueClient type declaration (#11392). 
+- Fixed QueueClient type declaration (#11392).
 
-## 12.1.2 (2020-6-12)
+## 12.1.2
 **Notes**
 - Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
@@ -134,7 +140,7 @@ https://aka.ms/azure-sdk-preview1-python.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 - New error hierarchy:
     - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`

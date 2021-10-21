@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class SettingsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,8 +43,8 @@ class SettingsOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.SettingsList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SettingsList"]:
         """Settings about different configurations in security center.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,12 +52,12 @@ class SettingsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.SettingsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SettingsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SettingsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -109,24 +109,24 @@ class SettingsOperations:
 
     async def get(
         self,
-        setting_name: Union[str, "models.Enum3"],
-        **kwargs
-    ) -> "models.SettingResource":
+        setting_name: Union[str, "_models.Enum69"],
+        **kwargs: Any
+    ) -> "_models.Setting":
         """Settings of different configurations in security center.
 
-        :param setting_name: Name of setting: (MCAS/WDATP).
-        :type setting_name: str or ~azure.mgmt.security.models.Enum3
+        :param setting_name: The name of the setting.
+        :type setting_name: str or ~azure.mgmt.security.models.Enum69
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SettingResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.SettingResource
+        :return: Setting, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.Setting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SettingResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Setting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -153,7 +153,7 @@ class SettingsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SettingResource', pipeline_response)
+        deserialized = self._deserialize('Setting', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -163,27 +163,27 @@ class SettingsOperations:
 
     async def update(
         self,
-        setting_name: Union[str, "models.Enum3"],
-        setting: "models.SettingResource",
-        **kwargs
-    ) -> "models.SettingResource":
+        setting_name: Union[str, "_models.Enum69"],
+        setting: "_models.Setting",
+        **kwargs: Any
+    ) -> "_models.Setting":
         """updating settings about different configurations in security center.
 
-        :param setting_name: Name of setting: (MCAS/WDATP).
-        :type setting_name: str or ~azure.mgmt.security.models.Enum3
+        :param setting_name: The name of the setting.
+        :type setting_name: str or ~azure.mgmt.security.models.Enum69
         :param setting: Setting object.
-        :type setting: ~azure.mgmt.security.models.SettingResource
+        :type setting: ~azure.mgmt.security.models.Setting
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SettingResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.SettingResource
+        :return: Setting, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.Setting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SettingResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Setting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01"
+        api_version = "2021-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -205,7 +205,7 @@ class SettingsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(setting, 'SettingResource')
+        body_content = self._serialize.body(setting, 'Setting')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -215,7 +215,7 @@ class SettingsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SettingResource', pipeline_response)
+        deserialized = self._deserialize('Setting', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

@@ -9,7 +9,7 @@ from io import SEEK_SET, UnsupportedOperation
 from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disable=unused-import
 
 import six
-from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
+from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
 from ._shared.response_handlers import (
     process_storage_error,
@@ -23,7 +23,6 @@ from ._shared.uploads import (
     AppendBlobChunkUploader)
 from ._shared.encryption import generate_blob_encryption_data, encrypt_blob
 from ._generated.models import (
-    StorageErrorException,
     BlockLookupList,
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
@@ -81,6 +80,11 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
 
+        immutability_policy = kwargs.pop('immutability_policy', None)
+        immutability_policy_expiry = None if immutability_policy is None else immutability_policy.expiry_time
+        immutability_policy_mode = None if immutability_policy is None else immutability_policy.policy_mode
+        legal_hold = kwargs.pop('legal_hold', None)
+
         # Do single put if the size is smaller than or equal config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
@@ -93,7 +97,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                 encryption_data, data = encrypt_blob(data, encryption_options['key'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
             return client.upload(
-                data,
+                body=data,
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
                 headers=headers,
@@ -103,6 +107,9 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                 upload_stream_current=0,
                 tier=tier.value if tier else None,
                 blob_tags_string=blob_tags_string,
+                immutability_policy_expiry=immutability_policy_expiry,
+                immutability_policy_mode=immutability_policy_mode,
+                legal_hold=legal_hold,
                 **kwargs)
 
         use_original_upload_path = blob_settings.use_byte_buffer or \
@@ -152,8 +159,11 @@ def upload_block_blob(  # pylint: disable=too-many-locals
             headers=headers,
             tier=tier.value if tier else None,
             blob_tags_string=blob_tags_string,
+            immutability_policy_expiry=immutability_policy_expiry,
+            immutability_policy_mode=immutability_policy_mode,
+            legal_hold=legal_hold,
             **kwargs)
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         try:
             process_storage_error(error)
         except ResourceModifiedError as mod_error:
@@ -216,7 +226,7 @@ def upload_page_blob(
             headers=headers,
             **kwargs)
 
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         try:
             process_storage_error(error)
         except ResourceModifiedError as mod_error:
@@ -264,7 +274,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 append_position_access_conditions=append_conditions,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             if error.response.status_code != 404:
                 raise
             # rewind the request body if it is a stream
@@ -292,5 +302,5 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 append_position_access_conditions=append_conditions,
                 headers=headers,
                 **kwargs)
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         process_storage_error(error)

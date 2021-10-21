@@ -138,9 +138,9 @@ class Application(GenericResource):
     :type application_definition_id: str
     :param parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: any
     :ivar outputs: Name and value pairs that define the managed application outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Updating".
@@ -261,10 +261,10 @@ class ApplicationDefinition(GenericResource):
     :type package_file_uri: str
     :param main_template: The inline main template json which has resources to be provisioned. It
      can be a JObject or well-formed JSON string.
-    :type main_template: object
+    :type main_template: any
     :param create_ui_definition: The createUiDefinition json for the backing template with
      Microsoft.Solutions/applications resource. It can be a JObject or well-formed JSON string.
-    :type create_ui_definition: object
+    :type create_ui_definition: any
     """
 
     _validation = {
@@ -390,9 +390,9 @@ class ApplicationPatchable(GenericResource):
     :type application_definition_id: str
     :param parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: any
     :ivar outputs: Name and value pairs that define the managed application outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Updating".
@@ -510,14 +510,14 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
-    :vartype type: str
+    :param type: The identity type. The only acceptable values to pass in are None and
+     "SystemAssigned". The default value is None.
+    :type type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -526,8 +526,6 @@ class Identity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
         **kwargs
@@ -535,6 +533,80 @@ class Identity(msrest.serialization.Model):
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = kwargs.get('type', None)
+
+
+class Operation(msrest.serialization.Model):
+    """Microsoft.Solutions operation.
+
+    :param name: Operation name: {provider}/{resource}/{operation}.
+    :type name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+
+
+class OperationDisplay(msrest.serialization.Model):
+    """The object that represents the operation.
+
+    :param provider: Service provider: Microsoft.Solutions.
+    :type provider: str
+    :param resource: Resource on which the operation is performed: Application, JitRequest, etc.
+    :type resource: str
+    :param operation: Operation type: Read, write, delete, etc.
+    :type operation: str
+    """
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+
+
+class OperationListResult(msrest.serialization.Model):
+    """Result of the request to list Microsoft.Solutions operations. It contains a list of operations and a URL link to get the next set of results.
+
+    :param value: List of Microsoft.Solutions operations.
+    :type value: list[~azure.mgmt.resource.managedapplications.models.Operation]
+    :param next_link: URL to get the next set of operation list results if there are any.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class Plan(msrest.serialization.Model):

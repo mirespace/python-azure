@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PrivateEndpointConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,11 +46,11 @@ class PrivateEndpointConnectionsOperations:
     async def get(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "models.Enum14"],
+        parent_type: Union[str, "_models.Enum25"],
         parent_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
-    ) -> "models.PrivateEndpointConnection":
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnection":
         """Get a specific private endpoint connection.
 
         Get a specific private endpoint connection under a topic or domain.
@@ -59,7 +59,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum14
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum25
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -71,12 +71,12 @@ class PrivateEndpointConnectionsOperations:
         :rtype: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -117,18 +117,18 @@ class PrivateEndpointConnectionsOperations:
     async def _update_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "models.Enum15"],
+        parent_type: Union[str, "_models.Enum26"],
         parent_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: "models.PrivateEndpointConnection",
-        **kwargs
-    ) -> "models.PrivateEndpointConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -178,12 +178,12 @@ class PrivateEndpointConnectionsOperations:
     async def begin_update(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "models.Enum15"],
+        parent_type: Union[str, "_models.Enum26"],
         parent_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: "models.PrivateEndpointConnection",
-        **kwargs
-    ) -> AsyncLROPoller["models.PrivateEndpointConnection"]:
+        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Update a specific private endpoint connection.
 
         Update a specific private endpoint connection under a topic or domain.
@@ -192,7 +192,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum15
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum26
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -203,8 +203,8 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
@@ -212,7 +212,7 @@ class PrivateEndpointConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -239,7 +239,15 @@ class PrivateEndpointConnectionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
+            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
+            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -256,17 +264,17 @@ class PrivateEndpointConnectionsOperations:
     async def _delete_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "models.Enum16"],
+        parent_type: Union[str, "_models.Enum27"],
         parent_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -302,10 +310,10 @@ class PrivateEndpointConnectionsOperations:
     async def begin_delete(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "models.Enum16"],
+        parent_type: Union[str, "_models.Enum27"],
         parent_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a specific private endpoint connection.
 
@@ -315,7 +323,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum16
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum27
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -324,8 +332,8 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -356,7 +364,15 @@ class PrivateEndpointConnectionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
+            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
+            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -373,12 +389,12 @@ class PrivateEndpointConnectionsOperations:
     def list_by_resource(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "models.Enum17"],
+        parent_type: Union[str, "_models.Enum28"],
         parent_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.PrivateEndpointConnectionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """Lists all private endpoint connections under a resource.
 
         Get all private endpoint connections under a topic or domain.
@@ -387,7 +403,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum17
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum28
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -407,12 +423,12 @@ class PrivateEndpointConnectionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

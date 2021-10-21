@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class CollectionPartitionRegionOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,8 +49,8 @@ class CollectionPartitionRegionOperations:
         database_rid: str,
         collection_rid: str,
         filter: str,
-        **kwargs
-    ) -> AsyncIterable["models.PartitionMetricListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PartitionMetricListResult"]:
         """Retrieves the metrics determined by the given filter for the given collection and region, split
         by partition.
 
@@ -73,12 +73,12 @@ class CollectionPartitionRegionOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.PartitionMetricListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PartitionMetricListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartitionMetricListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -91,7 +91,7 @@ class CollectionPartitionRegionOperations:
                 url = self.list_metrics.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'region': self._serialize.url("region", region, 'str'),
                     'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),

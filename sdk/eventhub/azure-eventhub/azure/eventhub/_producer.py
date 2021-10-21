@@ -31,7 +31,7 @@ from ._utils import (
     set_message_partition_key,
     trace_message,
     send_context_manager,
-    add_link_to_send,
+    transform_outbound_single_message,
 )
 from ._constants import TIMEOUT_SYMBOL
 
@@ -53,7 +53,6 @@ def _set_trace_message(event_datas, parent_span=None):
     # type: (Iterable[EventData], Optional[AbstractSpan]) -> Iterable[EventData]
     for ed in iter(event_datas):
         trace_message(ed, parent_span)
-        add_link_to_send(ed, parent_span)
         yield ed
 
 
@@ -191,11 +190,11 @@ class EventHubProducer(
     ):
         # type: (...) -> Union[EventData, EventDataBatch]
         if isinstance(event_data, EventData):
+            outgoing_event_data = transform_outbound_single_message(event_data, EventData)
             if partition_key:
-                set_message_partition_key(event_data.message, partition_key)
-            wrapper_event_data = event_data
+                set_message_partition_key(outgoing_event_data.message, partition_key)
+            wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
-            add_link_to_send(wrapper_event_data, span)
         else:
             if isinstance(
                 event_data, EventDataBatch
@@ -206,8 +205,8 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for message in event_data.message._body_gen:  # pylint: disable=protected-access
-                    add_link_to_send(message, span)
+                for event in event_data.message._body_gen: # pylint: disable=protected-access
+                    trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:

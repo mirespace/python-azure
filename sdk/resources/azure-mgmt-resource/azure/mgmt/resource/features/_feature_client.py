@@ -9,13 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import ARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import TYPE_CHECKING
 
+from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import FeatureClientConfiguration
 from ._operations_mixin import FeatureClientOperationsMixin
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -36,17 +46,18 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2015-12-01'
-    _PROFILE_TAG = "azure.mgmt.resource.FeatureClient"
+    DEFAULT_API_VERSION = '2021-07-01'
+    _PROFILE_TAG = "azure.mgmt.resource.features.FeatureClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -58,9 +69,9 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
         self,
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        api_version=None, # type: Optional[str]
+        base_url=None,  # type: Optional[str]
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
         if not base_url:
@@ -80,10 +91,14 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2015-12-01: :mod:`v2015_12_01.models<azure.mgmt.resource.v2015_12_01.models>`
+           * 2015-12-01: :mod:`v2015_12_01.models<azure.mgmt.resource.features.v2015_12_01.models>`
+           * 2021-07-01: :mod:`v2021_07_01.models<azure.mgmt.resource.features.v2021_07_01.models>`
         """
         if api_version == '2015-12-01':
             from .v2015_12_01 import models
+            return models
+        elif api_version == '2021-07-01':
+            from .v2021_07_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -91,13 +106,29 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
     def features(self):
         """Instance depends on the API version:
 
-           * 2015-12-01: :class:`FeaturesOperations<azure.mgmt.resource.v2015_12_01.operations.FeaturesOperations>`
+           * 2015-12-01: :class:`FeaturesOperations<azure.mgmt.resource.features.v2015_12_01.operations.FeaturesOperations>`
+           * 2021-07-01: :class:`FeaturesOperations<azure.mgmt.resource.features.v2021_07_01.operations.FeaturesOperations>`
         """
         api_version = self._get_api_version('features')
         if api_version == '2015-12-01':
             from .v2015_12_01.operations import FeaturesOperations as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import FeaturesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'features'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def subscription_feature_registrations(self):
+        """Instance depends on the API version:
+
+           * 2021-07-01: :class:`SubscriptionFeatureRegistrationsOperations<azure.mgmt.resource.features.v2021_07_01.operations.SubscriptionFeatureRegistrationsOperations>`
+        """
+        api_version = self._get_api_version('subscription_feature_registrations')
+        if api_version == '2021-07-01':
+            from .v2021_07_01.operations import SubscriptionFeatureRegistrationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'subscription_feature_registrations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

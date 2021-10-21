@@ -46,7 +46,7 @@ class VpnSiteLinksOperations:
         resource_group_name: str,
         vpn_site_name: str,
         vpn_site_link_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnSiteLink":
         """Retrieves the details of a VPN site link.
 
@@ -93,7 +93,7 @@ class VpnSiteLinksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VpnSiteLink', pipeline_response)
@@ -108,7 +108,7 @@ class VpnSiteLinksOperations:
         self,
         resource_group_name: str,
         vpn_site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVpnSiteLinksResult"]:
         """Lists all the vpnSiteLinks in a resource group for a vpn site.
 
@@ -168,7 +168,7 @@ class VpnSiteLinksOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

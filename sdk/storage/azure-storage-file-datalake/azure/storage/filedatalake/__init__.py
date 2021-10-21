@@ -31,11 +31,18 @@ from ._models import (
     DelimitedJsonDialect,
     ArrowDialect,
     ArrowType,
+    QuickQueryDialect,
     DataLakeFileQueryError,
     AccessControlChangeResult,
     AccessControlChangeCounters,
     AccessControlChangeFailure,
     AccessControlChanges,
+    AnalyticsLogging,
+    Metrics,
+    RetentionPolicy,
+    StaticWebsite,
+    CorsRule,
+    DeletedPathProperties
 )
 
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
@@ -87,5 +94,12 @@ __all__ = [
     'DataLakeFileQueryError',
     'ArrowDialect',
     'ArrowType',
-    'DataLakeFileQueryError'
+    'QuickQueryDialect',
+    'DataLakeFileQueryError',
+    'AnalyticsLogging',
+    'Metrics',
+    'RetentionPolicy',
+    'StaticWebsite',
+    'CorsRule',
+    'DeletedPathProperties'
 ]

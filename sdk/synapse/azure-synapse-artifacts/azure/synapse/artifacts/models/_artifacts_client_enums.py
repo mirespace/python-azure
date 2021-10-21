@@ -26,6 +26,12 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AmazonRdsForOraclePartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NONE = "None"
+    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
+    DYNAMIC_RANGE = "DynamicRange"
+
 class AvroCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "none"
@@ -91,6 +97,21 @@ class CellOutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STREAM = "stream"
     ERROR = "error"
 
+class CompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """All available compressionCodec values.
+    """
+
+    NONE = "none"
+    LZO = "lzo"
+    BZIP2 = "bzip2"
+    GZIP = "gzip"
+    DEFLATE = "deflate"
+    ZIP_DEFLATE = "zipDeflate"
+    SNAPPY = "snappy"
+    LZ4 = "lz4"
+    TAR = "tar"
+    TAR_G_ZIP = "tarGZip"
+
 class CopyBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """All available types of copy behavior.
     """
@@ -107,6 +128,14 @@ class DataFlowComputeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MEMORY_OPTIMIZED = "MemoryOptimized"
     COMPUTE_OPTIMIZED = "ComputeOptimized"
 
+class DataFlowDebugCommandType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The command type.
+    """
+
+    EXECUTE_PREVIEW_QUERY = "executePreviewQuery"
+    EXECUTE_STATISTICS_QUERY = "executeStatisticsQuery"
+    EXECUTE_EXPRESSION_QUERY = "executeExpressionQuery"
+
 class DataFlowReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Data flow reference type.
     """
@@ -114,8 +143,6 @@ class DataFlowReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     DATA_FLOW_REFERENCE = "DataFlowReference"
 
 class DatasetCompressionLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """All available compression levels.
-    """
 
     OPTIMAL = "Optimal"
     FASTEST = "Fastest"
@@ -137,19 +164,11 @@ class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
 
 class Db2AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """AuthenticationType to be used for connection.
+    """AuthenticationType to be used for connection. It is mutually exclusive with connectionString
+    property.
     """
 
     BASIC = "Basic"
-
-class DelimitedTextCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    BZIP2 = "bzip2"
-    GZIP = "gzip"
-    DEFLATE = "deflate"
-    ZIP_DEFLATE = "zipDeflate"
-    SNAPPY = "snappy"
-    LZ4 = "lz4"
 
 class DependencyCondition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -159,9 +178,7 @@ class DependencyCondition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COMPLETED = "Completed"
 
 class DynamicsAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The authentication type to connect to Dynamics server. 'Office365' for online scenario, 'Ifd'
-    for on-premises with Ifd scenario, 'AADServicePrincipal' for Server-To-Server authentication in
-    online scenario. Type: string (or Expression with resultType string).
+    """All available dynamicsAuthenticationType values.
     """
 
     OFFICE365 = "Office365"
@@ -169,25 +186,14 @@ class DynamicsAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
 
 class DynamicsDeploymentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The deployment type of the Dynamics instance. 'Online' for Dynamics Online and
-    'OnPremisesWithIfd' for Dynamics on-premises with Ifd. Type: string (or Expression with
-    resultType string).
+    """All available dynamicsDeploymentType values.
     """
 
     ONLINE = "Online"
     ON_PREMISES_WITH_IFD = "OnPremisesWithIfd"
 
-class DynamicsServicePrincipalCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The service principal credential type to use in Server-To-Server authentication.
-    'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
-    Expression with resultType string).
-    """
-
-    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
-    SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
-
 class DynamicsSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The write behavior for the operation.
+    """Defines values for DynamicsSinkWriteBehavior.
     """
 
     UPSERT = "Upsert"
@@ -239,7 +245,7 @@ class HBaseAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     BASIC = "Basic"
 
 class HdiNodeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The node types on which the script action should be executed.
+    """All available HdiNodeTypes values.
     """
 
     HEADNODE = "Headnode"
@@ -364,12 +370,27 @@ class JsonFormatFilePattern(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     ARRAY_OF_OBJECTS = "arrayOfObjects"
 
 class JsonWriteFilePattern(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """File pattern of JSON. This setting controls the way a collection of JSON objects will be
-    treated. The default value is 'setOfObjects'. It is case-sensitive.
+    """All available filePatterns.
     """
 
     SET_OF_OBJECTS = "setOfObjects"
     ARRAY_OF_OBJECTS = "arrayOfObjects"
+
+class LivyStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The batch state
+    """
+
+    NOT_STARTED = "not_started"
+    STARTING = "starting"
+    IDLE = "idle"
+    BUSY = "busy"
+    SHUTTING_DOWN = "shutting_down"
+    ERROR = "error"
+    DEAD = "dead"
+    KILLED = "killed"
+    SUCCESS = "success"
+    RUNNING = "running"
+    RECOVERING = "recovering"
 
 class MongoDbAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the MongoDB database.
@@ -441,6 +462,7 @@ class OrcCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "none"
     ZLIB = "zlib"
     SNAPPY = "snappy"
+    LZO = "lzo"
 
 class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Parameter type.
@@ -454,7 +476,7 @@ class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ARRAY = "Array"
     SECURE_STRING = "SecureString"
 
-class ParquetCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ParquetCompressionCodecEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "none"
     GZIP = "gzip"
@@ -708,6 +730,14 @@ class SqlConnectionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SQL_ON_DEMAND = "SqlOnDemand"
     SQL_POOL = "SqlPool"
 
+class SqlPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for Sql read in parallel.
+    """
+
+    NONE = "None"
+    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
+    DYNAMIC_RANGE = "DynamicRange"
+
 class SqlPoolReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """SQL pool reference type.
     """
@@ -733,6 +763,7 @@ class SsisPackageLocationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     SSISDB = "SSISDB"
     FILE = "File"
     INLINE_PACKAGE = "InlinePackage"
+    PACKAGE_STORE = "PackageStore"
 
 class StoredProcedureParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Stored procedure parameter type.
@@ -796,6 +827,7 @@ class TumblingWindowFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
 
     MINUTE = "Minute"
     HOUR = "Hour"
+    MONTH = "Month"
 
 class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Linked service reference type.

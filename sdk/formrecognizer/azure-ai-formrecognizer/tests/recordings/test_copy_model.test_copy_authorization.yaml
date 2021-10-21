@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: null
+    body: 'b''{"modelId": "f1102fb6-ae5e-4cfb-a071-d6a8f70447de"}'''
     headers:
       Accept:
       - application/json
@@ -9,24 +9,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '0'
+      - '51'
+      Content-Type:
+      - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/copyAuthorization
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:authorizeCopy?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"modelId": "0303c157-575e-4aae-8ed6-ff5f82e0f700", "accessToken":
-        "redacted", "expirationDateTimeTicks": 1604103781}'
+      string: '{"targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname",
+        "targetResourceRegion": "region", "targetModelId": "f1102fb6-ae5e-4cfb-a071-d6a8f70447de",
+        "targetModelLocation": "https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/f1102fb6-ae5e-4cfb-a071-d6a8f70447de?api-version=2021-09-30-preview",
+        "accessToken": "redacted", "expirationDateTime": "2021-09-15T19:31:35Z"}'
     headers:
       apim-request-id:
-      - 3a9ed8bb-7b05-437e-a0db-69e05db162de
+      - 330d2749-976c-4121-b194-35a0e66f83f3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 00:23:01 GMT
-      location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/0303c157-575e-4aae-8ed6-ff5f82e0f700
+      - Wed, 15 Sep 2021 18:31:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,8 +36,8 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '166'
+      - '332'
     status:
-      code: 201
-      message: Created
+      code: 200
+      message: OK
 version: 1

@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-schema-registry-avro-serializer
+  - azure-event-hubs
 urlFragment: schemaregistry-avroserializer-samples
 ---
 
@@ -23,7 +23,7 @@ Several Schema Registry Avro Serializer Python SDK samples are available to you 
     * Receive `EventData` from Event Hubs and deserialize the received bytes.
 
 ## Prerequisites
-- Python 2.7, 3.5 or later.
+- Python 2.7, 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Schema Registry, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
@@ -50,7 +50,7 @@ Check out the [API reference documentation][api_reference] to learn more about
 what you can do with the Azure Schema Registry Avro Serializer library.
 
 <!-- LINKS -->
-[avro_serializer_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/avro_serializer.py
-[eventhub_send_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/eventhub_send_integration.py
-[eventhub_receive_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/eventhub_receive_integration.py
+[avro_serializer_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/avro_serializer.py
+[eventhub_send_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/eventhub_send_integration.py
+[eventhub_receive_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/eventhub_receive_integration.py
 [api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html

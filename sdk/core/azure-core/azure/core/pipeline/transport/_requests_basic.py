@@ -25,10 +25,12 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar
-import time
+from typing import Iterator, Optional, Any, Union, TypeVar, overload, TYPE_CHECKING
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
+from urllib3.exceptions import (
+    DecodeError, ReadTimeoutError, ProtocolError
+)
 import requests
 
 from azure.core.configuration import ConnectionConfiguration
@@ -44,11 +46,38 @@ from ._base import (
     _HttpResponseBase
 )
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
+from .._tools import is_rest as _is_rest, handle_non_stream_rest_response as _handle_non_stream_rest_response
+
+if TYPE_CHECKING:
+    from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+def _read_raw_stream(response, chunk_size=1):
+    # Special case for urllib3.
+    if hasattr(response.raw, 'stream'):
+        try:
+            for chunk in response.raw.stream(chunk_size, decode_content=False):
+                yield chunk
+        except ProtocolError as e:
+            raise requests.exceptions.ChunkedEncodingError(e)
+        except DecodeError as e:
+            raise requests.exceptions.ContentDecodingError(e)
+        except ReadTimeoutError as e:
+            raise requests.exceptions.ConnectionError(e)
+    else:
+        # Standard file-like object.
+        while True:
+            chunk = response.raw.read(chunk_size)
+            if not chunk:
+                break
+            yield chunk
+
+    # following behavior from requests iter_content, we set content consumed to True
+    # https://github.com/psf/requests/blob/master/requests/models.py#L774
+    response._content_consumed = True  # pylint: disable=protected-access
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -99,15 +128,23 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+        on the *content-encoding* header.
     """
-    def __init__(self, pipeline, response):
+    def __init__(self, pipeline, response, **kwargs):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        internal_response = response.internal_response
+        if decompress:
+            self.iter_content_func = internal_response.iter_content(self.block_size)
+        else:
+            self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
-        self.downloaded = 0
 
     def __len__(self):
         return self.content_length
@@ -116,52 +153,31 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        retry_active = True
-        retry_total = 3
-        retry_interval = 1  # 1 second
-        while retry_active:
-            try:
-                chunk = next(self.iter_content_func)
-                if not chunk:
-                    raise StopIteration()
-                self.downloaded += self.block_size
-                return chunk
-            except StopIteration:
-                self.response.internal_response.close()
+        internal_response = self.response.internal_response
+        try:
+            chunk = next(self.iter_content_func)
+            if not chunk:
                 raise StopIteration()
-            except (requests.exceptions.ChunkedEncodingError,
-                    requests.exceptions.ConnectionError):
-                retry_total -= 1
-                if retry_total <= 0:
-                    retry_active = False
-                else:
-                    time.sleep(retry_interval)
-                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.http_response.status_code == 416:
-                        raise
-                    chunk = next(self.iter_content_func)
-                    if not chunk:
-                        raise StopIteration()
-                    self.downloaded += len(chunk)
-                    return chunk
-                continue
-            except requests.exceptions.StreamConsumedError:
-                raise
-            except Exception as err:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.internal_response.close()
-                raise
+            return chunk
+        except StopIteration:
+            internal_response.close()
+            raise StopIteration()
+        except requests.exceptions.StreamConsumedError:
+            raise
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            internal_response.close()
+            raise
     next = __next__  # Python 2 compatibility.
 
 
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
+    def stream_download(self, pipeline, **kwargs):
+        # type: (PipelineType, **Any) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self)
+        return StreamDownloadGenerator(pipeline, self, **kwargs)
 
 
 class RequestsTransport(HttpTransport):
@@ -229,8 +245,37 @@ class RequestsTransport(HttpTransport):
             self._session_owner = False
             self.session = None
 
-    def send(self, request, **kwargs): # type: ignore
+    @overload
+    def send(self, request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
+        """Send a rest request and get back a rest response.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    @overload
+    def send(self, request, **kwargs):
+        # type: (RestHttpRequest, Any) -> RestHttpResponse
+        """Send an `azure.core.rest` request and get back a rest response.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.rest.HttpRequest
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.rest.HttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    def send(self, request, **kwargs): # type: ignore
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -283,4 +328,14 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
+        if _is_rest(request):
+            from azure.core.rest._requests_basic import RestRequestsTransportResponse
+            retval = RestRequestsTransportResponse(
+                request=request,
+                internal_response=response,
+                block_size=self.connection_config.data_block_size
+            )
+            if not kwargs.get('stream'):
+                _handle_non_stream_rest_response(retval)
+            return retval
         return RequestsTransportResponse(request, response, self.connection_config.data_block_size)

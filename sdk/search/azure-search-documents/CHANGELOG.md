@@ -1,7 +1,95 @@
 # Release History
 
-## 11.1.0b5 (Unreleased)
+## 11.3.0b5 (Unreleased)
 
+### Features Added
+
+- Added properties to `SearchClient.search`: `session_id`, `scoring_statistics`.
+- Added properties to `SearchIndexerDataSourceConnection`: `identity`, `encryption_key`.
+- Added `select` property to the following `SearchIndexClient` operations: `get_synonym_maps`, `list_indexes`.
+- Added `select` property to the following `SearchIndexersClient` operations: `get_data_source_connections`, `get_indexers`, `get_skillsets`.
+
+### Other Changes
+
+## 11.3.0b4 (2021-10-05)
+
+### Features Added
+
+- Added properties to `SearchClient`: `query_answer`, `query_answer_count`,
+  `query_caption`, `query_caption_highlight` and `semantic_fields`.
+
+### Breaking Changes
+
+- Renamed `SearchClient.speller` to `SearchClient.query_speller`.
+- Renamed model `Speller` to `QuerySpellerType`.
+- Renamed model `Answers` to `QueryAnswerType`. 
+- Removed keyword arguments from `SearchClient`: `answers` and `captions`.
+- `SentimentSkill`, `EntityRecognitionSkill`: added client-side validation to prevent sending unsupported parameters.
+- Renamed property `ignore_reset_requirements` to `skip_indexer_reset_requirement_for_cache`.
+
+## 11.3.0b3 (2021-09-08)
+
+### Features Added
+
+- Added new models: 
+  - `azure.search.documents.models.QueryCaptionType`
+  - `azure.search.documents.models.CaptionResult`
+  - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillVersion`
+  - `azure.search.documents.indexes.models.LexicalNormalizerName`
+  - `azure.search.documents.indexes.models.PIIDetectionSkill`
+  - `azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode`
+  - `azure.search.documents.indexes.models.SearchIndexerCache`
+  - `azure.search.documents.indexes.models.SearchIndexerDataIdentity`
+  - `azure.search.documents.indexes.models.SearchIndexerDataNoneIdentity`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity`
+  - `azure.search.documents.indexes.models.SentimentSkillVersion`
+- Added `normalizer_name` property to `AnalyzeTextOptions` model.
+
+### Breaking Changes
+
+- Removed:
+  - `azure.search.documents.indexes.models.SentimentSkillV3`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillV3`
+- Renamed:
+  - `SearchField.normalizer` renamed to `SearchField.normalizer_name`.
+
+### Other Changes
+- `SentimentSkill` and `EntityRecognitionSkill` can now be created by specifying
+  the `skill_version` keyword argument with a `SentimentSkillVersion` or
+  `EntityRecognitionSkillVersion`, respectively. The default behavior if `skill_version`
+  is not specified is to create a version 1 skill.
+
+## 11.3.0b2 (2021-08-10)
+
+### Features Added
+
+- Added new skills: `SentimentSkillV3`, `EntityLinkingSkill`, `EntityRecognitionSkillV3`
+
+## 11.3.0b1 (2021-07-07)
+
+### Features Added
+
+- Added AAD support
+- Added support for semantic search
+- Added normalizer support
+
+## 11.2.0 (2021-06-08)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+**New features**
+
+- Added support for knowledge store    #18461
+- Added new data source type ADLS gen2  #16852
+
+## 11.1.0 (2021-02-10)
+
+**Breaking Changes**
+
+- `IndexDocumentsBatch` does not support `enqueue_action` any longer. `enqueue_actions` takes a single action too.
+- `max_retries` of `SearchIndexingBufferedSender` is renamed to `max_retries_per_action`
+- `SearchClient` does not support `get_search_indexing_buffered_sender`
 
 ## 11.1.0b4 (2020-11-10)
 

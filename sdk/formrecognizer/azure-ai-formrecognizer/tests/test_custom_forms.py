@@ -7,126 +7,38 @@
 import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormTrainingClient
-from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormTrainingClient, _models, DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
+from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalClientPreparer as _GlobalClientPreparer
+from testcase import FormRecognizerTest
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import FormRecognizerPreparer
 
-
-GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
+DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
+FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestCustomForms(FormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
-    def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @FormRecognizerPreparer()
+    def test_analyze_document_none_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with self.assertRaises(ValueError):
-            client.begin_recognize_custom_forms(model_id=None, form=b"xx")
+            client.begin_analyze_document(model=None, document=b"xx")
 
-    @GlobalFormRecognizerAccountPreparer()
-    def test_custom_form_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @FormRecognizerPreparer()
+    def test_analyze_document_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with self.assertRaises(ValueError):
-            client.begin_recognize_custom_forms(model_id="", form=b"xx")
+            client.begin_analyze_document(model="", document=b"xx")
 
-    @GlobalFormRecognizerAccountPreparer()
-    def test_custom_form_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = client.begin_recognize_custom_forms(model_id="xx", form=myfile)
-
-    @GlobalFormRecognizerAccountPreparer()
-    def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", form=b"xx", content_type="image/jpeg")
-
-    @GlobalFormRecognizerAccountPreparer()
-    def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-        with self.assertRaises(TypeError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", form="https://badurl.jpg", content_type="application/json")
-
-    @GlobalFormRecognizerAccountPreparer()
-    def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-        with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
-
-        with self.assertRaises(ValueError):
-            poller = client.begin_recognize_custom_forms(
-                model_id="xxx",
-                form=myfile,
-            )
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    def test_custom_form_damaged_file(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
+    def test_custom_form_unlabeled(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
-        model = poller.result()
-
-        with self.assertRaises(HttpResponseError):
-            poller = fr_client.begin_recognize_custom_forms(
-                model.model_id,
-                b"\x25\x50\x44\x46\x55\x55\x55",
-            )
-            form = poller.result()
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    def test_custom_form_unlabeled_blank_page(self, client, container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
-        model = poller.result()
-
-        with open(self.blank_pdf, "rb") as fd:
-            blank = fd.read()
-        poller = fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            blank
-        )
-        form = poller.result()
-
-        self.assertEqual(len(form), 1)
-        self.assertEqual(form[0].page_range.first_page_number, 1)
-        self.assertEqual(form[0].page_range.last_page_number, 1)
-        self.assertIsNotNone(form[0].pages)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    def test_custom_form_labeled_blank_page(self, client, container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-
-        poller = client.begin_training(container_sas_url, use_training_labels=True)
-        model = poller.result()
-
-        with open(self.blank_pdf, "rb") as fd:
-            blank = fd.read()
-        poller = fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            blank
-        )
-        form = poller.result()
-
-        self.assertEqual(len(form), 1)
-        self.assertEqual(form[0].page_range.first_page_number, 1)
-        self.assertEqual(form[0].page_range.last_page_number, 1)
-        self.assertIsNotNone(form[0].pages)
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    def test_custom_form_unlabeled(self, client, container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         with open(self.form_jpg, "rb") as stream:
@@ -140,12 +52,12 @@ class TestCustomForms(FormRecognizerTest):
         self.assertEqual(form[0].form_type, "form-0")
         self.assertUnlabeledRecognizedFormHasValues(form[0], model)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True, multipage=True)
-    def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
+    def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         with open(self.multipage_invoice_pdf, "rb") as stream:
@@ -162,13 +74,13 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.form_type, "form-0")
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    def test_custom_form_labeled(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
+    def test_custom_form_labeled(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
-            container_sas_url,
+            formrecognizer_storage_container_sas_url_v2,
             use_training_labels=True,
             model_name="labeled"
         )
@@ -183,13 +95,13 @@ class TestCustomForms(FormRecognizerTest):
         self.assertEqual(form[0].form_type, "custom:labeled")
         self.assertLabeledRecognizedFormHasValues(form[0], model)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True, multipage=True)
-    def test_custom_form_multipage_labeled(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
+    def test_custom_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
-            container_sas_url,
+            formrecognizer_multipage_storage_container_sas_url_v2,
             use_training_labels=True
         )
         model = poller.result()
@@ -208,12 +120,12 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.form_type, "custom:"+model.model_id)
             self.assertLabeledRecognizedFormHasValues(form, model)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    def test_custom_form_unlabeled_transform(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
+    def test_custom_form_unlabeled_transform(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -247,12 +159,26 @@ class TestCustomForms(FormRecognizerTest):
         self.assertIsNotNone(recognized_form[0].model_id)
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True, multipage=True)
-    def test_custom_form_multipage_unlabeled_transform(self, client, container_sas_url):
+        recognized_form_dict = [v.to_dict() for v in recognized_form]
+        self.assertIsNone(recognized_form_dict[0].get("form_type_confidence"))
+        self.assertIsNotNone(recognized_form_dict[0].get("model_id"))
+        self.assertEqual(recognized_form_dict[0].get("form_type"), "form-0")
+
+        recognized_form = _models.RecognizedForm.from_dict(recognized_form_dict[0])
+
+        self.assertFormPagesTransformCorrect(recognized_form.pages, read_results, page_results)
+        self.assertEqual(recognized_form.page_range.first_page_number, page_results[0].page)
+        self.assertEqual(recognized_form.page_range.last_page_number, page_results[0].page)
+        self.assertIsNone(recognized_form.form_type_confidence)
+        self.assertIsNotNone(recognized_form.model_id)
+        self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form.fields, actual_fields, read_results)
+
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
+    def test_custom_form_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -287,93 +213,101 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.model_id, model.model_id)
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    def test_custom_form_labeled_transform(self, client, container_sas_url):
-        fr_client = client.get_form_recognizer_client()
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url):
+        fr_client = client.get_document_analysis_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=True)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
-            form = prepare_form_result(analyze_result, model.model_id)
+            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(form)
+            responses.append(document)
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = fr_client.begin_recognize_custom_forms(
+        poller = fr_client.begin_analyze_document(
             model.model_id,
             myfile,
-            include_field_elements=True,
             cls=callback
         )
-        form = poller.result()
-        actual = responses[0]
-        recognized_form = responses[1]
-        read_results = actual.analyze_result.read_results
-        page_results = actual.analyze_result.page_results
-        actual_fields = actual.analyze_result.document_results[0].fields
+        document = poller.result()
 
-        self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
-        self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
-        self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
-        self.assertEqual(recognized_form[0].form_type_confidence, 1.0)
-        self.assertIsNotNone(recognized_form[0].model_id)
-        self.assertFormFieldsTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
+        raw_analyze_result = responses[0].analyze_result
+        returned_model = responses[1]
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True, multipage=True)
-    def test_custom_form_multipage_labeled_transform(self, client, container_sas_url):
-        fr_client = client.get_form_recognizer_client()
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
 
-        poller = client.begin_training(container_sas_url, use_training_labels=True)
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
+
+        # check page range
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+        fr_client = client.get_document_analysis_client()
+
+        poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url)
         model = poller.result()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
-            form = prepare_form_result(analyze_result, model.model_id)
+            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(form)
+            responses.append(document)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = fr_client.begin_recognize_custom_forms(
+        poller = fr_client.begin_analyze_document(
             model.model_id,
             myfile,
-            include_field_elements=True,
             cls=callback
         )
-        form = poller.result()
-        actual = responses[0]
-        recognized_form = responses[1]
-        read_results = actual.analyze_result.read_results
-        page_results = actual.analyze_result.page_results
-        document_results = actual.analyze_result.document_results
+        document = poller.result()
 
-        self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
-        for form, actual in zip(recognized_form, document_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
-            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertEqual(form.form_type_confidence, 1.0)
-            self.assertEqual(form.model_id, model.model_id)
-            self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
+        raw_analyze_result = responses[0].analyze_result
+        returned_model = responses[1]
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
+
+        # check page range
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)
+
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
     @pytest.mark.live_test_only
-    def test_custom_form_continuation_token(self, client, container_sas_url):
+    def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         with open(self.form_jpg, "rb") as fd:
@@ -392,12 +326,12 @@ class TestCustomForms(FormRecognizerTest):
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True, multipage2=True)
-    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
+    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
         model = poller.result()
 
         responses = []
@@ -431,12 +365,12 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.model_id, model.model_id)
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True, multipage2=True)
-    def test_custom_form_multipage_vendor_set_labeled_transform(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @FormTrainingClientPreparer()
+    def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2):
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=True)
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
         model = poller.result()
 
         responses = []
@@ -468,16 +402,16 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertEqual(form.form_type_confidence, 1.0)
+            self.assertIsNotNone(form.form_type_confidence)
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True, selection_marks=True)
-    def test_custom_form_selection_mark(self, client, container_sas_url):
-        fr_client = client.get_form_recognizer_client()
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
+        fr_client = client.get_document_analysis_client()
 
-        poller = client.begin_training(container_sas_url, use_training_labels=True)
+        poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
 
         with open(self.selection_form_pdf, "rb") as fd:
@@ -486,23 +420,48 @@ class TestCustomForms(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
-            form = prepare_form_result(analyze_result, model.model_id)
+            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(form)
+            responses.append(document)
 
-        poller = fr_client.begin_recognize_custom_forms(
+        poller = fr_client.begin_analyze_document(
             model.model_id,
             myfile,
-            include_field_elements=True,
             cls=callback
         )
-        form = poller.result()
+        document = poller.result()
 
-        actual = responses[0]
-        recognized_form = responses[1]
-        read_results = actual.analyze_result.read_results
-        page_results = actual.analyze_result.page_results
-        actual_fields = actual.analyze_result.document_results[0].fields
+        raw_analyze_result = responses[0].analyze_result
+        returned_model = responses[1]
 
-        self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
+        # Check AnalyzeResult
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
+
+        # check page range
+        assert len(raw_analyze_result.pages) == len(returned_model.pages)
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url):
+        fr_client = client.get_document_analysis_client()
+
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+
+        build_poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        model = build_poller.result()
+
+        poller = fr_client.begin_analyze_document(model.model_id, myfile, pages="1")
+        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        result = poller.result()
+        assert result

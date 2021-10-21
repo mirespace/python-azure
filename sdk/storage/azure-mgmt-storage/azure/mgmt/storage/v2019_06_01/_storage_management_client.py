@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import StorageManagementClientConfiguration
 from .operations import Operations
@@ -23,6 +24,7 @@ from .operations import SkusOperations
 from .operations import StorageAccountsOperations
 from .operations import UsagesOperations
 from .operations import ManagementPoliciesOperations
+from .operations import BlobInventoryPoliciesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import ObjectReplicationPoliciesOperations
@@ -51,6 +53,8 @@ class StorageManagementClient(object):
     :vartype usages: azure.mgmt.storage.v2019_06_01.operations.UsagesOperations
     :ivar management_policies: ManagementPoliciesOperations operations
     :vartype management_policies: azure.mgmt.storage.v2019_06_01.operations.ManagementPoliciesOperations
+    :ivar blob_inventory_policies: BlobInventoryPoliciesOperations operations
+    :vartype blob_inventory_policies: azure.mgmt.storage.v2019_06_01.operations.BlobInventoryPoliciesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections: azure.mgmt.storage.v2019_06_01.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
@@ -111,6 +115,8 @@ class StorageManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.management_policies = ManagementPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.blob_inventory_policies = BlobInventoryPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
@@ -135,6 +141,24 @@ class StorageManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.table = TableOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

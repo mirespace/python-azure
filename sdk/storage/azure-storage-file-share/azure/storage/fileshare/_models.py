@@ -9,10 +9,10 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator
+from azure.core.exceptions import HttpResponseError
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
-from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -274,7 +274,7 @@ class ContentSettings(DictMixin):
     :param str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :param str content_md5:
+    :param bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
@@ -375,8 +375,8 @@ class ShareProperties(DictMixin):
         props.deleted_time = generated.properties.deleted_time
         props.version = generated.version
         props.remaining_retention_days = generated.properties.remaining_retention_days
-        props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
-        props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
+        props.provisioned_egress_mbps = generated.properties.provisioned_egress_m_bps
+        props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_m_bps
         props.provisioned_iops = generated.properties.provisioned_iops
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
@@ -428,7 +428,7 @@ class SharePropertiesPaged(PageIterator):
                 prefix=self.prefix,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -520,7 +520,7 @@ class HandlesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -549,6 +549,8 @@ class DirectoryProperties(DictMixin):
     :vartype creation_time: str or ~datetime.datetime
     :ivar last_write_time: Last write time for the file.
     :vartype last_write_time: str or ~datetime.datetime
+    :ivar last_access_time: Last access time for the file.
+    :vartype last_access_time: ~datetime.datetime
     :ivar file_attributes:
         The file system attributes for files and directories.
     :vartype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
@@ -572,19 +574,26 @@ class DirectoryProperties(DictMixin):
         self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
         self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
         self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.last_access_time = None
         self.file_attributes = kwargs.get('x-ms-file-attributes')
         self.permission_key = kwargs.get('x-ms-file-permission-key')
         self.file_id = kwargs.get('x-ms-file-id')
         self.parent_id = kwargs.get('x-ms-file-parent-id')
+        self.is_directory = True
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
+        props.file_id = generated.file_id
+        props.file_attributes = generated.attributes
         props.last_modified = generated.properties.last_modified
+        props.creation_time = generated.properties.creation_time
+        props.last_access_time = generated.properties.last_access_time
+        props.last_write_time = generated.properties.last_write_time
+        props.change_time = generated.properties.change_time
         props.etag = generated.properties.etag
-        props.server_encrypted = generated.properties.server_encrypted
-        props.metadata = generated.metadata
+        props.permission_key = generated.permission_key
         return props
 
 
@@ -634,7 +643,7 @@ class DirectoryPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -643,8 +652,8 @@ class DirectoryPropertiesPaged(PageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [_wrap_item(i) for i in self._response.segment.directory_items]
-        self.current_page.extend([_wrap_item(i) for i in self._response.segment.file_items])
+        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
+        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items]) # pylint: disable = protected-access
         return self._response.next_marker or None, self.current_page
 
 
@@ -703,18 +712,27 @@ class FileProperties(DictMixin):
         self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
         self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
         self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.last_access_time = None
         self.file_attributes = kwargs.get('x-ms-file-attributes')
         self.permission_key = kwargs.get('x-ms-file-permission-key')
         self.file_id = kwargs.get('x-ms-file-id')
         self.parent_id = kwargs.get('x-ms-file-parent-id')
+        self.is_directory = False
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
-        props.content_length = generated.properties.content_length
-        props.metadata = generated.properties.metadata
-        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+        props.file_id = generated.file_id
+        props.etag = generated.properties.etag
+        props.file_attributes = generated.attributes
+        props.last_modified = generated.properties.last_modified
+        props.creation_time = generated.properties.creation_time
+        props.last_access_time = generated.properties.last_access_time
+        props.last_write_time = generated.properties.last_write_time
+        props.change_time = generated.properties.change_time
+        props.size = generated.properties.content_length
+        props.permission_key = generated.permission_key
         return props
 
 

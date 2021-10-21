@@ -28,7 +28,7 @@ class VirtualNetworkRulesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -48,7 +48,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         server_name: str,
         virtual_network_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkRule":
         """Gets a virtual network rule.
 
@@ -60,7 +60,7 @@ class VirtualNetworkRulesOperations:
         :type virtual_network_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkRule, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.VirtualNetworkRule
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.VirtualNetworkRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRule"]
@@ -111,7 +111,7 @@ class VirtualNetworkRulesOperations:
         server_name: str,
         virtual_network_rule_name: str,
         parameters: "_models.VirtualNetworkRule",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VirtualNetworkRule"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VirtualNetworkRule"]]
         error_map = {
@@ -171,7 +171,7 @@ class VirtualNetworkRulesOperations:
         server_name: str,
         virtual_network_rule_name: str,
         parameters: "_models.VirtualNetworkRule",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualNetworkRule"]:
         """Creates or updates an existing virtual network rule.
 
@@ -182,15 +182,15 @@ class VirtualNetworkRulesOperations:
         :param virtual_network_rule_name: The name of the virtual network rule.
         :type virtual_network_rule_name: str
         :param parameters: The requested virtual Network Rule Resource state.
-        :type parameters: ~maria_db_management_client.models.VirtualNetworkRule
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.VirtualNetworkRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkRule or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~maria_db_management_client.models.VirtualNetworkRule]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.rdbms.mariadb.models.VirtualNetworkRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -246,7 +246,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         server_name: str,
         virtual_network_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -290,7 +290,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         server_name: str,
         virtual_network_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the virtual network rule with the given name.
 
@@ -302,8 +302,8 @@ class VirtualNetworkRulesOperations:
         :type virtual_network_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -358,7 +358,7 @@ class VirtualNetworkRulesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkRuleListResult"]:
         """Gets a list of virtual network rules in a server.
 
@@ -368,7 +368,7 @@ class VirtualNetworkRulesOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetworkRuleListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.VirtualNetworkRuleListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.VirtualNetworkRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRuleListResult"]

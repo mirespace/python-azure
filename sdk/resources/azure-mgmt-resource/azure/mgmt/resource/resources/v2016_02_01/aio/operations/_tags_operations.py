@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class TagsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class TagsOperations:
         self,
         tag_name: str,
         tag_value: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a subscription resource tag value.
 
@@ -98,8 +98,8 @@ class TagsOperations:
         self,
         tag_name: str,
         tag_value: str,
-        **kwargs
-    ) -> "models.TagValue":
+        **kwargs: Any
+    ) -> "_models.TagValue":
         """Create a subscription resource tag value.
 
         :param tag_name: The name of the tag.
@@ -111,7 +111,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TagValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagValue"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagValue"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -159,8 +159,8 @@ class TagsOperations:
     async def create_or_update(
         self,
         tag_name: str,
-        **kwargs
-    ) -> "models.TagDetails":
+        **kwargs: Any
+    ) -> "_models.TagDetails":
         """Create a subscription resource tag.
 
         :param tag_name: The name of the tag.
@@ -170,7 +170,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TagDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -217,7 +217,7 @@ class TagsOperations:
     async def delete(
         self,
         tag_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a subscription resource tag.
 
@@ -265,8 +265,8 @@ class TagsOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.TagsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TagsListResult"]:
         """Get a list of subscription resource tags.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -274,7 +274,7 @@ class TagsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.TagsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

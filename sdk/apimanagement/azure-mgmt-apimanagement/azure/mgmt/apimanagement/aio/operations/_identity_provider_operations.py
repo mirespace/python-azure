@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class IdentityProviderOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,8 +45,8 @@ class IdentityProviderOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.IdentityProviderList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.IdentityProviderList"]:
         """Lists a collection of Identity Provider configured in the specified service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -58,12 +58,12 @@ class IdentityProviderOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.IdentityProviderList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentityProviderList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IdentityProviderList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -105,7 +105,7 @@ class IdentityProviderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -120,8 +120,8 @@ class IdentityProviderOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        identity_provider_name: Union[str, "models.IdentityProviderType"],
-        **kwargs
+        identity_provider_name: Union[str, "_models.IdentityProviderType"],
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the identityProvider specified by its identifier.
 
@@ -141,7 +141,7 @@ class IdentityProviderOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -168,7 +168,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -184,9 +184,9 @@ class IdentityProviderOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        identity_provider_name: Union[str, "models.IdentityProviderType"],
-        **kwargs
-    ) -> "models.IdentityProviderContract":
+        identity_provider_name: Union[str, "_models.IdentityProviderType"],
+        **kwargs: Any
+    ) -> "_models.IdentityProviderContract":
         """Gets the configuration details of the identity Provider configured in specified service
         instance.
 
@@ -201,12 +201,12 @@ class IdentityProviderOperations:
         :rtype: ~azure.mgmt.apimanagement.models.IdentityProviderContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentityProviderContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IdentityProviderContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -233,7 +233,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -250,11 +250,11 @@ class IdentityProviderOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        identity_provider_name: Union[str, "models.IdentityProviderType"],
-        parameters: "models.IdentityProviderCreateContract",
+        identity_provider_name: Union[str, "_models.IdentityProviderType"],
+        parameters: "_models.IdentityProviderCreateContract",
         if_match: Optional[str] = None,
-        **kwargs
-    ) -> "models.IdentityProviderContract":
+        **kwargs: Any
+    ) -> "_models.IdentityProviderContract":
         """Creates or Updates the IdentityProvider configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -273,12 +273,12 @@ class IdentityProviderOperations:
         :rtype: ~azure.mgmt.apimanagement.models.IdentityProviderContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentityProviderContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IdentityProviderContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -312,7 +312,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -334,11 +334,11 @@ class IdentityProviderOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        identity_provider_name: Union[str, "models.IdentityProviderType"],
+        identity_provider_name: Union[str, "_models.IdentityProviderType"],
         if_match: str,
-        parameters: "models.IdentityProviderUpdateParameters",
-        **kwargs
-    ) -> "models.IdentityProviderContract":
+        parameters: "_models.IdentityProviderUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.IdentityProviderContract":
         """Updates an existing IdentityProvider configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -357,12 +357,12 @@ class IdentityProviderOperations:
         :rtype: ~azure.mgmt.apimanagement.models.IdentityProviderContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentityProviderContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IdentityProviderContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -395,7 +395,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -412,9 +412,9 @@ class IdentityProviderOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        identity_provider_name: Union[str, "models.IdentityProviderType"],
+        identity_provider_name: Union[str, "_models.IdentityProviderType"],
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified identity provider configuration.
 
@@ -437,7 +437,7 @@ class IdentityProviderOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -465,7 +465,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -477,9 +477,9 @@ class IdentityProviderOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        identity_provider_name: Union[str, "models.IdentityProviderType"],
-        **kwargs
-    ) -> "models.ClientSecretContract":
+        identity_provider_name: Union[str, "_models.IdentityProviderType"],
+        **kwargs: Any
+    ) -> "_models.ClientSecretContract":
         """Gets the client secret details of the Identity Provider.
 
         :param resource_group_name: The name of the resource group.
@@ -493,12 +493,12 @@ class IdentityProviderOperations:
         :rtype: ~azure.mgmt.apimanagement.models.ClientSecretContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClientSecretContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClientSecretContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -525,7 +525,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class CompliancesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,12 +44,12 @@ class CompliancesOperations:
     def list(
         self,
         scope: str,
-        **kwargs
-    ) -> AsyncIterable["models.ComplianceList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ComplianceList"]:
         """The Compliance scores of the specific management group.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class CompliancesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.ComplianceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComplianceList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComplianceList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,12 +116,12 @@ class CompliancesOperations:
         self,
         scope: str,
         compliance_name: str,
-        **kwargs
-    ) -> "models.Compliance":
+        **kwargs: Any
+    ) -> "_models.Compliance":
         """Details of a specific Compliance.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :param compliance_name: name of the Compliance.
@@ -131,7 +131,7 @@ class CompliancesOperations:
         :rtype: ~azure.mgmt.security.models.Compliance
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Compliance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Compliance"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

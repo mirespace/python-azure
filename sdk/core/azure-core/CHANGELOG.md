@@ -1,8 +1,141 @@
-
 # Release History
 
-## 1.9.1 (Unreleased)
+## 1.19.1 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+- fix type check for `data` input to `azure.core.rest` for python 2.7 users  #21341
+
+### Other Changes
+
+- Refactor AzureJSONEncoder (thanks to @Codejune for the contribution)  #21028
+
+## 1.19.0 (2021-09-30)
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` are now abstract base classes. They should not be initialized directly, instead
+your transport responses should inherit from them and implement them.
+- The properties of the `azure.core.rest` responses are now all read-only
+
+- HttpLoggingPolicy integrates logs into one record #19925
+
+## 1.18.0 (2021-09-02)
+
+### Features Added
+
+- `azure.core.serialization.AzureJSONEncoder` (introduced in 1.17.0) serializes `datetime.datetime` objects in ISO 8601 format, conforming to RFC 3339's specification.    #20190
+- We now use `azure.core.serialization.AzureJSONEncoder` to serialize `json` input to `azure.core.rest.HttpRequest`.
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- The `text` property on `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` has changed to a method, which also takes
+an `encoding` parameter.
+- Removed `iter_text` and `iter_lines` from `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse`
+
+### Bugs Fixed
+
+- The behaviour of the headers returned in `azure.core.rest` responses now aligns across sync and async. Items can now be checked case-insensitively and without raising an error for format.
+
+## 1.17.0 (2021-08-05)
+
+### Features Added
+
+- Cut hard dependency on requests library
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return a `CloudEvent`
+
+### Fixed
+
+- Not override "x-ms-client-request-id" if it already exists in the header.    #17757
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest` will not try to guess the `charset` anymore if it was impossible to extract it from `HttpResponse` analysis. This removes our dependency on `charset`.
+
+## 1.16.0 (2021-07-01)
+
+### Features Added
+
+- Add new ***provisional*** methods `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
+requests and sends them through our pipelines.
+- Add new ***provisional*** module `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
+- Add new ***provisional*** errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
+are thrown if you mishandle streamed responses from the provisional `azure.core.rest` module
+
+### Fixed
+
+- Improved error message in the `from_dict` method of `CloudEvent` when a wrong schema is sent.
+
+## 1.15.0 (2021-06-04)
+
+### New Features
+
+- Added `BearerTokenCredentialPolicy.on_challenge` and `.authorize_request` to allow subclasses to optionally handle authentication challenges
+
+### Bug Fixes
+
+- Retry policies don't sleep after operations time out
+- The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
+
+## 1.14.0 (2021-05-13)
+
+### New Features
+
+- Added `azure.core.credentials.AzureNamedKeyCredential` credential #17548.
+- Added `decompress` parameter for `stream_download` method. If it is set to `False`, will not do decompression upon the stream.    #17920
+
+## 1.13.0 (2021-04-02)
+
+Azure core requires Python 2.7 or Python 3.6+ since this release.
+
+### New Features
+
+- Added `azure.core.utils.parse_connection_string` function to parse connection strings across SDKs, with common validation and support for case insensitive keys.
+- Supported adding custom policies  #16519
+- Added `~azure.core.tracing.Link` that should be used while passing `Links` to  `AbstractSpan`.
+- `AbstractSpan` constructor can now take in additional keyword only args.
+
+### Bug fixes
+
+- Make NetworkTraceLoggingPolicy show the auth token in plain text. #14191
+- Fixed RetryPolicy overriding default connection timeout with an extreme value #17481
+
+## 1.12.0 (2021-03-08)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+### Features
+
+- Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
+- Added `azure.core.serialization.NULL` sentinel value
+- Improve `repr`s for `HttpRequest` and `HttpResponse`s  #16972
+
+### Bug Fixes
+
+- Disable retry in stream downloading. (thanks to @jochen-ott-by @hoffmann for the contribution)  #16723
+
+## 1.11.0 (2021-02-08)
+
+### Features
+
+- Added `CaseInsensitiveEnumMeta` class for case-insensitive enums.  #16316
+- Add `raise_for_status` method onto `HttpResponse`. Calling `response.raise_for_status()` on a response with an error code
+will raise an `HttpResponseError`. Calling it on a good response will do nothing  #16399
+
+### Bug Fixes
+
+- Update conn.conn_kw rather than overriding it when setting block size. (thanks for @jiasli for the contribution)  #16587
+
+## 1.10.0 (2021-01-11)
+
+### Features
+
+- Added `AzureSasCredential` and its respective policy. #15946
 
 ## 1.9.0 (2020-11-09)
 

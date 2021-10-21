@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-identity
+  - azure-sdks
 urlFragment: identity-samples
 ---
 
@@ -23,16 +23,17 @@ the same API for all compatible client libraries.
 
 ## Setup
 
-To run these samples, first install the Azure Identity and Key Vault Secrets
-client libraries:
+To run these samples, first install the Azure Identity and Key Vault Certificates
+and Secrets client libraries:
 
 ```commandline
-pip install azure-identity azure-keyvault-secrets
+pip install azure-identity azure-keyvault-certificates azure-keyvault-secrets
 ```
 
 ## Contents
 | File | Description |
 |-------------|-------------|
 | control_interactive_prompts.py | demonstrates controlling when interactive credentials prompt for user interaction |
-| custom_credentials.py | demonstrates custom credential implementation |
-| user_authentication.py | demonstrates user authentication API for applications |
+| custom_credentials.py | demonstrates custom credential implementations using existing access tokens and an MSAL client |
+| key_vault_cert.py | demonstrates authenticating with a Key Vault certificate |
+| user_authentication.py | demonstrates user authentication and token cache persistence API for applications |

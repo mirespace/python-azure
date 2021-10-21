@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class InformationProtectionPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,23 +44,23 @@ class InformationProtectionPoliciesOperations:
     async def get(
         self,
         scope: str,
-        information_protection_policy_name: Union[str, "models.Enum17"],
-        **kwargs
-    ) -> "models.InformationProtectionPolicy":
+        information_protection_policy_name: Union[str, "_models.Enum15"],
+        **kwargs: Any
+    ) -> "_models.InformationProtectionPolicy":
         """Details of the information protection policy.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :param information_protection_policy_name: Name of the information protection policy.
-        :type information_protection_policy_name: str or ~azure.mgmt.security.models.Enum17
+        :type information_protection_policy_name: str or ~azure.mgmt.security.models.Enum15
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: InformationProtectionPolicy, or the result of cls(response)
         :rtype: ~azure.mgmt.security.models.InformationProtectionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InformationProtectionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InformationProtectionPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -103,18 +103,18 @@ class InformationProtectionPoliciesOperations:
     async def create_or_update(
         self,
         scope: str,
-        information_protection_policy_name: Union[str, "models.Enum17"],
-        information_protection_policy: "models.InformationProtectionPolicy",
-        **kwargs
-    ) -> "models.InformationProtectionPolicy":
+        information_protection_policy_name: Union[str, "_models.Enum15"],
+        information_protection_policy: "_models.InformationProtectionPolicy",
+        **kwargs: Any
+    ) -> "_models.InformationProtectionPolicy":
         """Details of the information protection policy.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :param information_protection_policy_name: Name of the information protection policy.
-        :type information_protection_policy_name: str or ~azure.mgmt.security.models.Enum17
+        :type information_protection_policy_name: str or ~azure.mgmt.security.models.Enum15
         :param information_protection_policy: Information protection policy.
         :type information_protection_policy: ~azure.mgmt.security.models.InformationProtectionPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -122,7 +122,7 @@ class InformationProtectionPoliciesOperations:
         :rtype: ~azure.mgmt.security.models.InformationProtectionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InformationProtectionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InformationProtectionPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -174,12 +174,12 @@ class InformationProtectionPoliciesOperations:
     def list(
         self,
         scope: str,
-        **kwargs
-    ) -> AsyncIterable["models.InformationProtectionPolicyList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.InformationProtectionPolicyList"]:
         """Information protection policies of a specific management group.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -187,7 +187,7 @@ class InformationProtectionPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.InformationProtectionPolicyList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InformationProtectionPolicyList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InformationProtectionPolicyList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

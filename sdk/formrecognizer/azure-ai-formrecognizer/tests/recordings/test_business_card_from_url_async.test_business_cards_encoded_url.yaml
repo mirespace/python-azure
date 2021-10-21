@@ -1,32 +1,33 @@
 interactions:
 - request:
-    body: 'b''{"source": "https://fakeuri.com/blank%20space"}'''
+    body: 'b''{"urlSource": "https://fakeuri.com/blank%20space"}'''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '47'
+      - '50'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
   response:
     body:
-      string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
-        "39db3ba3-d6ab-435e-ab0b-8304f7712b4a"}, "message": "Failed to download image
-        from input URL."}}'
+      string: '{"error": {"code": "InvalidRequest", "message": "Invalid request.",
+        "innererror": {"code": "InvalidContent", "message": "The file is corrupted
+        or format is unsupported. Refer to documentation for the list of supported
+        formats."}}}'
     headers:
-      apim-request-id: 39db3ba3-d6ab-435e-ab0b-8304f7712b4a
-      content-length: '161'
+      apim-request-id: 2ec36219-4ddf-4e42-a2b4-5bc63edd9454
       content-type: application/json; charset=utf-8
-      date: Wed, 11 Nov 2020 17:56:19 GMT
+      date: Tue, 14 Sep 2021 08:46:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3157'
+      x-envoy-upstream-service-time: '351'
     status:
       code: 400
       message: Bad Request
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyze?includeTextDetails=false
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
 version: 1

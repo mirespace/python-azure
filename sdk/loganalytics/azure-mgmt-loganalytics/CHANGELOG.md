@@ -1,5 +1,89 @@
 # Release History
 
+## 11.0.0 (2021-07-12)
+
+**Features**
+
+  - Model ClusterPatch has a new parameter billing_type
+  - Model Workspace has a new parameter features
+  - Model WorkspacePatch has a new parameter features
+  - Model WorkspaceFeatures has a new parameter disable_local_auth
+
+**Breaking changes**
+
+  - Model Workspace no longer has parameter immediate_purge_data_on30_days
+  - Model Workspace no longer has parameter enable_log_access_using_only_resource_permissions
+  - Model Workspace no longer has parameter cluster_resource_id
+  - Model Workspace no longer has parameter enable_data_export
+  - Model WorkspacePatch no longer has parameter immediate_purge_data_on30_days
+  - Model WorkspacePatch no longer has parameter enable_log_access_using_only_resource_permissions
+  - Model WorkspacePatch no longer has parameter cluster_resource_id
+  - Model WorkspacePatch no longer has parameter enable_data_export
+  - Model CapacityReservationProperties no longer has parameter max_capacity
+
+## 10.0.0 (2021-05-13)
+
+**Features**
+
+  - Model WorkspacePatch has a new parameter cluster_resource_id
+  - Model WorkspacePatch has a new parameter immediate_purge_data_on30_days
+  - Model WorkspacePatch has a new parameter enable_data_export
+  - Model WorkspacePatch has a new parameter enable_log_access_using_only_resource_permissions
+  - Model Workspace has a new parameter cluster_resource_id
+  - Model Workspace has a new parameter immediate_purge_data_on30_days
+  - Model Workspace has a new parameter enable_data_export
+  - Model Workspace has a new parameter enable_log_access_using_only_resource_permissions
+
+**Breaking changes**
+
+  - Model WorkspacePatch no longer has parameter features
+  - Model Table no longer has parameter is_troubleshooting_allowed
+  - Model Table no longer has parameter is_troubleshoot_enabled
+  - Model Table no longer has parameter last_troubleshoot_date
+  - Model WorkspaceSku no longer has parameter max_capacity_reservation_level
+  - Model Workspace no longer has parameter features
+
+## 9.0.0 (2021-04-06)
+
+**Features**
+
+  - Model WorkspacePatch has a new parameter created_date
+  - Model WorkspacePatch has a new parameter features
+  - Model WorkspacePatch has a new parameter modified_date
+  - Model WorkspacePatch has a new parameter force_cmk_for_query
+  - Model Cluster has a new parameter last_modified_date
+  - Model Cluster has a new parameter billing_type
+  - Model Cluster has a new parameter is_double_encryption_enabled
+  - Model Cluster has a new parameter is_availability_zones_enabled
+  - Model Cluster has a new parameter created_date
+  - Model Cluster has a new parameter capacity_reservation_properties
+  - Model Cluster has a new parameter associated_workspaces
+  - Model Table has a new parameter is_troubleshooting_allowed
+  - Model Table has a new parameter last_troubleshoot_date
+  - Model Table has a new parameter is_troubleshoot_enabled
+  - Model Identity has a new parameter user_assigned_identities
+  - Model ClusterPatch has a new parameter identity
+  - Model KeyVaultProperties has a new parameter key_rsa_size
+  - Model Workspace has a new parameter created_date
+  - Model Workspace has a new parameter features
+  - Model Workspace has a new parameter modified_date
+  - Model Workspace has a new parameter force_cmk_for_query
+
+**Breaking changes**
+
+  - Model Cluster no longer has parameter next_link
+  - Model ErrorResponse has a new signature
+
+## 8.0.0 (2020-12-25)
+
+**Breaking changes**
+
+  - Change client name from OperationalInsightsManagementClient to LogAnalyticsManagementClient
+
+## 7.0.0 (2020-12-17)
+
+- GA release
+
 ## 7.0.0b1 (2020-11-16)
 
 This is beta preview version.
@@ -14,7 +98,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -22,7 +106,7 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 ## 2.0.0(2020-11-09)
 
@@ -143,8 +227,8 @@ caused by usage of classes that were not supposed to be used in the
 first place.
 
   - LogAnalyticsManagementClient cannot be imported from
-    `azure.mgmt.loganalytics.log_analytics_management_client` anymore 
-    (import OperationalInsightsManagementClient from 
+    `azure.mgmt.loganalytics.log_analytics_management_client` anymore
+    (import OperationalInsightsManagementClient from
     `azure.mgmt.loganalytics` works like before)
   - LogAnalyticsManagementClientConfiguration import has been moved from
     `azure.mgmt.loganalytics.log_analytics_management_client` to `azure.mgmt.loganalytics`

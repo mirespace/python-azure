@@ -36,12 +36,14 @@ try:
     from ._models_py3 import PrivateLinkResourceProperties
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
+    from ._models_py3 import QueryPerformanceInsightResetDataResult
     from ._models_py3 import QueryStatistic
     from ._models_py3 import QueryText
     from ._models_py3 import QueryTextsResultList
     from ._models_py3 import RecommendationAction
     from ._models_py3 import RecommendationActionsResultList
     from ._models_py3 import RecommendedActionSessionsOperationStatus
+    from ._models_py3 import RecoverableServerResource
     from ._models_py3 import Resource
     from ._models_py3 import Server
     from ._models_py3 import ServerForCreate
@@ -55,6 +57,7 @@ try:
     from ._models_py3 import ServerPropertiesForReplica
     from ._models_py3 import ServerPropertiesForRestore
     from ._models_py3 import ServerSecurityAlertPolicy
+    from ._models_py3 import ServerSecurityAlertPolicyListResult
     from ._models_py3 import ServerUpdateParameters
     from ._models_py3 import Sku
     from ._models_py3 import StorageProfile
@@ -97,12 +100,14 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkResourceProperties  # type: ignore
     from ._models import PrivateLinkServiceConnectionStateProperty  # type: ignore
     from ._models import ProxyResource  # type: ignore
+    from ._models import QueryPerformanceInsightResetDataResult  # type: ignore
     from ._models import QueryStatistic  # type: ignore
     from ._models import QueryText  # type: ignore
     from ._models import QueryTextsResultList  # type: ignore
     from ._models import RecommendationAction  # type: ignore
     from ._models import RecommendationActionsResultList  # type: ignore
     from ._models import RecommendedActionSessionsOperationStatus  # type: ignore
+    from ._models import RecoverableServerResource  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import Server  # type: ignore
     from ._models import ServerForCreate  # type: ignore
@@ -116,6 +121,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerPropertiesForReplica  # type: ignore
     from ._models import ServerPropertiesForRestore  # type: ignore
     from ._models import ServerSecurityAlertPolicy  # type: ignore
+    from ._models import ServerSecurityAlertPolicyListResult  # type: ignore
     from ._models import ServerUpdateParameters  # type: ignore
     from ._models import Sku  # type: ignore
     from ._models import StorageProfile  # type: ignore
@@ -132,11 +138,13 @@ except (SyntaxError, ImportError):
 from ._maria_db_management_client_enums import (
     CreateMode,
     GeoRedundantBackup,
+    MinimalTlsVersionEnum,
     OperationOrigin,
     PrivateEndpointProvisioningState,
     PrivateLinkServiceConnectionStateActionsRequire,
     PrivateLinkServiceConnectionStateStatus,
     PublicNetworkAccessEnum,
+    QueryPerformanceInsightResetDataResultState,
     SecurityAlertPolicyName,
     ServerSecurityAlertPolicyState,
     ServerState,
@@ -177,12 +185,14 @@ __all__ = [
     'PrivateLinkResourceProperties',
     'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
+    'QueryPerformanceInsightResetDataResult',
     'QueryStatistic',
     'QueryText',
     'QueryTextsResultList',
     'RecommendationAction',
     'RecommendationActionsResultList',
     'RecommendedActionSessionsOperationStatus',
+    'RecoverableServerResource',
     'Resource',
     'Server',
     'ServerForCreate',
@@ -196,6 +206,7 @@ __all__ = [
     'ServerPropertiesForReplica',
     'ServerPropertiesForRestore',
     'ServerSecurityAlertPolicy',
+    'ServerSecurityAlertPolicyListResult',
     'ServerUpdateParameters',
     'Sku',
     'StorageProfile',
@@ -210,11 +221,13 @@ __all__ = [
     'WaitStatisticsResultList',
     'CreateMode',
     'GeoRedundantBackup',
+    'MinimalTlsVersionEnum',
     'OperationOrigin',
     'PrivateEndpointProvisioningState',
     'PrivateLinkServiceConnectionStateActionsRequire',
     'PrivateLinkServiceConnectionStateStatus',
     'PublicNetworkAccessEnum',
+    'QueryPerformanceInsightResetDataResultState',
     'SecurityAlertPolicyName',
     'ServerSecurityAlertPolicyState',
     'ServerState',

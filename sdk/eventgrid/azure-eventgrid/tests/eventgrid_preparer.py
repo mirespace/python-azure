@@ -3,12 +3,14 @@ import hashlib
 import os
 from collections import namedtuple
 
+from azure_devtools.scenario_tests import ReplayableTest
+from azure.core.credentials import AccessToken
 from azure.mgmt.eventgrid import EventGridManagementClient
 from azure.mgmt.eventgrid.models import Topic, InputSchema, JsonInputSchemaMapping, JsonField, JsonFieldWithDefault
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from devtools_testutils import (
-    ResourceGroupPreparer, AzureMgmtPreparer, FakeResource
+    ResourceGroupPreparer, AzureMgmtPreparer, FakeResource, AzureMgmtTestCase
 )
 
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
@@ -25,6 +27,15 @@ SUBJECT_JSON_FIELD_WITH_DEFAULT = JsonFieldWithDefault(source_field='customSubje
 DATA_VERSION_JSON_FIELD_WITH_DEFAULT = JsonFieldWithDefault(source_field='customDataVersion', default_value='')
 CUSTOM_JSON_INPUT_SCHEMA_MAPPING = JsonInputSchemaMapping(id=ID_JSON_FIELD, topic=TOPIC_JSON_FIELD, event_time=EVENT_TIME_JSON_FIELD, event_type=EVENT_TYPE_JSON_FIELD_WITH_DEFAULT, subject=SUBJECT_JSON_FIELD_WITH_DEFAULT, data_version=DATA_VERSION_JSON_FIELD_WITH_DEFAULT)
 
+class FakeTokenCredential(object):
+    """Protocol for classes able to provide OAuth tokens.
+    :param str scopes: Lets you specify the type of access needed.
+    """
+    def __init__(self):
+        self.token = AccessToken("YOU SHALL NOT PASS", 0)
+
+    def get_token(self, *args):
+        return self.token
 
 class EventGridTopicPreparer(AzureMgmtPreparer):
     def __init__(self,
@@ -62,11 +73,10 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
                 topic = Topic(location=self.parameter_location, tags=None, input_schema=CUSTOM_EVENT_SCHEMA, input_schema_mapping=CUSTOM_JSON_INPUT_SCHEMA_MAPPING)
             else:
                 topic = Topic(location=self.parameter_location)
-            topic_operation = self.client.topics.create_or_update(
+            topic_operation = self.client.topics.begin_create_or_update(
                 group.name,
                 name,
                 topic,
-                {}
             )
             self.resource = topic_operation.result()
             key = self.client.topics.list_shared_access_keys(group.name, name)
@@ -85,7 +95,7 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.topics.delete(group.name, name, polling=False)
+            self.client.topics.begin_delete(group.name, name, polling=False)
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -94,5 +104,6 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
             template = 'To create this event grid topic resource, a resource group is required. Please add ' \
                        'decorator @{} in front of this event grid topic preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
+
 
 CachedEventGridTopicPreparer = functools.partial(EventGridTopicPreparer, use_cache=True)

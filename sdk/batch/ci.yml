@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -14,7 +14,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,7 +28,7 @@ extends:
   parameters:
     ServiceDirectory: batch
     Artifacts:
-    - name: azure_mgmt_batch
+    - name: azure-mgmt-batch
       safeName: azuremgmtbatch
-    - name: azure_batch
+    - name: azure-batch
       safeName: azurebatch

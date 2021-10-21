@@ -18,10 +18,11 @@ Example to show managing queue entities under a ServiceBus Namespace asynchronou
 
 import os
 import asyncio
+import uuid
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = "sb_mgmt_demo_queue"
+QUEUE_NAME = "sb_mgmt_queue" + str(uuid.uuid4())
 
 
 async def create_queue(servicebus_mgmt_client):
@@ -55,8 +56,13 @@ async def get_and_update_queue(servicebus_mgmt_client):
     print("Dead Lettering on Message Expiration:", queue_properties.dead_lettering_on_message_expiration)
     print("Please refer to QueueProperties for complete available settings.")
     print("")
+    # update by updating the properties in the model
     queue_properties.max_delivery_count = 5
     await servicebus_mgmt_client.update_queue(queue_properties)
+
+    # update by passing keyword arguments
+    queue_properties = await servicebus_mgmt_client.get_queue(QUEUE_NAME)
+    await servicebus_mgmt_client.update_queue(queue_properties, max_delivery_count=3)
 
 
 async def get_queue_runtime_properties(servicebus_mgmt_client):
@@ -67,6 +73,9 @@ async def get_queue_runtime_properties(servicebus_mgmt_client):
     print("Updated at:", queue_runtime_properties.updated_at_utc)
     print("Size in Bytes:", queue_runtime_properties.size_in_bytes)
     print("Message Count:", queue_runtime_properties.total_message_count)
+    print("Active Message Count:", queue_runtime_properties.active_message_count)
+    print("Scheduled Message Count:", queue_runtime_properties.scheduled_message_count)
+    print("Dead-letter Message Count:", queue_runtime_properties.dead_letter_message_count)
     print("Please refer to QueueRuntimeProperties from complete available runtime properties.")
     print("")
 

@@ -6,26 +6,26 @@ interactions:
       Accept:
       - application/json
       Content-Type:
-      - image/jpeg
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false&locale=not%20a%20locale
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?locale=not%20a%20locale&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
-      string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
-        "347827d1-e8dd-4485-ac9e-9b1af858a2d7"}, "message": "Locale unsupported. Supported
-        locales include en-AU, en-CA, en-GB, en-IN and en-US."}}'
+      string: '{"error": {"code": "InvalidArgument", "message": "Invalid argument.",
+        "innererror": {"code": "InvalidParameter", "message": "The parameter Locale
+        is invalid: The language code is invalid or not supported."}}}'
     headers:
-      apim-request-id: 347827d1-e8dd-4485-ac9e-9b1af858a2d7
-      content-length: '200'
+      apim-request-id: 8f6bc0ec-dfbe-4d03-895f-b0cf4bec6192
       content-type: application/json; charset=utf-8
-      date: Mon, 16 Nov 2020 19:11:12 GMT
+      date: Thu, 30 Sep 2021 17:06:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '138'
+      x-envoy-upstream-service-time: '69'
     status:
       code: 400
       message: Bad Request
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false&locale=not%20a%20locale
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?locale=not%20a%20locale&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 version: 1

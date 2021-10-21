@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -14,7 +14,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -27,6 +27,14 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: attestation
+    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
+    MatrixConfigs:
+      - Name: attestation_ci_matrix
+        Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
-    - name: azure_mgmt_attestation
+    - name: azure-mgmt-attestation
       safeName: azuremgmtattestation
+    - name: azure-security-attestation
+      safeName: azuresecurityattestation

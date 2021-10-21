@@ -4,18 +4,19 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
   paths:
     include:
     - sdk/communication/
+    - sdk/core/
 
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -23,19 +24,22 @@ pr:
   paths:
     include:
     - sdk/communication/
+    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: communication
     Artifacts:
-    - name: azure_communication_nspkg
-      safeName: azurecommunicationnspkg
-    - name: azure_communication_administration
-      safeName: azurecommunicationadministration
-    - name: azure_communication_chat
+    - name: azure-communication-identity
+      safeName: azurecommunicationidentity
+    - name: azure-communication-chat
       safeName: azurecommunicationchat
-    - name: azure_mgmt_communication
+    - name: azure-mgmt-communication
       safeName: azuremgmtcommunication
-    - name: azure_communication_sms
+    - name: azure-communication-sms
       safeName: azurecommunicationsms
+    - name: azure-communication-phonenumbers
+      safeName: azurecommunicationphonenumbers
+    - name: azure-communication-networktraversal
+      safeName: azurecommunicationnetworktraversal

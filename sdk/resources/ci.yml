@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -14,7 +14,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,9 +28,9 @@ extends:
   parameters:
     ServiceDirectory: resources
     Artifacts:
-    - name: azure_mgmt_msi
-      safeName: azuremgmtmsi
-    - name: azure_mgmt_resource
+    - name: azure-mgmt-resource
       safeName: azuremgmtresource
-    - name: azure_mgmt_resourcegraph
+    - name: azure-mgmt-resourcegraph
       safeName: azuremgmtresourcegraph
+    - name: azure-mgmt-msi
+      safeName: azuremgmtmsi

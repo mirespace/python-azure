@@ -25,7 +25,7 @@ class CheckNameAvailabilityOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -43,16 +43,16 @@ class CheckNameAvailabilityOperations:
     async def execute(
         self,
         name_availability_request: "_models.NameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailability":
         """Check the availability of name for resource.
 
         :param name_availability_request: The required parameters for checking if resource name is
          available.
-        :type name_availability_request: ~maria_db_management_client.models.NameAvailabilityRequest
+        :type name_availability_request: ~azure.mgmt.rdbms.mariadb.models.NameAvailabilityRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailability, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.NameAvailability
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.NameAvailability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NameAvailability"]

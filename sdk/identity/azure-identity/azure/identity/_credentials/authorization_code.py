@@ -6,28 +6,29 @@ from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal.aad_client import AadClient
-from .._internal.decorators import log_get_token
+from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
 
-class AuthorizationCodeCredential(object):
+class AuthorizationCodeCredential(GetTokenMixin):
     """Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
 
-    See https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
+    See `Azure Active Directory documentation
+    <https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow>`_ for more information
     about the authentication flow.
 
-    :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its 'directory' ID.
+    :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
     :param str client_id: the application's client ID
     :param str authorization_code: the authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
-          defines authorities for other clouds.
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
     """
 
@@ -38,8 +39,20 @@ class AuthorizationCodeCredential(object):
         self._client_secret = kwargs.pop("client_secret", None)
         self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
+        super(AuthorizationCodeCredential, self).__init__()
 
-    @log_get_token("AuthorizationCodeCredential")
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
+
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -51,14 +64,22 @@ class AuthorizationCodeCredential(object):
         redeeming the authorization code.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
-        if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
+        # pylint:disable=useless-super-delegation
+        return super(AuthorizationCodeCredential, self).get_token(*scopes, **kwargs)
 
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
+        return self._client.get_cached_access_token(scopes, **kwargs)
+
+    def _request_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
         if self._authorization_code:
             token = self._client.obtain_token_by_authorization_code(
                 scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs
@@ -66,14 +87,12 @@ class AuthorizationCodeCredential(object):
             self._authorization_code = None  # auth codes are single-use
             return token
 
-        token = self._client.get_cached_access_token(scopes)
-        if not token:
-            token = self._redeem_refresh_token(scopes, **kwargs)
-        elif self._client.should_refresh(token):
-            try:
-                self._redeem_refresh_token(scopes, **kwargs)
-            except Exception:  # pylint: disable=broad-except
-                pass
+        token = None
+        for refresh_token in self._client.get_cached_refresh_tokens(scopes):
+            if "secret" in refresh_token:
+                token = self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
+                if token:
+                    break
 
         if not token:
             raise ClientAuthenticationError(
@@ -81,13 +100,3 @@ class AuthorizationCodeCredential(object):
             )
 
         return token
-
-    def _redeem_refresh_token(self, scopes, **kwargs):
-        # type: (Iterable[str], **Any) -> Optional[AccessToken]
-        for refresh_token in self._client.get_cached_refresh_tokens(scopes):
-            if "secret" not in refresh_token:
-                continue
-            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
-            if token:
-                return token
-        return None

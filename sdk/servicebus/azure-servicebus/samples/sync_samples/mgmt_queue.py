@@ -17,10 +17,11 @@ Example to show managing queue entities under a ServiceBus Namespace, including
 # pylint: disable=C0111
 
 import os
+import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = "sb_mgmt_demo_queue"
+QUEUE_NAME = "sb_mgmt_queue" + str(uuid.uuid4())
 
 
 def create_queue(servicebus_mgmt_client):
@@ -54,18 +55,26 @@ def get_and_update_queue(servicebus_mgmt_client):
     print("Dead Lettering on Message Expiration:", queue_properties.dead_lettering_on_message_expiration)
     print("Please refer to QueueDescription for complete available settings.")
     print("")
+    # update by updating the properties in the model
     queue_properties.max_delivery_count = 5
     servicebus_mgmt_client.update_queue(queue_properties)
+
+    # update by passing keyword arguments
+    queue_properties = servicebus_mgmt_client.get_queue(QUEUE_NAME)
+    servicebus_mgmt_client.update_queue(queue_properties, max_delivery_count=3)
 
 
 def get_queue_runtime_properties(servicebus_mgmt_client):
     print("-- Get Queue Runtime Properties")
-    get_queue_runtime_properties = servicebus_mgmt_client.get_queue_runtime_properties(QUEUE_NAME)
-    print("Queue Name:", get_queue_runtime_properties.name)
+    queue_runtime_properties = servicebus_mgmt_client.get_queue_runtime_properties(QUEUE_NAME)
+    print("Queue Name:", queue_runtime_properties.name)
     print("Queue Runtime Properties:")
-    print("Updated at:", get_queue_runtime_properties.updated_at_utc)
-    print("Size in Bytes:", get_queue_runtime_properties.size_in_bytes)
-    print("Message Count:", get_queue_runtime_properties.total_message_count)
+    print("Updated at:", queue_runtime_properties.updated_at_utc)
+    print("Size in Bytes:", queue_runtime_properties.size_in_bytes)
+    print("Message Count:", queue_runtime_properties.total_message_count)
+    print("Active Message Count:", queue_runtime_properties.active_message_count)
+    print("Scheduled Message Count:", queue_runtime_properties.scheduled_message_count)
+    print("Dead-letter Message Count:", queue_runtime_properties.dead_letter_message_count)
     print("Please refer to QueueRuntimeProperties from complete available runtime properties.")
     print("")
 

@@ -24,7 +24,7 @@ class NetworkManagementClientOperationsMixin:
         self,
         location: str,
         domain_name_label: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DnsNameAvailabilityResult":
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
@@ -83,7 +83,7 @@ class NetworkManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualWanSecurityProviders":
         """Gives the supported security providers for the virtual wan.
 
@@ -128,7 +128,7 @@ class NetworkManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VirtualWanSecurityProviders', pipeline_response)

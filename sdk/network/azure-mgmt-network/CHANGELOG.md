@@ -1,5 +1,136 @@
 # Release History
 
+## 19.1.0 (2021-10-09)
+
+**Features**
+
+  - Model ServiceEndpointPolicy has a new parameter service_alias
+  - Model ServiceEndpointPolicy has a new parameter contextual_service_endpoint_policies
+  - Model ApplicationGatewayRequestRoutingRule has a new parameter load_distribution_policy
+  - Model BgpConnection has a new parameter hub_virtual_network_connection
+  - Model BastionHost has a new parameter enable_ip_connect
+  - Model BastionHost has a new parameter disable_copy_paste
+  - Model BastionHost has a new parameter enable_tunneling
+  - Model BastionHost has a new parameter scale_units
+  - Model BastionHost has a new parameter enable_file_copy
+  - Model BastionHost has a new parameter enable_shareable_link
+  - Model DscpConfiguration has a new parameter qos_definition_collection
+  - Model ServiceTagInformation has a new parameter service_tag_change_number
+  - Model VnetRoute has a new parameter bgp_connections
+  - Model VpnGateway has a new parameter enable_bgp_route_translation_for_nat
+  - Model ServiceEndpointPolicyDefinition has a new parameter type
+  - Model ApplicationGateway has a new parameter global_configuration
+  - Model ApplicationGateway has a new parameter load_distribution_policies
+  - Model InboundNatRule has a new parameter frontend_port_range_end
+  - Model InboundNatRule has a new parameter frontend_port_range_start
+  - Model InboundNatRule has a new parameter backend_address_pool
+  - Model PrivateEndpoint has a new parameter ip_configurations
+  - Model PrivateEndpoint has a new parameter application_security_groups
+  - Model PrivateEndpoint has a new parameter custom_network_interface_name
+  - Model NetworkVirtualAppliance has a new parameter ssh_public_key
+  - Model ApplicationGatewayUrlPathMap has a new parameter default_load_distribution_policy
+  - Model FirewallPolicy has a new parameter sql
+  - Model FirewallPolicy has a new parameter explicit_proxy_settings
+  - Model VirtualHub has a new parameter kind
+  - Model ApplicationGatewayPathRule has a new parameter load_distribution_policy
+  - Added operation BastionHostsOperations.begin_update_tags
+  - Added operation group ServiceTagInformationOperations
+
+## 19.0.0 (2021-05-14)
+
+**Features**
+
+  - Model ApplicationGatewayTrustedClientCertificate has a new parameter validated_cert_data
+  - Model ApplicationGatewayTrustedClientCertificate has a new parameter client_cert_issuer_dn
+  - Model VirtualNetwork has a new parameter flow_timeout_in_minutes
+  - Model FrontendIPConfiguration has a new parameter gateway_load_balancer
+  - Model IPAddressAvailabilityResult has a new parameter is_platform_reserved
+  - Model CustomIpPrefix has a new parameter custom_ip_prefix_parent
+  - Model CustomIpPrefix has a new parameter failed_reason
+  - Model CustomIpPrefix has a new parameter child_custom_ip_prefixes
+  - Model CustomIpPrefix has a new parameter authorization_message
+  - Model CustomIpPrefix has a new parameter signed_message
+  - Model VirtualNetworkPeering has a new parameter peering_sync_level
+  - Model VirtualNetworkPeering has a new parameter resource_guid
+  - Model VirtualNetworkPeering has a new parameter do_not_verify_remote_gateways
+  - Model VirtualNetworkPeering has a new parameter type
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_address_space
+  - Model Subnet has a new parameter application_gateway_ip_configurations
+  - Model Subnet has a new parameter type
+  - Model LoadBalancingRule has a new parameter backend_address_pools
+  - Model EffectiveNetworkSecurityGroupAssociation has a new parameter network_manager
+  - Model BastionHost has a new parameter sku
+  - Model VirtualNetworkGateway has a new parameter extended_location
+  - Model VirtualNetworkGateway has a new parameter nat_rules
+  - Model VirtualNetworkGateway has a new parameter enable_bgp_route_translation_for_nat
+  - Model NetworkInterface has a new parameter workload_type
+  - Model NetworkInterface has a new parameter private_link_service
+  - Model NetworkInterface has a new parameter nic_type
+  - Model NetworkInterface has a new parameter migration_phase
+  - Model Delegation has a new parameter type
+  - Model PublicIPPrefix has a new parameter nat_gateway
+  - Model VirtualNetworkGatewayConnection has a new parameter egress_nat_rules
+  - Model VirtualNetworkGatewayConnection has a new parameter ingress_nat_rules
+  - Model NetworkInterfaceIPConfiguration has a new parameter gateway_load_balancer
+  - Model NetworkInterfaceIPConfiguration has a new parameter type
+  - Model AvailablePrivateEndpointType has a new parameter display_name
+  - Model PublicIPAddress has a new parameter delete_option
+  - Model PublicIPAddress has a new parameter nat_gateway
+  - Model PublicIPAddress has a new parameter service_public_ip_address
+  - Model PublicIPAddress has a new parameter linked_public_ip_address
+  - Model PublicIPAddress has a new parameter migration_phase
+  - Model VirtualHub has a new parameter preferred_routing_gateway
+  - Model BackendAddressPool has a new parameter tunnel_interfaces
+  - Model ServiceTagInformationPropertiesFormat has a new parameter state
+  - Added operation LoadBalancersOperations.begin_swap_public_ip_addresses
+  - Added operation group VirtualNetworkGatewayNatRulesOperations
+
+**Breaking changes**
+
+  - Operation VirtualNetworkPeeringsOperations.begin_create_or_update has a new signature
+  - Model VirtualNetworkGateway no longer has parameter virtual_network_extended_location
+
+## 18.0.0 (2021-03-08)
+
+**Features**
+
+  - Model VpnConnection has a new parameter traffic_selector_policies
+  - Model VirtualNetworkGateway has a new parameter virtual_network_extended_location
+  - Model VirtualNetworkGateway has a new parameter v_net_extended_location_resource_id
+  - Model VpnClientConfiguration has a new parameter vpn_authentication_types
+  - Model LoadBalancerBackendAddress has a new parameter subnet
+  - Model ServiceEndpointPolicy has a new parameter kind
+  - Model FirewallPolicy has a new parameter snat
+  - Model FirewallPolicy has a new parameter insights
+  - Added operation VirtualNetworkGatewayConnectionsOperations.begin_reset_connection
+  - Added operation VpnLinkConnectionsOperations.begin_get_ike_sas
+  - Added operation VpnLinkConnectionsOperations.begin_reset_connection
+
+**Breaking changes**
+
+  - Model VirtualNetworkGateway no longer has parameter extended_location
+  - Model VirtualNetworkGateway no longer has parameter virtual_network_extended_location_resource_id
+
+## 17.1.0 (2021-01-26)
+
+**Features**
+  - Model PrivateEndpoint has a new parameter extended_location
+  - Model VpnGateway has a new parameter nat_rules
+  - Model ExpressRouteConnection has a new parameter express_route_gateway_bypass
+  - Model SecurityRule has a new parameter type
+  - Model PrivateLinkService has a new parameter extended_location
+  - Model Route has a new parameter type
+  - Model Route has a new parameter has_bgp_override
+  - Model RouteTable has a new parameter resource_guid
+  - Model VpnSiteLinkConnection has a new parameter ingress_nat_rules
+  - Model VpnSiteLinkConnection has a new parameter vpn_link_connection_mode
+  - Model VpnSiteLinkConnection has a new parameter egress_nat_rules
+  - Model BackendAddressPool has a new parameter location
+  - Model CustomIpPrefix has a new parameter extended_location
+  - Added operation ExpressRouteGatewaysOperations.begin_update_tags
+  - Added operation VirtualNetworkGatewayConnectionsOperations.begin_get_ike_sas
+  - Added operation group NatRulesOperations
+
 ## 17.0.0 (2020-11-25)
 
 **Features**
@@ -42,7 +173,7 @@
 
   - Operation ConnectionMonitorsOperations.begin_create_or_update has a new signature
   - Model VirtualHub no longer has parameter enable_virtual_router_route_propogation
-  
+
 ## 16.0.0 (2020-09-15)
 
 **Features**
@@ -145,7 +276,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -153,13 +284,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
 ## 10.2.0 (2020-04-10)

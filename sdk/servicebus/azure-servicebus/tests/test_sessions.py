@@ -64,8 +64,64 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for i in range(3):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
 
+                    message.partition_key = 'pkey'
+
+                    message.session_id = session_id
+                    message.partition_key = session_id
+                    message.application_properties = {'key': 'value'}
+                    message.subject = 'label'
+                    message.content_type = 'application/text'
+                    message.correlation_id = 'cid'
+                    message.message_id = str(i)
+                    message.to = 'to'
+                    message.reply_to = 'reply_to'
+                    message.reply_to_session_id = 'reply_to_session_id'
+
                     with pytest.raises(ValueError):
                         message.partition_key = 'pkey'
+
+                    sender.send_messages(message)
+
+                with pytest.raises(ServiceBusError):
+                    receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)._open_with_retry()
+
+                count = 0
+                received_cnt_dic = {}
+                for message in receiver:
+                    print_message(_logger, message)
+                    assert message.delivery_count == 0
+                    assert message.application_properties
+                    assert message.application_properties[b'key'] == b'value'
+                    assert message.subject == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.partition_key == session_id
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.sequence_number
+                    assert message.enqueued_time_utc
+                    assert message.session_id == session_id
+                    assert message.reply_to_session_id == 'reply_to_session_id'
+                    count += 1
+                    receiver.complete_message(message)
+                    if message.message_id not in received_cnt_dic:
+                        received_cnt_dic[message.message_id] = 1
+                        sender.send_messages(message)
+                    else:
+                        received_cnt_dic[message.message_id] += 1
+
+                assert received_cnt_dic['0'] == 2 and received_cnt_dic['1'] == 2 and received_cnt_dic['2'] == 2
+                assert count == 6
+
+            session_id = ""
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5)
+
+            with sender, receiver:
+                for i in range(3):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+
+                    message.partition_key = 'pkey'
 
                     message.session_id = session_id
                     message.partition_key = session_id
@@ -118,7 +174,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True, lock_duration='PT5S')
     def test_session_by_queue_client_conn_str_receive_handler_receiveanddelete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -143,7 +199,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
             assert not receiver._running
             assert len(messages) == 10
-            time.sleep(30)
+            time.sleep(5)
 
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, max_wait_time=5) as session:
@@ -731,6 +787,27 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             renewer.close()
             assert len(messages) == 2
 
+        # test voluntary halt of auto lock renewer when session is closed
+        session_id = str(uuid.uuid4())
+        with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            messages = [ServiceBusMessage("{}".format(i), session_id=session_id) for i in range(10)]
+            sender.send_messages(messages)
+
+        renewer = AutoLockRenewer(max_lock_renewal_duration=100)
+        receiver = sb_client.get_queue_receiver(servicebus_queue.name,
+                                            session_id=session_id,
+                                            max_wait_time=5,
+                                            prefetch_count=10,
+                                            auto_lock_renewer=renewer)
+
+        with receiver:
+            received_msgs = receiver.receive_messages(max_wait_time=5)
+            for msg in received_msgs:
+                receiver.complete_message(msg)
+
+        receiver.close()
+        assert not renewer._renewable(receiver._session)
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -785,7 +862,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True, lock_duration='PT5S')
     def test_session_message_expiry(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
 
         with ServiceBusClient.from_connection_string(
@@ -801,7 +878,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
-                time.sleep(60)
+                time.sleep(10)
                 with pytest.raises(TypeError):
                     messages[0]._lock_expired
                 with pytest.raises(TypeError):

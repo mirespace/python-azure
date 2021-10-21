@@ -9,10 +9,16 @@
 try:
     from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
+    from ._models_py3 import AnalyticalStorageConfiguration
     from ._models_py3 import ApiProperties
     from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AutoscaleSettings
     from ._models_py3 import AutoscaleSettingsResource
+    from ._models_py3 import BackupInformation
+    from ._models_py3 import BackupPolicy
+    from ._models_py3 import BackupPolicyMigrationState
+    from ._models_py3 import BackupResource
+    from ._models_py3 import BackupResourceProperties
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
     from ._models_py3 import CassandraKeyspaceGetPropertiesOptions
@@ -28,16 +34,37 @@ try:
     from ._models_py3 import CassandraTableGetResults
     from ._models_py3 import CassandraTableListResult
     from ._models_py3 import CassandraTableResource
+    from ._models_py3 import CassandraViewCreateUpdateParameters
+    from ._models_py3 import CassandraViewGetPropertiesOptions
+    from ._models_py3 import CassandraViewGetPropertiesResource
+    from ._models_py3 import CassandraViewGetResults
+    from ._models_py3 import CassandraViewListResult
+    from ._models_py3 import CassandraViewResource
+    from ._models_py3 import Certificate
     from ._models_py3 import ClusterKey
+    from ._models_py3 import ClusterNodeStatus
+    from ._models_py3 import ClusterNodeStatusNodesItem
+    from ._models_py3 import ClusterResource
+    from ._models_py3 import ClusterResourceProperties
     from ._models_py3 import Column
+    from ._models_py3 import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import CompositePath
     from ._models_py3 import ConflictResolutionPolicy
     from ._models_py3 import ConsistencyPolicy
     from ._models_py3 import ContainerPartitionKey
+    from ._models_py3 import ContinuousBackupInformation
+    from ._models_py3 import ContinuousBackupRestoreLocation
+    from ._models_py3 import ContinuousModeBackupPolicy
     from ._models_py3 import CorsPolicy
     from ._models_py3 import CreateUpdateOptions
+    from ._models_py3 import DataCenterResource
+    from ._models_py3 import DataCenterResourceProperties
+    from ._models_py3 import DataTransferRegionalServiceResource
+    from ._models_py3 import DataTransferServiceResource
+    from ._models_py3 import DataTransferServiceResourceProperties
     from ._models_py3 import DatabaseAccountConnectionString
     from ._models_py3 import DatabaseAccountCreateUpdateParameters
+    from ._models_py3 import DatabaseAccountCreateUpdateProperties
     from ._models_py3 import DatabaseAccountGetResults
     from ._models_py3 import DatabaseAccountListConnectionStringsResult
     from ._models_py3 import DatabaseAccountListKeysResult
@@ -45,11 +72,23 @@ try:
     from ._models_py3 import DatabaseAccountRegenerateKeyParameters
     from ._models_py3 import DatabaseAccountUpdateParameters
     from ._models_py3 import DatabaseAccountsListResult
+    from ._models_py3 import DatabaseRestoreResource
+    from ._models_py3 import DefaultRequestDatabaseAccountCreateUpdateProperties
+    from ._models_py3 import DiagnosticLogSettings
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExcludedPath
     from ._models_py3 import ExtendedResourceProperties
     from ._models_py3 import FailoverPolicies
     from ._models_py3 import FailoverPolicy
+    from ._models_py3 import GraphAPIComputeRegionalServiceResource
+    from ._models_py3 import GraphAPIComputeServiceResource
+    from ._models_py3 import GraphAPIComputeServiceResourceProperties
+    from ._models_py3 import GraphResource
+    from ._models_py3 import GraphResourceCreateUpdateParameters
+    from ._models_py3 import GraphResourceGetPropertiesOptions
+    from ._models_py3 import GraphResourceGetPropertiesResource
+    from ._models_py3 import GraphResourceGetResults
+    from ._models_py3 import GraphResourcesListResult
     from ._models_py3 import GremlinDatabaseCreateUpdateParameters
     from ._models_py3 import GremlinDatabaseGetPropertiesOptions
     from ._models_py3 import GremlinDatabaseGetPropertiesResource
@@ -66,7 +105,14 @@ try:
     from ._models_py3 import Indexes
     from ._models_py3 import IndexingPolicy
     from ._models_py3 import IpAddressOrRange
+    from ._models_py3 import ListBackups
+    from ._models_py3 import ListClusters
+    from ._models_py3 import ListDataCenters
     from ._models_py3 import Location
+    from ._models_py3 import LocationGetResult
+    from ._models_py3 import LocationListResult
+    from ._models_py3 import LocationProperties
+    from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import Metric
     from ._models_py3 import MetricAvailability
     from ._models_py3 import MetricDefinition
@@ -104,17 +150,45 @@ try:
     from ._models_py3 import PercentileMetric
     from ._models_py3 import PercentileMetricListResult
     from ._models_py3 import PercentileMetricValue
+    from ._models_py3 import PeriodicModeBackupPolicy
+    from ._models_py3 import PeriodicModeProperties
+    from ._models_py3 import Permission
     from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointConnectionAutoGenerated
     from ._models_py3 import PrivateEndpointConnectionListResult
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
-    from ._models_py3 import PrivateLinkServiceConnectionStatePropertyAutoGenerated
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
+    from ._models_py3 import RegionalServiceResource
+    from ._models_py3 import RepairPostBody
     from ._models_py3 import Resource
+    from ._models_py3 import RestorableDatabaseAccountGetResult
+    from ._models_py3 import RestorableDatabaseAccountsListResult
+    from ._models_py3 import RestorableLocationResource
+    from ._models_py3 import RestorableMongodbCollectionGetResult
+    from ._models_py3 import RestorableMongodbCollectionPropertiesResource
+    from ._models_py3 import RestorableMongodbCollectionsListResult
+    from ._models_py3 import RestorableMongodbDatabaseGetResult
+    from ._models_py3 import RestorableMongodbDatabasePropertiesResource
+    from ._models_py3 import RestorableMongodbDatabasesListResult
+    from ._models_py3 import RestorableMongodbResourcesListResult
+    from ._models_py3 import RestorableSqlContainerGetResult
+    from ._models_py3 import RestorableSqlContainerPropertiesResource
+    from ._models_py3 import RestorableSqlContainerPropertiesResourceContainer
+    from ._models_py3 import RestorableSqlContainersListResult
+    from ._models_py3 import RestorableSqlDatabaseGetResult
+    from ._models_py3 import RestorableSqlDatabasePropertiesResource
+    from ._models_py3 import RestorableSqlDatabasePropertiesResourceDatabase
+    from ._models_py3 import RestorableSqlDatabasesListResult
+    from ._models_py3 import RestorableSqlResourcesListResult
+    from ._models_py3 import RestoreParameters
+    from ._models_py3 import SeedNode
+    from ._models_py3 import ServiceResource
+    from ._models_py3 import ServiceResourceCreateUpdateParameters
+    from ._models_py3 import ServiceResourceListResult
+    from ._models_py3 import ServiceResourceProperties
     from ._models_py3 import SpatialSpec
     from ._models_py3 import SqlContainerCreateUpdateParameters
     from ._models_py3 import SqlContainerGetPropertiesOptions
@@ -128,6 +202,15 @@ try:
     from ._models_py3 import SqlDatabaseGetResults
     from ._models_py3 import SqlDatabaseListResult
     from ._models_py3 import SqlDatabaseResource
+    from ._models_py3 import SqlDedicatedGatewayRegionalServiceResource
+    from ._models_py3 import SqlDedicatedGatewayServiceResource
+    from ._models_py3 import SqlDedicatedGatewayServiceResourceProperties
+    from ._models_py3 import SqlRoleAssignmentCreateUpdateParameters
+    from ._models_py3 import SqlRoleAssignmentGetResults
+    from ._models_py3 import SqlRoleAssignmentListResult
+    from ._models_py3 import SqlRoleDefinitionCreateUpdateParameters
+    from ._models_py3 import SqlRoleDefinitionGetResults
+    from ._models_py3 import SqlRoleDefinitionListResult
     from ._models_py3 import SqlStoredProcedureCreateUpdateParameters
     from ._models_py3 import SqlStoredProcedureGetPropertiesResource
     from ._models_py3 import SqlStoredProcedureGetResults
@@ -143,6 +226,7 @@ try:
     from ._models_py3 import SqlUserDefinedFunctionGetResults
     from ._models_py3 import SqlUserDefinedFunctionListResult
     from ._models_py3 import SqlUserDefinedFunctionResource
+    from ._models_py3 import SystemData
     from ._models_py3 import TableCreateUpdateParameters
     from ._models_py3 import TableGetPropertiesOptions
     from ._models_py3 import TableGetPropertiesResource
@@ -162,10 +246,16 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ARMProxyResource  # type: ignore
     from ._models import ARMResourceProperties  # type: ignore
+    from ._models import AnalyticalStorageConfiguration  # type: ignore
     from ._models import ApiProperties  # type: ignore
     from ._models import AutoUpgradePolicyResource  # type: ignore
     from ._models import AutoscaleSettings  # type: ignore
     from ._models import AutoscaleSettingsResource  # type: ignore
+    from ._models import BackupInformation  # type: ignore
+    from ._models import BackupPolicy  # type: ignore
+    from ._models import BackupPolicyMigrationState  # type: ignore
+    from ._models import BackupResource  # type: ignore
+    from ._models import BackupResourceProperties  # type: ignore
     from ._models import Capability  # type: ignore
     from ._models import CassandraKeyspaceCreateUpdateParameters  # type: ignore
     from ._models import CassandraKeyspaceGetPropertiesOptions  # type: ignore
@@ -181,16 +271,37 @@ except (SyntaxError, ImportError):
     from ._models import CassandraTableGetResults  # type: ignore
     from ._models import CassandraTableListResult  # type: ignore
     from ._models import CassandraTableResource  # type: ignore
+    from ._models import CassandraViewCreateUpdateParameters  # type: ignore
+    from ._models import CassandraViewGetPropertiesOptions  # type: ignore
+    from ._models import CassandraViewGetPropertiesResource  # type: ignore
+    from ._models import CassandraViewGetResults  # type: ignore
+    from ._models import CassandraViewListResult  # type: ignore
+    from ._models import CassandraViewResource  # type: ignore
+    from ._models import Certificate  # type: ignore
     from ._models import ClusterKey  # type: ignore
+    from ._models import ClusterNodeStatus  # type: ignore
+    from ._models import ClusterNodeStatusNodesItem  # type: ignore
+    from ._models import ClusterResource  # type: ignore
+    from ._models import ClusterResourceProperties  # type: ignore
     from ._models import Column  # type: ignore
+    from ._models import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import CompositePath  # type: ignore
     from ._models import ConflictResolutionPolicy  # type: ignore
     from ._models import ConsistencyPolicy  # type: ignore
     from ._models import ContainerPartitionKey  # type: ignore
+    from ._models import ContinuousBackupInformation  # type: ignore
+    from ._models import ContinuousBackupRestoreLocation  # type: ignore
+    from ._models import ContinuousModeBackupPolicy  # type: ignore
     from ._models import CorsPolicy  # type: ignore
     from ._models import CreateUpdateOptions  # type: ignore
+    from ._models import DataCenterResource  # type: ignore
+    from ._models import DataCenterResourceProperties  # type: ignore
+    from ._models import DataTransferRegionalServiceResource  # type: ignore
+    from ._models import DataTransferServiceResource  # type: ignore
+    from ._models import DataTransferServiceResourceProperties  # type: ignore
     from ._models import DatabaseAccountConnectionString  # type: ignore
     from ._models import DatabaseAccountCreateUpdateParameters  # type: ignore
+    from ._models import DatabaseAccountCreateUpdateProperties  # type: ignore
     from ._models import DatabaseAccountGetResults  # type: ignore
     from ._models import DatabaseAccountListConnectionStringsResult  # type: ignore
     from ._models import DatabaseAccountListKeysResult  # type: ignore
@@ -198,11 +309,23 @@ except (SyntaxError, ImportError):
     from ._models import DatabaseAccountRegenerateKeyParameters  # type: ignore
     from ._models import DatabaseAccountUpdateParameters  # type: ignore
     from ._models import DatabaseAccountsListResult  # type: ignore
+    from ._models import DatabaseRestoreResource  # type: ignore
+    from ._models import DefaultRequestDatabaseAccountCreateUpdateProperties  # type: ignore
+    from ._models import DiagnosticLogSettings  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import ExcludedPath  # type: ignore
     from ._models import ExtendedResourceProperties  # type: ignore
     from ._models import FailoverPolicies  # type: ignore
     from ._models import FailoverPolicy  # type: ignore
+    from ._models import GraphAPIComputeRegionalServiceResource  # type: ignore
+    from ._models import GraphAPIComputeServiceResource  # type: ignore
+    from ._models import GraphAPIComputeServiceResourceProperties  # type: ignore
+    from ._models import GraphResource  # type: ignore
+    from ._models import GraphResourceCreateUpdateParameters  # type: ignore
+    from ._models import GraphResourceGetPropertiesOptions  # type: ignore
+    from ._models import GraphResourceGetPropertiesResource  # type: ignore
+    from ._models import GraphResourceGetResults  # type: ignore
+    from ._models import GraphResourcesListResult  # type: ignore
     from ._models import GremlinDatabaseCreateUpdateParameters  # type: ignore
     from ._models import GremlinDatabaseGetPropertiesOptions  # type: ignore
     from ._models import GremlinDatabaseGetPropertiesResource  # type: ignore
@@ -219,7 +342,14 @@ except (SyntaxError, ImportError):
     from ._models import Indexes  # type: ignore
     from ._models import IndexingPolicy  # type: ignore
     from ._models import IpAddressOrRange  # type: ignore
+    from ._models import ListBackups  # type: ignore
+    from ._models import ListClusters  # type: ignore
+    from ._models import ListDataCenters  # type: ignore
     from ._models import Location  # type: ignore
+    from ._models import LocationGetResult  # type: ignore
+    from ._models import LocationListResult  # type: ignore
+    from ._models import LocationProperties  # type: ignore
+    from ._models import ManagedServiceIdentity  # type: ignore
     from ._models import Metric  # type: ignore
     from ._models import MetricAvailability  # type: ignore
     from ._models import MetricDefinition  # type: ignore
@@ -257,17 +387,45 @@ except (SyntaxError, ImportError):
     from ._models import PercentileMetric  # type: ignore
     from ._models import PercentileMetricListResult  # type: ignore
     from ._models import PercentileMetricValue  # type: ignore
+    from ._models import PeriodicModeBackupPolicy  # type: ignore
+    from ._models import PeriodicModeProperties  # type: ignore
+    from ._models import Permission  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
-    from ._models import PrivateEndpointConnectionAutoGenerated  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
     from ._models import PrivateEndpointProperty  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourceListResult  # type: ignore
     from ._models import PrivateLinkServiceConnectionStateProperty  # type: ignore
-    from ._models import PrivateLinkServiceConnectionStatePropertyAutoGenerated  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import RegionForOnlineOffline  # type: ignore
+    from ._models import RegionalServiceResource  # type: ignore
+    from ._models import RepairPostBody  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import RestorableDatabaseAccountGetResult  # type: ignore
+    from ._models import RestorableDatabaseAccountsListResult  # type: ignore
+    from ._models import RestorableLocationResource  # type: ignore
+    from ._models import RestorableMongodbCollectionGetResult  # type: ignore
+    from ._models import RestorableMongodbCollectionPropertiesResource  # type: ignore
+    from ._models import RestorableMongodbCollectionsListResult  # type: ignore
+    from ._models import RestorableMongodbDatabaseGetResult  # type: ignore
+    from ._models import RestorableMongodbDatabasePropertiesResource  # type: ignore
+    from ._models import RestorableMongodbDatabasesListResult  # type: ignore
+    from ._models import RestorableMongodbResourcesListResult  # type: ignore
+    from ._models import RestorableSqlContainerGetResult  # type: ignore
+    from ._models import RestorableSqlContainerPropertiesResource  # type: ignore
+    from ._models import RestorableSqlContainerPropertiesResourceContainer  # type: ignore
+    from ._models import RestorableSqlContainersListResult  # type: ignore
+    from ._models import RestorableSqlDatabaseGetResult  # type: ignore
+    from ._models import RestorableSqlDatabasePropertiesResource  # type: ignore
+    from ._models import RestorableSqlDatabasePropertiesResourceDatabase  # type: ignore
+    from ._models import RestorableSqlDatabasesListResult  # type: ignore
+    from ._models import RestorableSqlResourcesListResult  # type: ignore
+    from ._models import RestoreParameters  # type: ignore
+    from ._models import SeedNode  # type: ignore
+    from ._models import ServiceResource  # type: ignore
+    from ._models import ServiceResourceCreateUpdateParameters  # type: ignore
+    from ._models import ServiceResourceListResult  # type: ignore
+    from ._models import ServiceResourceProperties  # type: ignore
     from ._models import SpatialSpec  # type: ignore
     from ._models import SqlContainerCreateUpdateParameters  # type: ignore
     from ._models import SqlContainerGetPropertiesOptions  # type: ignore
@@ -281,6 +439,15 @@ except (SyntaxError, ImportError):
     from ._models import SqlDatabaseGetResults  # type: ignore
     from ._models import SqlDatabaseListResult  # type: ignore
     from ._models import SqlDatabaseResource  # type: ignore
+    from ._models import SqlDedicatedGatewayRegionalServiceResource  # type: ignore
+    from ._models import SqlDedicatedGatewayServiceResource  # type: ignore
+    from ._models import SqlDedicatedGatewayServiceResourceProperties  # type: ignore
+    from ._models import SqlRoleAssignmentCreateUpdateParameters  # type: ignore
+    from ._models import SqlRoleAssignmentGetResults  # type: ignore
+    from ._models import SqlRoleAssignmentListResult  # type: ignore
+    from ._models import SqlRoleDefinitionCreateUpdateParameters  # type: ignore
+    from ._models import SqlRoleDefinitionGetResults  # type: ignore
+    from ._models import SqlRoleDefinitionListResult  # type: ignore
     from ._models import SqlStoredProcedureCreateUpdateParameters  # type: ignore
     from ._models import SqlStoredProcedureGetPropertiesResource  # type: ignore
     from ._models import SqlStoredProcedureGetResults  # type: ignore
@@ -296,6 +463,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlUserDefinedFunctionGetResults  # type: ignore
     from ._models import SqlUserDefinedFunctionListResult  # type: ignore
     from ._models import SqlUserDefinedFunctionResource  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TableCreateUpdateParameters  # type: ignore
     from ._models import TableGetPropertiesOptions  # type: ignore
     from ._models import TableGetPropertiesResource  # type: ignore
@@ -314,20 +482,40 @@ except (SyntaxError, ImportError):
     from ._models import VirtualNetworkRule  # type: ignore
 
 from ._cosmos_db_management_client_enums import (
+    AnalyticalStorageSchemaType,
+    ApiType,
+    AuthenticationMethod,
+    BackupPolicyMigrationStatus,
+    BackupPolicyType,
+    BackupStorageRedundancy,
     CompositePathSortOrder,
     ConflictResolutionMode,
     ConnectorOffer,
+    CreateMode,
+    CreatedByType,
     DataType,
     DatabaseAccountKind,
     DefaultConsistencyLevel,
+    EnableFullTextQuery,
     IndexKind,
     IndexingMode,
     KeyKind,
+    ManagedCassandraProvisioningState,
+    NetworkAclBypass,
+    NodeState,
+    NodeStatus,
     NotebookWorkspaceName,
+    OperationType,
     PartitionKind,
     PrimaryAggregationType,
     PublicNetworkAccess,
+    ResourceIdentityType,
+    RestoreMode,
+    RoleDefinitionType,
     ServerVersion,
+    ServiceSize,
+    ServiceStatus,
+    ServiceType,
     SpatialType,
     TriggerOperation,
     TriggerType,
@@ -337,10 +525,16 @@ from ._cosmos_db_management_client_enums import (
 __all__ = [
     'ARMProxyResource',
     'ARMResourceProperties',
+    'AnalyticalStorageConfiguration',
     'ApiProperties',
     'AutoUpgradePolicyResource',
     'AutoscaleSettings',
     'AutoscaleSettingsResource',
+    'BackupInformation',
+    'BackupPolicy',
+    'BackupPolicyMigrationState',
+    'BackupResource',
+    'BackupResourceProperties',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
     'CassandraKeyspaceGetPropertiesOptions',
@@ -356,16 +550,37 @@ __all__ = [
     'CassandraTableGetResults',
     'CassandraTableListResult',
     'CassandraTableResource',
+    'CassandraViewCreateUpdateParameters',
+    'CassandraViewGetPropertiesOptions',
+    'CassandraViewGetPropertiesResource',
+    'CassandraViewGetResults',
+    'CassandraViewListResult',
+    'CassandraViewResource',
+    'Certificate',
     'ClusterKey',
+    'ClusterNodeStatus',
+    'ClusterNodeStatusNodesItem',
+    'ClusterResource',
+    'ClusterResourceProperties',
     'Column',
+    'Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties',
     'CompositePath',
     'ConflictResolutionPolicy',
     'ConsistencyPolicy',
     'ContainerPartitionKey',
+    'ContinuousBackupInformation',
+    'ContinuousBackupRestoreLocation',
+    'ContinuousModeBackupPolicy',
     'CorsPolicy',
     'CreateUpdateOptions',
+    'DataCenterResource',
+    'DataCenterResourceProperties',
+    'DataTransferRegionalServiceResource',
+    'DataTransferServiceResource',
+    'DataTransferServiceResourceProperties',
     'DatabaseAccountConnectionString',
     'DatabaseAccountCreateUpdateParameters',
+    'DatabaseAccountCreateUpdateProperties',
     'DatabaseAccountGetResults',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountListKeysResult',
@@ -373,11 +588,23 @@ __all__ = [
     'DatabaseAccountRegenerateKeyParameters',
     'DatabaseAccountUpdateParameters',
     'DatabaseAccountsListResult',
+    'DatabaseRestoreResource',
+    'DefaultRequestDatabaseAccountCreateUpdateProperties',
+    'DiagnosticLogSettings',
     'ErrorResponse',
     'ExcludedPath',
     'ExtendedResourceProperties',
     'FailoverPolicies',
     'FailoverPolicy',
+    'GraphAPIComputeRegionalServiceResource',
+    'GraphAPIComputeServiceResource',
+    'GraphAPIComputeServiceResourceProperties',
+    'GraphResource',
+    'GraphResourceCreateUpdateParameters',
+    'GraphResourceGetPropertiesOptions',
+    'GraphResourceGetPropertiesResource',
+    'GraphResourceGetResults',
+    'GraphResourcesListResult',
     'GremlinDatabaseCreateUpdateParameters',
     'GremlinDatabaseGetPropertiesOptions',
     'GremlinDatabaseGetPropertiesResource',
@@ -394,7 +621,14 @@ __all__ = [
     'Indexes',
     'IndexingPolicy',
     'IpAddressOrRange',
+    'ListBackups',
+    'ListClusters',
+    'ListDataCenters',
     'Location',
+    'LocationGetResult',
+    'LocationListResult',
+    'LocationProperties',
+    'ManagedServiceIdentity',
     'Metric',
     'MetricAvailability',
     'MetricDefinition',
@@ -432,17 +666,45 @@ __all__ = [
     'PercentileMetric',
     'PercentileMetricListResult',
     'PercentileMetricValue',
+    'PeriodicModeBackupPolicy',
+    'PeriodicModeProperties',
+    'Permission',
     'PrivateEndpointConnection',
-    'PrivateEndpointConnectionAutoGenerated',
     'PrivateEndpointConnectionListResult',
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionStateProperty',
-    'PrivateLinkServiceConnectionStatePropertyAutoGenerated',
     'ProxyResource',
     'RegionForOnlineOffline',
+    'RegionalServiceResource',
+    'RepairPostBody',
     'Resource',
+    'RestorableDatabaseAccountGetResult',
+    'RestorableDatabaseAccountsListResult',
+    'RestorableLocationResource',
+    'RestorableMongodbCollectionGetResult',
+    'RestorableMongodbCollectionPropertiesResource',
+    'RestorableMongodbCollectionsListResult',
+    'RestorableMongodbDatabaseGetResult',
+    'RestorableMongodbDatabasePropertiesResource',
+    'RestorableMongodbDatabasesListResult',
+    'RestorableMongodbResourcesListResult',
+    'RestorableSqlContainerGetResult',
+    'RestorableSqlContainerPropertiesResource',
+    'RestorableSqlContainerPropertiesResourceContainer',
+    'RestorableSqlContainersListResult',
+    'RestorableSqlDatabaseGetResult',
+    'RestorableSqlDatabasePropertiesResource',
+    'RestorableSqlDatabasePropertiesResourceDatabase',
+    'RestorableSqlDatabasesListResult',
+    'RestorableSqlResourcesListResult',
+    'RestoreParameters',
+    'SeedNode',
+    'ServiceResource',
+    'ServiceResourceCreateUpdateParameters',
+    'ServiceResourceListResult',
+    'ServiceResourceProperties',
     'SpatialSpec',
     'SqlContainerCreateUpdateParameters',
     'SqlContainerGetPropertiesOptions',
@@ -456,6 +718,15 @@ __all__ = [
     'SqlDatabaseGetResults',
     'SqlDatabaseListResult',
     'SqlDatabaseResource',
+    'SqlDedicatedGatewayRegionalServiceResource',
+    'SqlDedicatedGatewayServiceResource',
+    'SqlDedicatedGatewayServiceResourceProperties',
+    'SqlRoleAssignmentCreateUpdateParameters',
+    'SqlRoleAssignmentGetResults',
+    'SqlRoleAssignmentListResult',
+    'SqlRoleDefinitionCreateUpdateParameters',
+    'SqlRoleDefinitionGetResults',
+    'SqlRoleDefinitionListResult',
     'SqlStoredProcedureCreateUpdateParameters',
     'SqlStoredProcedureGetPropertiesResource',
     'SqlStoredProcedureGetResults',
@@ -471,6 +742,7 @@ __all__ = [
     'SqlUserDefinedFunctionGetResults',
     'SqlUserDefinedFunctionListResult',
     'SqlUserDefinedFunctionResource',
+    'SystemData',
     'TableCreateUpdateParameters',
     'TableGetPropertiesOptions',
     'TableGetPropertiesResource',
@@ -487,20 +759,40 @@ __all__ = [
     'Usage',
     'UsagesResult',
     'VirtualNetworkRule',
+    'AnalyticalStorageSchemaType',
+    'ApiType',
+    'AuthenticationMethod',
+    'BackupPolicyMigrationStatus',
+    'BackupPolicyType',
+    'BackupStorageRedundancy',
     'CompositePathSortOrder',
     'ConflictResolutionMode',
     'ConnectorOffer',
+    'CreateMode',
+    'CreatedByType',
     'DataType',
     'DatabaseAccountKind',
     'DefaultConsistencyLevel',
+    'EnableFullTextQuery',
     'IndexKind',
     'IndexingMode',
     'KeyKind',
+    'ManagedCassandraProvisioningState',
+    'NetworkAclBypass',
+    'NodeState',
+    'NodeStatus',
     'NotebookWorkspaceName',
+    'OperationType',
     'PartitionKind',
     'PrimaryAggregationType',
     'PublicNetworkAccess',
+    'ResourceIdentityType',
+    'RestoreMode',
+    'RoleDefinitionType',
     'ServerVersion',
+    'ServiceSize',
+    'ServiceStatus',
+    'ServiceType',
     'SpatialType',
     'TriggerOperation',
     'TriggerType',

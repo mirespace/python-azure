@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, List, Mapping
 
 import six
 
@@ -18,8 +18,9 @@ from uamqp import types
 from uamqp.message import MessageHeader
 
 from azure.core.settings import settings
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, Link
 
+from .amqp import AmqpAnnotatedMessage
 from ._version import VERSION
 from ._constants import (
     PROP_PARTITION_KEY_AMQP_SYMBOL,
@@ -29,13 +30,21 @@ from ._constants import (
     PROP_LAST_ENQUEUED_TIME_UTC,
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
-    PROP_TIMESTAMP)
+    PROP_TIMESTAMP,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from uamqp import Message
     from azure.core.tracing import AbstractSpan
+    from azure.core.credentials import AzureSasCredential
     from ._common import EventData
+
+    MessagesType = Union[
+        AmqpAnnotatedMessage,
+        EventData,
+        Iterable[Union[AmqpAnnotatedMessage, EventData]],
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -90,7 +99,7 @@ def create_properties(user_agent=None):
         USER_AGENT_PREFIX, VERSION, framework, platform_str
     )
     if user_agent:
-        final_user_agent = "{} {}".format(final_user_agent, user_agent)
+        final_user_agent = "{} {}".format(user_agent, final_user_agent)
 
     if len(final_user_agent) > MAX_USER_AGENT_LENGTH:
         raise ValueError(
@@ -126,28 +135,13 @@ def set_message_partition_key(message, partition_key):
 
 @contextmanager
 def send_context_manager():
-    span_impl_type = (
-        settings.tracing_implementation()
-    )  # type: Type[AbstractSpan]
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
-        with span_impl_type(name="Azure.EventHubs.send") as child:
-            child.kind = SpanKind.CLIENT
+        with span_impl_type(name="Azure.EventHubs.send", kind=SpanKind.CLIENT) as child:
             yield child
     else:
         yield None
-
-
-def add_link_to_send(event, send_span):
-    """Add Diagnostic-Id from event to span as link.
-    """
-    try:
-        if send_span and event.properties:
-            traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
-            if traceparent:
-                send_span.link(traceparent)
-    except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("add_link_to_send had an exception %r", exp)
 
 
 def trace_message(event, parent_span=None):
@@ -163,8 +157,10 @@ def trace_message(event, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            with current_span.span(name="Azure.EventHubs.message") as message_span:
-                message_span.kind = SpanKind.PRODUCER
+            link = Link({"traceparent": current_span.get_trace_parent()})
+            with current_span.span(
+                name="Azure.EventHubs.message", kind=SpanKind.PRODUCER, links=[link]
+            ) as message_span:
                 message_span.add_attribute("az.namespace", "Microsoft.EventHub")
                 if not event.properties:
                     event.properties = dict()
@@ -175,30 +171,29 @@ def trace_message(event, parent_span=None):
         _LOGGER.warning("trace_message had an exception %r", exp)
 
 
-def trace_link_message(events, parent_span=None):
-    # type: (Union[EventData, Iterable[EventData]], Optional[AbstractSpan]) -> None
-    """Link the current event(s) to current span or provided parent span.
-
-    Will extract DiagnosticId if available.
-    """
-    trace_events = events if isinstance(events, Iterable) else (events,)  # pylint:disable=isinstance-second-argument-not-valid-type
-    try:  # pylint:disable=too-many-nested-blocks
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(
-                span_impl_type.get_current_span()
-            )
-            if current_span:
-                for event in trace_events:  # type: ignore
-                    if event.properties:
-                        traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
-                        if traceparent:
-                            current_span.link(
-                                traceparent,
-                                attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
-                            )
-    except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("trace_link_message had an exception %r", exp)
+def get_event_links(events):
+    trace_events = (
+        events if isinstance(events, Iterable) else (events,)
+    )  # pylint:disable=isinstance-second-argument-not-valid-type
+    links = []
+    try:
+        for event in trace_events:  # type: ignore
+            if event.properties:
+                traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
+                if traceparent:
+                    links.append(
+                        Link(
+                            {"traceparent": traceparent},
+                            attributes={
+                                "enqueuedTime": event.message.annotations.get(
+                                    PROP_TIMESTAMP
+                                )
+                            },
+                        )
+                    )
+    except AttributeError:
+        pass
+    return links
 
 
 def event_position_selector(value, inclusive=False):
@@ -262,3 +257,69 @@ def get_last_enqueued_event_properties(event_data):
         }
         return event_data._last_enqueued_event_properties
     return None
+
+
+def parse_sas_credential(credential):
+    # type: (AzureSasCredential) -> Tuple
+    sas = credential.signature
+    parsed_sas = sas.split("&")
+    expiry = None
+    for item in parsed_sas:
+        if item.startswith("se="):
+            expiry = int(item[3:])
+    return (sas, expiry)
+
+
+def transform_outbound_single_message(message, message_type):
+    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
+    """
+    This method serves multiple goals:
+    1. update the internal message to reflect any updates to settable properties on EventData
+    2. transform the AmqpAnnotatedMessage to be EventData
+    :param message: A single instance of message of type EventData
+        or AmqpAnnotatedMessage.
+    :type message: ~azure.eventhub.common.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage
+    :param Type[EventData] message_type: The class type to return the messages as.
+    :rtype: EventData
+    """
+    try:
+        # EventData
+        # pylint: disable=protected-access
+        return message._to_outgoing_message()  # type: ignore
+    except AttributeError:
+        # AmqpAnnotatedMessage
+        # pylint: disable=protected-access
+        return message_type._from_message(
+            message=message._to_outgoing_amqp_message(), raw_amqp_message=message  # type: ignore
+        )
+
+
+def decode_with_recurse(data, encoding="UTF-8"):
+    # type: (Any, str) -> Any
+    """
+    If data is of a compatible type, iterates through nested structure and decodes all binary
+        strings with provided encoding.
+    :param Any data: The data object which, if compatible, will be iterated through to decode binary string.
+    :param encoding: The encoding to use for decoding data.
+        Default is 'UTF-8'
+    :rtype: Any
+    """
+
+    if isinstance(data, str):
+        return data
+    if isinstance(data, six.binary_type):
+        return data.decode(encoding)
+    if isinstance(data, Mapping):
+        decoded_mapping = {}
+        for k,v in data.items():
+            decoded_key = decode_with_recurse(k, encoding)
+            decoded_val = decode_with_recurse(v, encoding)
+            decoded_mapping[decoded_key] = decoded_val
+        return decoded_mapping
+    if isinstance(data, Iterable):
+        decoded_list = []
+        for d in data:
+            decoded_list.append(decode_with_recurse(d, encoding))
+        return decoded_list
+
+    return data

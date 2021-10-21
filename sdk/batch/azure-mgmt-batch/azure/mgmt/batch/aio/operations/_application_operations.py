@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ApplicationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,9 +46,9 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        parameters: Optional["models.Application"] = None,
-        **kwargs
-    ) -> "models.Application":
+        parameters: Optional["_models.Application"] = None,
+        **kwargs: Any
+    ) -> "_models.Application":
         """Adds an application to the specified Batch account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -64,12 +64,12 @@ class ApplicationOperations:
         :rtype: ~azure.mgmt.batch.models.Application
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Application"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Application"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -119,7 +119,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an application.
 
@@ -139,7 +139,7 @@ class ApplicationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -178,8 +178,8 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        **kwargs
-    ) -> "models.Application":
+        **kwargs: Any
+    ) -> "_models.Application":
         """Gets information about the specified application.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -193,12 +193,12 @@ class ApplicationOperations:
         :rtype: ~azure.mgmt.batch.models.Application
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Application"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Application"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -240,9 +240,9 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        parameters: "models.Application",
-        **kwargs
-    ) -> "models.Application":
+        parameters: "_models.Application",
+        **kwargs: Any
+    ) -> "_models.Application":
         """Updates settings for the specified application.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -258,12 +258,12 @@ class ApplicationOperations:
         :rtype: ~azure.mgmt.batch.models.Application
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Application"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Application"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -310,8 +310,8 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ListApplicationsResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ListApplicationsResult"]:
         """Lists all of the applications in the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -325,12 +325,12 @@ class ApplicationOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.batch.models.ListApplicationsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListApplicationsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListApplicationsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

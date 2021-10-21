@@ -9,13 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core import PipelineClient
-from msrest import Serializer, Deserializer
+from typing import TYPE_CHECKING
 
+from azure.core import PipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import FormRecognizerClientConfiguration
 from ._operations_mixin import FormRecognizerClientOperationsMixin
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -24,7 +34,7 @@ class _SDKClient(object):
         pass
 
 class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMixin, _SDKClient):
-    """Extracts information from forms and images into structured data.
+    """Extracts content, layout, and structured data from documents.
 
     This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
@@ -36,16 +46,17 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for
+example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2.1-preview.2'
+    DEFAULT_API_VERSION = '2021-09-30-preview'
     _PROFILE_TAG = "azure.ai.formrecognizer.FormRecognizerClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -58,14 +69,16 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         self,
         credential,  # type: "TokenCredential"
         endpoint,  # type: str
-        api_version=None,
-        profile=KnownProfiles.default,
+        api_version=None, # type: Optional[str]
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '2.0':
+        if api_version == '2021-09-30-preview':
+            base_url = '{endpoint}/formrecognizer'
+        elif api_version == '2.0':
             base_url = '{endpoint}/formrecognizer/v2.0'
-        elif api_version == '2.1-preview.2':
-            base_url = '{endpoint}/formrecognizer/v2.1-preview.2'
+        elif api_version == '2.1':
+            base_url = '{endpoint}/formrecognizer/v2.1'
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = FormRecognizerClientConfiguration(credential, endpoint, **kwargs)
@@ -83,14 +96,18 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
+           * 2021-09-30-preview: :mod:`v2021_09_30_preview.models<azure.ai.formrecognizer.v2021_09_30_preview.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
-           * 2.1-preview.2: :mod:`v2_1_preview_2.models<azure.ai.formrecognizer.v2_1_preview_2.models>`
+           * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
         """
-        if api_version == '2.0':
+        if api_version == '2021-09-30-preview':
+            from .v2021_09_30_preview import models
+            return models
+        elif api_version == '2.0':
             from .v2_0 import models
             return models
-        elif api_version == '2.1-preview.2':
-            from .v2_1_preview_2 import models
+        elif api_version == '2.1':
+            from .v2_1 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 

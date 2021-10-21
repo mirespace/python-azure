@@ -32,7 +32,6 @@ CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
 TIME_TO_SLEEP = 5
-CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
 def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
@@ -139,7 +138,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         result = await client.create_indexer(indexer)
         assert len(await client.get_indexers()) == 1
         await client.reset_indexer("sample-indexer")
-        assert (await client.get_indexer_status("sample-indexer")).last_result.status in ('InProgress', 'reset')
+        assert (await client.get_indexer_status("sample-indexer")).last_result.status.lower() in ('inprogress', 'reset')
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)

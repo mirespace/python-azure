@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class IotSecuritySolutionOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,8 +44,8 @@ class IotSecuritySolutionOperations:
     def list_by_subscription(
         self,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.IoTSecuritySolutionsList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.IoTSecuritySolutionsList"]:
         """Use this method to get the list of IoT Security solutions by subscription.
 
         :param filter: Filter the IoT Security solution with OData syntax. Supports filtering by
@@ -56,7 +56,7 @@ class IotSecuritySolutionOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.IoTSecuritySolutionsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,8 +117,8 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.IoTSecuritySolutionsList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.IoTSecuritySolutionsList"]:
         """Use this method to get the list IoT Security solutions organized by resource group.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -132,7 +132,7 @@ class IotSecuritySolutionOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.IoTSecuritySolutionsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -194,8 +194,8 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        **kwargs
-    ) -> "models.IoTSecuritySolutionModel":
+        **kwargs: Any
+    ) -> "_models.IoTSecuritySolutionModel":
         """User this method to get details of a specific IoT Security solution based on solution name.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -208,7 +208,7 @@ class IotSecuritySolutionOperations:
         :rtype: ~azure.mgmt.security.models.IoTSecuritySolutionModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -253,9 +253,9 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        iot_security_solution_data: "models.IoTSecuritySolutionModel",
-        **kwargs
-    ) -> "models.IoTSecuritySolutionModel":
+        iot_security_solution_data: "_models.IoTSecuritySolutionModel",
+        **kwargs: Any
+    ) -> "_models.IoTSecuritySolutionModel":
         """Use this method to create or update yours IoT Security solution.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -270,7 +270,7 @@ class IotSecuritySolutionOperations:
         :rtype: ~azure.mgmt.security.models.IoTSecuritySolutionModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -324,9 +324,9 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        update_iot_security_solution_data: "models.UpdateIotSecuritySolutionData",
-        **kwargs
-    ) -> "models.IoTSecuritySolutionModel":
+        update_iot_security_solution_data: "_models.UpdateIotSecuritySolutionData",
+        **kwargs: Any
+    ) -> "_models.IoTSecuritySolutionModel":
         """Use this method to update existing IoT Security solution tags or user defined resources. To
         update other fields use the CreateOrUpdate method.
 
@@ -342,7 +342,7 @@ class IotSecuritySolutionOperations:
         :rtype: ~azure.mgmt.security.models.IoTSecuritySolutionModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecuritySolutionModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecuritySolutionModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -392,7 +392,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Use this method to delete yours IoT Security solution.
 

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -294,12 +294,12 @@ class CloudToDeviceProperties(msrest.serialization.Model):
     """The IoT hub cloud-to-device messaging properties.
 
     :param max_delivery_count: The max delivery count for cloud-to-device messages in the device
-     queue. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-
-     device-messages.
+     queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type max_delivery_count: int
     :param default_ttl_as_iso8601: The default time to live for cloud-to-device messages in the
-     device queue. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-
-     to-device-messages.
+     device queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type default_ttl_as_iso8601: ~datetime.timedelta
     :param feedback: The properties of the feedback queue for cloud-to-device messages.
     :type feedback: ~azure.mgmt.iothub.v2019_11_04.models.FeedbackProperties
@@ -561,8 +561,8 @@ class EventHubProperties(msrest.serialization.Model):
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages.
     :type retention_time_in_days: long
     :param partition_count: The number of partitions for receiving device-to-cloud messages in the
-     Event Hub-compatible endpoint. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-
-     messaging#device-to-cloud-messages.
+     Event Hub-compatible endpoint. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages.
     :type partition_count: int
     :ivar partition_ids: The partition ids in the Event Hub-compatible endpoint.
     :vartype partition_ids: list[str]
@@ -724,12 +724,12 @@ class FeedbackProperties(msrest.serialization.Model):
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type lock_duration_as_iso8601: ~datetime.timedelta
     :param ttl_as_iso8601: The period of time for which a message is available to consume before it
-     is expired by the IoT hub. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-
-     messaging#cloud-to-device-messages.
+     is expired by the IoT hub. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type ttl_as_iso8601: ~datetime.timedelta
     :param max_delivery_count: The number of times the IoT hub attempts to deliver a message on the
-     feedback queue. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-
-     to-device-messages.
+     feedback queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type max_delivery_count: int
     """
 
@@ -1480,12 +1480,12 @@ class MatchedRoute(msrest.serialization.Model):
 class MessagingEndpointProperties(msrest.serialization.Model):
     """The properties of the messaging endpoints used by this IoT hub.
 
-    :param lock_duration_as_iso8601: The lock duration. See: https://docs.microsoft.com/azure/iot-
-     hub/iot-hub-devguide-file-upload.
+    :param lock_duration_as_iso8601: The lock duration. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
     :type lock_duration_as_iso8601: ~datetime.timedelta
     :param ttl_as_iso8601: The period of time for which a message is available to consume before it
-     is expired by the IoT hub. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-
-     upload.
+     is expired by the IoT hub. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
     :type ttl_as_iso8601: ~datetime.timedelta
     :param max_delivery_count: The number of times the IoT hub attempts to deliver a message. See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
@@ -2189,7 +2189,7 @@ class RoutingTwin(msrest.serialization.Model):
     """Twin reference input parameter. This is an optional parameter.
 
     :param tags: A set of tags. Twin Tags.
-    :type tags: object
+    :type tags: any
     :param properties:
     :type properties: ~azure.mgmt.iothub.v2019_11_04.models.RoutingTwinProperties
     """
@@ -2202,7 +2202,7 @@ class RoutingTwin(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[object] = None,
+        tags: Optional[Any] = None,
         properties: Optional["RoutingTwinProperties"] = None,
         **kwargs
     ):
@@ -2215,9 +2215,9 @@ class RoutingTwinProperties(msrest.serialization.Model):
     """RoutingTwinProperties.
 
     :param desired: Twin desired properties.
-    :type desired: object
+    :type desired: any
     :param reported: Twin desired properties.
-    :type reported: object
+    :type reported: any
     """
 
     _attribute_map = {
@@ -2228,8 +2228,8 @@ class RoutingTwinProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        desired: Optional[object] = None,
-        reported: Optional[object] = None,
+        desired: Optional[Any] = None,
+        reported: Optional[Any] = None,
         **kwargs
     ):
         super(RoutingTwinProperties, self).__init__(**kwargs)
@@ -2323,8 +2323,8 @@ class StorageEndpointProperties(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param sas_ttl_as_iso8601: The period of time for which the SAS URI generated by IoT Hub for
-     file upload is valid. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-
-     upload#file-upload-notification-configuration-options.
+     file upload is valid. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload#file-upload-notification-configuration-options.
     :type sas_ttl_as_iso8601: ~datetime.timedelta
     :param connection_string: Required. The connection string for the Azure Storage account to
      which files are uploaded.

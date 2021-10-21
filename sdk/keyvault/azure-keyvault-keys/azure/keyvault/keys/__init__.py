@@ -2,11 +2,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from ._enums import KeyCurveName, KeyOperation, KeyType
-from ._parse_id import parse_key_vault_key_id
+from ._enums import KeyCurveName, KeyExportEncryptionAlgorithm, KeyOperation, KeyRotationPolicyAction, KeyType
 from ._shared.client_base import ApiVersion
-from ._shared import KeyVaultResourceId
-from ._models import DeletedKey, JsonWebKey, KeyProperties, KeyVaultKey
+from ._models import (
+    DeletedKey,
+    JsonWebKey,
+    KeyProperties,
+    KeyReleasePolicy,
+    KeyRotationLifetimeAction,
+    KeyRotationPolicy,
+    KeyVaultKey,
+    KeyVaultKeyIdentifier,
+    RandomBytes,
+    ReleaseKeyResult,
+)
 from ._client import KeyClient
 
 __all__ = [
@@ -14,14 +23,21 @@ __all__ = [
     "KeyClient",
     "JsonWebKey",
     "KeyVaultKey",
+    "KeyVaultKeyIdentifier",
     "KeyCurveName",
+    "KeyExportEncryptionAlgorithm",
     "KeyOperation",
+    "KeyRotationPolicyAction",
     "KeyType",
     "DeletedKey",
     "KeyProperties",
-    "parse_key_vault_key_id",
-    "KeyVaultResourceId"
+    "KeyReleasePolicy",
+    "KeyRotationLifetimeAction",
+    "KeyRotationPolicy",
+    "RandomBytes",
+    "ReleaseKeyResult",
 ]
 
 from ._version import VERSION
+
 __version__ = VERSION

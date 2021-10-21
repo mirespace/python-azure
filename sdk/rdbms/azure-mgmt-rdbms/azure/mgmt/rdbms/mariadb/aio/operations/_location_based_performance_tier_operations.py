@@ -26,7 +26,7 @@ class LocationBasedPerformanceTierOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -44,7 +44,7 @@ class LocationBasedPerformanceTierOperations:
     def list(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PerformanceTierListResult"]:
         """List all the performance tiers at specified location in a given subscription.
 
@@ -52,7 +52,7 @@ class LocationBasedPerformanceTierOperations:
         :type location_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PerformanceTierListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.PerformanceTierListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.PerformanceTierListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PerformanceTierListResult"]

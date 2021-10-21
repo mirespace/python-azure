@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class TriggersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,8 +47,8 @@ class TriggersOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.TriggerListResponse"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TriggerListResponse"]:
         """Lists triggers.
 
         :param resource_group_name: The resource group name.
@@ -60,7 +60,7 @@ class TriggersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.TriggerListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,9 +121,9 @@ class TriggersOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: "models.TriggerFilterParameters",
-        **kwargs
-    ) -> "models.TriggerQueryResponse":
+        filter_parameters: "_models.TriggerFilterParameters",
+        **kwargs: Any
+    ) -> "_models.TriggerQueryResponse":
         """Query triggers.
 
         :param resource_group_name: The resource group name.
@@ -137,7 +137,7 @@ class TriggersOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -188,10 +188,10 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        trigger: "models.TriggerResource",
+        trigger: "_models.TriggerResource",
         if_match: Optional[str] = None,
-        **kwargs
-    ) -> "models.TriggerResource":
+        **kwargs: Any
+    ) -> "_models.TriggerResource":
         """Creates or updates a trigger.
 
         :param resource_group_name: The resource group name.
@@ -210,7 +210,7 @@ class TriggersOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -265,8 +265,8 @@ class TriggersOperations:
         factory_name: str,
         trigger_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
-    ) -> Optional["models.TriggerResource"]:
+        **kwargs: Any
+    ) -> Optional["_models.TriggerResource"]:
         """Gets a trigger.
 
         :param resource_group_name: The resource group name.
@@ -283,7 +283,7 @@ class TriggersOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -334,7 +334,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a trigger.
 
@@ -393,9 +393,9 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
-    ) -> Optional["models.TriggerSubscriptionOperationStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerSubscriptionOperationStatus"]]
+        **kwargs: Any
+    ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -444,8 +444,8 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.TriggerSubscriptionOperationStatus"]:
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Subscribe event trigger to events.
 
         :param resource_group_name: The resource group name.
@@ -456,8 +456,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TriggerSubscriptionOperationStatus or the result of cls(response)
@@ -465,7 +465,7 @@ class TriggersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -516,8 +516,8 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
-    ) -> "models.TriggerSubscriptionOperationStatus":
+        **kwargs: Any
+    ) -> "_models.TriggerSubscriptionOperationStatus":
         """Get a trigger's event subscription status.
 
         :param resource_group_name: The resource group name.
@@ -531,7 +531,7 @@ class TriggersOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerSubscriptionOperationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -578,9 +578,9 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
-    ) -> Optional["models.TriggerSubscriptionOperationStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerSubscriptionOperationStatus"]]
+        **kwargs: Any
+    ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -629,8 +629,8 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.TriggerSubscriptionOperationStatus"]:
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Unsubscribe event trigger from events.
 
         :param resource_group_name: The resource group name.
@@ -641,8 +641,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TriggerSubscriptionOperationStatus or the result of cls(response)
@@ -650,7 +650,7 @@ class TriggersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -701,7 +701,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -747,7 +747,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts a trigger.
 
@@ -759,8 +759,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -816,7 +816,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -862,7 +862,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Stops a trigger.
 
@@ -874,8 +874,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

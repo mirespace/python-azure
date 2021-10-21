@@ -28,7 +28,7 @@ class ServersOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -48,7 +48,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ServerForCreate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Server"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Server"]]
         error_map = {
@@ -106,7 +106,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ServerForCreate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Server"]:
         """Creates a new server or updates an existing server. The update action will overwrite the
         existing server.
@@ -116,15 +116,15 @@ class ServersOperations:
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The required parameters for creating or updating a server.
-        :type parameters: ~maria_db_management_client.models.ServerForCreate
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.ServerForCreate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Server or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~maria_db_management_client.models.Server]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.rdbms.mariadb.models.Server]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -178,7 +178,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ServerUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Server"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Server"]]
         error_map = {
@@ -233,7 +233,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ServerUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Server"]:
         """Updates an existing server. The request body can contain one to many of the properties present
         in the normal server definition.
@@ -243,15 +243,15 @@ class ServersOperations:
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The required parameters for updating a server.
-        :type parameters: ~maria_db_management_client.models.ServerUpdateParameters
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.ServerUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Server or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~maria_db_management_client.models.Server]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.rdbms.mariadb.models.Server]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -304,7 +304,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -348,7 +348,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a server.
 
@@ -358,8 +358,8 @@ class ServersOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -412,7 +412,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Server":
         """Gets information about a server.
 
@@ -422,7 +422,7 @@ class ServersOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Server, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.Server
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.Server
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Server"]
@@ -469,7 +469,7 @@ class ServersOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerListResult"]:
         """List all the servers in a given resource group.
 
@@ -477,7 +477,7 @@ class ServersOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServerListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.ServerListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.ServerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerListResult"]
@@ -538,13 +538,13 @@ class ServersOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerListResult"]:
         """List all the servers in a given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServerListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.ServerListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.ServerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerListResult"]
@@ -606,7 +606,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -650,7 +650,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restarts a server.
 
@@ -660,8 +660,8 @@ class ServersOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -714,7 +714,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -747,7 +747,7 @@ class ServersOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudErrorAutoGenerated, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -759,7 +759,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts a stopped server.
 
@@ -769,8 +769,8 @@ class ServersOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -823,7 +823,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -856,7 +856,7 @@ class ServersOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudErrorAutoGenerated, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -868,7 +868,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Stops a running server.
 
@@ -878,8 +878,8 @@ class ServersOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class SubAssessmentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,12 +44,12 @@ class SubAssessmentsOperations:
     def list_all(
         self,
         scope: str,
-        **kwargs
-    ) -> AsyncIterable["models.SecuritySubAssessmentList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SecuritySubAssessmentList"]:
         """Get security sub-assessments on all your scanned resources inside a subscription scope.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class SubAssessmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.SecuritySubAssessmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecuritySubAssessmentList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecuritySubAssessmentList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,12 +116,12 @@ class SubAssessmentsOperations:
         self,
         scope: str,
         assessment_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.SecuritySubAssessmentList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SecuritySubAssessmentList"]:
         """Get security sub-assessments on all your scanned resources inside a scope.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :param assessment_name: The Assessment Key - Unique key for the assessment type.
@@ -131,7 +131,7 @@ class SubAssessmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.SecuritySubAssessmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecuritySubAssessmentList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecuritySubAssessmentList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -192,12 +192,12 @@ class SubAssessmentsOperations:
         scope: str,
         assessment_name: str,
         sub_assessment_name: str,
-        **kwargs
-    ) -> "models.SecuritySubAssessment":
+        **kwargs: Any
+    ) -> "_models.SecuritySubAssessment":
         """Get a security sub-assessment on your scanned resource.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :param assessment_name: The Assessment Key - Unique key for the assessment type.
@@ -209,7 +209,7 @@ class SubAssessmentsOperations:
         :rtype: ~azure.mgmt.security.models.SecuritySubAssessment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecuritySubAssessment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecuritySubAssessment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

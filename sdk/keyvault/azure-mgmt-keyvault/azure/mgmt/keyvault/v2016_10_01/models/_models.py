@@ -455,7 +455,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.family = kwargs['family']
+        self.family = kwargs.get('family', "A")
         self.name = kwargs['name']
 
 
@@ -587,7 +587,7 @@ class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The vault name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.KeyVault/vaults. Default value:
+    :ivar type: The type of resource, Microsoft.KeyVault/vaults. Has constant value:
      "Microsoft.KeyVault/vaults".
     :vartype type: str
     """

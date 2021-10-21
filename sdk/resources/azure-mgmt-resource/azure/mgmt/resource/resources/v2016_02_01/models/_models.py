@@ -155,7 +155,7 @@ class DeploymentExportResult(msrest.serialization.Model):
     """DeploymentExportResult.
 
     :param template: The template content.
-    :type template: object
+    :type template: any
     """
 
     _attribute_map = {
@@ -289,7 +289,7 @@ class DeploymentOperationProperties(msrest.serialization.Model):
     :param status_code: Operation status code.
     :type status_code: str
     :param status_message: Operation status message.
-    :type status_message: object
+    :type status_message: any
     :param target_resource: The target resource.
     :type target_resource: ~azure.mgmt.resource.resources.v2016_02_01.models.TargetResource
     :param request: The HTTP request message.
@@ -354,12 +354,12 @@ class DeploymentProperties(msrest.serialization.Model):
 
     :param template: The template content. It can be a JObject or a well formed JSON string. Use
      only one of Template or TemplateLink.
-    :type template: object
+    :type template: any
     :param template_link: The template URI. Use only one of Template or TemplateLink.
     :type template_link: ~azure.mgmt.resource.resources.v2016_02_01.models.TemplateLink
     :param parameters: Deployment parameters. It can be a JObject or a well formed JSON string. Use
      only one of Parameters or ParametersLink.
-    :type parameters: object
+    :type parameters: any
     :param parameters_link: The parameters URI. Use only one of Parameters or ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink
     :param mode: Required. The deployment mode. Possible values include: "Incremental", "Complete".
@@ -404,18 +404,18 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :param timestamp: The timestamp of the template deployment.
     :type timestamp: ~datetime.datetime
     :param outputs: Key/value pairs that represent deployment output.
-    :type outputs: object
+    :type outputs: any
     :param providers: The list of resource providers needed for the deployment.
     :type providers: list[~azure.mgmt.resource.resources.v2016_02_01.models.Provider]
     :param dependencies: The list of deployment dependencies.
     :type dependencies: list[~azure.mgmt.resource.resources.v2016_02_01.models.Dependency]
     :param template: The template content. Use only one of Template or TemplateLink.
-    :type template: object
+    :type template: any
     :param template_link: The URI referencing the template. Use only one of Template or
      TemplateLink.
     :type template_link: ~azure.mgmt.resource.resources.v2016_02_01.models.TemplateLink
     :param parameters: Deployment parameters. Use only one of Parameters or ParametersLink.
-    :type parameters: object
+    :type parameters: any
     :param parameters_link: The URI referencing the parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink
@@ -492,7 +492,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -515,7 +515,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -647,7 +647,7 @@ class GenericResource(Resource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2016_02_01.models.Plan
     :param properties: The resource properties.
-    :type properties: object
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: Id of the resource that manages this resource.
@@ -709,7 +709,7 @@ class GenericResourceExpanded(GenericResource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2016_02_01.models.Plan
     :param properties: The resource properties.
-    :type properties: object
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: Id of the resource that manages this resource.
@@ -796,7 +796,7 @@ class HttpMessage(msrest.serialization.Model):
     """HttpMessage.
 
     :param content: HTTP message content.
-    :type content: object
+    :type content: any
     """
 
     _attribute_map = {
@@ -820,14 +820,14 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant id of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
-    :vartype type: str
+    :param type: The identity type. The only acceptable values to pass in are None and
+     "SystemAssigned". The default value is None.
+    :type type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -836,8 +836,6 @@ class Identity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
         **kwargs
@@ -845,6 +843,7 @@ class Identity(msrest.serialization.Model):
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = kwargs.get('type', None)
 
 
 class ParametersLink(msrest.serialization.Model):
@@ -1047,7 +1046,7 @@ class ResourceGroupExportResult(msrest.serialization.Model):
     """ResourceGroupExportResult.
 
     :param template: The template content.
-    :type template: object
+    :type template: any
     :param error: The error.
     :type error:
      ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails

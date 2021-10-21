@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ApiIssueCommentOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,8 +50,8 @@ class ApiIssueCommentOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.IssueCommentCollection"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.IssueCommentCollection"]:
         """Lists all comments for the Issue associated with the specified API.
 
         :param resource_group_name: The name of the resource group.
@@ -77,12 +77,12 @@ class ApiIssueCommentOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.IssueCommentCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueCommentCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueCommentCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -132,7 +132,7 @@ class ApiIssueCommentOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -150,7 +150,7 @@ class ApiIssueCommentOperations:
         api_id: str,
         issue_id: str,
         comment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the issue Comment for an API specified by its
         identifier.
@@ -176,7 +176,7 @@ class ApiIssueCommentOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -205,7 +205,7 @@ class ApiIssueCommentOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -224,8 +224,8 @@ class ApiIssueCommentOperations:
         api_id: str,
         issue_id: str,
         comment_id: str,
-        **kwargs
-    ) -> "models.IssueCommentContract":
+        **kwargs: Any
+    ) -> "_models.IssueCommentContract":
         """Gets the details of the issue Comment for an API specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -244,12 +244,12 @@ class ApiIssueCommentOperations:
         :rtype: ~azure.mgmt.apimanagement.models.IssueCommentContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueCommentContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueCommentContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -278,7 +278,7 @@ class ApiIssueCommentOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -298,10 +298,10 @@ class ApiIssueCommentOperations:
         api_id: str,
         issue_id: str,
         comment_id: str,
-        parameters: "models.IssueCommentContract",
+        parameters: "_models.IssueCommentContract",
         if_match: Optional[str] = None,
-        **kwargs
-    ) -> "models.IssueCommentContract":
+        **kwargs: Any
+    ) -> "_models.IssueCommentContract":
         """Creates a new Comment for the Issue in an API or updates an existing one.
 
         :param resource_group_name: The name of the resource group.
@@ -325,12 +325,12 @@ class ApiIssueCommentOperations:
         :rtype: ~azure.mgmt.apimanagement.models.IssueCommentContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssueCommentContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssueCommentContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -366,7 +366,7 @@ class ApiIssueCommentOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -392,7 +392,7 @@ class ApiIssueCommentOperations:
         issue_id: str,
         comment_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified comment from an Issue.
 
@@ -420,7 +420,7 @@ class ApiIssueCommentOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -450,7 +450,7 @@ class ApiIssueCommentOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

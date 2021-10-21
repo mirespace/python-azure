@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime
+from typing import Any, Dict, Union
 
 try:
     from urllib.parse import urlparse, quote
@@ -12,16 +14,16 @@ except ImportError:
 
 import six
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
-from ._generated import DataLakeStorageClient
-from ._generated.models import StorageErrorException
+from ._generated import AzureDataLakeStorageRESTAPI
 from ._models import LocationMode, DirectoryProperties, AccessControlChangeResult, AccessControlChanges, \
     AccessControlChangeCounters, AccessControlChangeFailure
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
-    get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions
+    get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions, \
+    get_api_version
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
@@ -80,10 +82,18 @@ class PathClient(StorageAccountHostsMixin):
                                          _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
-        self._datalake_client_for_blob_operation = DataLakeStorageClient(self._blob_client.url,
-                                                                         file_system_name, path_name,
-                                                                         pipeline=self._pipeline)
+        api_version = get_api_version(kwargs)
+
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, path=path_name,
+                                                   pipeline=self._pipeline)
+        self._client._config.version = api_version  # pylint: disable=protected-access
+
+        self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
+            self._blob_client.url,
+            file_system=file_system_name,
+            path=path_name,
+            pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
 
     def __exit__(self, *args):
         self._blob_client.close()
@@ -196,7 +206,7 @@ class PathClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             return self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -207,15 +217,15 @@ class PathClient(StorageAccountHostsMixin):
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
-            'recursive': True,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers,
             'timeout': kwargs.pop('timeout', None)}
         options.update(kwargs)
         return options
 
     def _delete(self, **kwargs):
-        # type: (bool, **Any) -> None
+        # type: (**Any) -> Dict[Union[datetime, str]]
         """
         Marks the specified path for deletion.
 
@@ -247,7 +257,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._delete_path_options(**kwargs)
         try:
             return self._client.path.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -331,7 +341,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
             return self._client.path.set_access_control(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -394,7 +404,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
             return self._client.path.get_properties(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -619,7 +629,7 @@ class PathClient(StorageAccountHostsMixin):
                 failure_count=total_failure_count),
                 continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             error.continuation_token = last_continuation_token
             process_storage_error(error)
         except AzureError as error:
@@ -655,9 +665,8 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def _rename_path(self, rename_source,
-                     **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+    def _rename_path(self, rename_source, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         """
         Rename directory or file
 
@@ -717,7 +726,7 @@ class PathClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             return self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _get_path_properties(self, **kwargs):
@@ -761,6 +770,17 @@ class PathClient(StorageAccountHostsMixin):
         """
         path_properties = self._blob_client.get_blob_properties(**kwargs)
         return path_properties
+
+    def _exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a path exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._blob_client.exists(**kwargs)
 
     def set_metadata(self, metadata,  # type: Dict[str, str]
                      **kwargs):

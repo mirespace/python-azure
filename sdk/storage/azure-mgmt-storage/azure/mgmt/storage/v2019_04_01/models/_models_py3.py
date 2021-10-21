@@ -147,17 +147,17 @@ class ActiveDirectoryProperties(msrest.serialization.Model):
 
 
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -184,17 +184,17 @@ class Resource(msrest.serialization.Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an etag.
+    """The resource model definition for an Azure Resource Manager resource with an etag.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -262,13 +262,13 @@ class BlobContainer(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -386,13 +386,13 @@ class BlobServiceProperties(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
      elements in the request. If no CorsRule elements are included in the request body, all CORS
@@ -777,8 +777,8 @@ class Encryption(msrest.serialization.Model):
 
     :param services: List of services which support encryption.
     :type services: ~azure.mgmt.storage.v2019_04_01.models.EncryptionServices
-    :param key_source: Required. The encryption keySource (provider). Possible values (case-
-     insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
+    :param key_source: Required. The encryption keySource (provider). Possible values
+     (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
      "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
     :type key_source: str or ~azure.mgmt.storage.v2019_04_01.models.KeySource
     :param key_vault_properties: Properties provided by key vault.
@@ -964,13 +964,13 @@ class FileServiceProperties(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param cors: Specifies CORS rules for the File service. You can include up to five CorsRule
      elements in the request. If no CorsRule elements are included in the request body, all CORS
@@ -1006,13 +1006,13 @@ class FileShare(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -1062,13 +1062,13 @@ class FileShareItem(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -1199,7 +1199,7 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: Required. The identity type. Default value: "SystemAssigned".
+    :ivar type: The identity type. Has constant value: "SystemAssigned".
     :vartype type: str
     """
 
@@ -1233,13 +1233,13 @@ class ImmutabilityPolicy(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -1326,20 +1326,18 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
 class IPRule(msrest.serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
      address is allowed.
     :type ip_address_or_range: str
-    :ivar action: The action of IP ACL rule. Default value: "Allow".
-    :vartype action: str
+    :param action: The action of IP ACL rule. The only acceptable values to pass in are None and
+     "Allow". The default value is None.
+    :type action: str
     """
 
     _validation = {
         'ip_address_or_range': {'required': True},
-        'action': {'constant': True},
     }
 
     _attribute_map = {
@@ -1347,16 +1345,16 @@ class IPRule(msrest.serialization.Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    action = "Allow"
-
     def __init__(
         self,
         *,
         ip_address_or_range: str,
+        action: Optional[str] = None,
         **kwargs
     ):
         super(IPRule, self).__init__(**kwargs)
         self.ip_address_or_range = ip_address_or_range
+        self.action = action
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -1570,13 +1568,13 @@ class ListContainerItem(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -1725,13 +1723,13 @@ class ManagementPolicy(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
@@ -2463,19 +2461,19 @@ class SKUCapability(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -2517,13 +2515,13 @@ class StorageAccount(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -2600,6 +2598,11 @@ class StorageAccount(TrackedResource):
      The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
      "TLS1_1", "TLS1_2".
     :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+    :param allow_shared_key_access: Indicates whether the storage account permits requests to be
+     authorized with the account access key via Shared Key. If false, then all requests, including
+     shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
+     default value is null, which is equivalent to true.
+    :type allow_shared_key_access: bool
     """
 
     _validation = {
@@ -2656,6 +2659,7 @@ class StorageAccount(TrackedResource):
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
         'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
+        'allow_shared_key_access': {'key': 'properties.allowSharedKeyAccess', 'type': 'bool'},
     }
 
     def __init__(
@@ -2670,6 +2674,7 @@ class StorageAccount(TrackedResource):
         large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
         allow_blob_public_access: Optional[bool] = None,
         minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        allow_shared_key_access: Optional[bool] = None,
         **kwargs
     ):
         super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
@@ -2697,6 +2702,7 @@ class StorageAccount(TrackedResource):
         self.large_file_shares_state = large_file_shares_state
         self.allow_blob_public_access = allow_blob_public_access
         self.minimum_tls_version = minimum_tls_version
+        self.allow_shared_key_access = allow_shared_key_access
 
 
 class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
@@ -2708,7 +2714,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The storage account name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Storage/storageAccounts. Default value:
+    :ivar type: The type of resource, Microsoft.Storage/storageAccounts. Has constant value:
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
@@ -2789,6 +2795,11 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
      The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
      "TLS1_1", "TLS1_2".
     :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+    :param allow_shared_key_access: Indicates whether the storage account permits requests to be
+     authorized with the account access key via Shared Key. If false, then all requests, including
+     shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
+     default value is null, which is equivalent to true.
+    :type allow_shared_key_access: bool
     """
 
     _validation = {
@@ -2813,6 +2824,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
         'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
+        'allow_shared_key_access': {'key': 'properties.allowSharedKeyAccess', 'type': 'bool'},
     }
 
     def __init__(
@@ -2833,6 +2845,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
         allow_blob_public_access: Optional[bool] = None,
         minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        allow_shared_key_access: Optional[bool] = None,
         **kwargs
     ):
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
@@ -2851,6 +2864,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         self.large_file_shares_state = large_file_shares_state
         self.allow_blob_public_access = allow_blob_public_access
         self.minimum_tls_version = minimum_tls_version
+        self.allow_shared_key_access = allow_shared_key_access
 
 
 class StorageAccountKey(msrest.serialization.Model):
@@ -3021,6 +3035,11 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
      The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
      "TLS1_1", "TLS1_2".
     :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+    :param allow_shared_key_access: Indicates whether the storage account permits requests to be
+     authorized with the account access key via Shared Key. If false, then all requests, including
+     shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
+     default value is null, which is equivalent to true.
+    :type allow_shared_key_access: bool
     """
 
     _attribute_map = {
@@ -3037,6 +3056,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
         'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
+        'allow_shared_key_access': {'key': 'properties.allowSharedKeyAccess', 'type': 'bool'},
     }
 
     def __init__(
@@ -3055,6 +3075,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
         allow_blob_public_access: Optional[bool] = None,
         minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        allow_shared_key_access: Optional[bool] = None,
         **kwargs
     ):
         super(StorageAccountUpdateParameters, self).__init__(**kwargs)
@@ -3071,6 +3092,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         self.large_file_shares_state = large_file_shares_state
         self.allow_blob_public_access = allow_blob_public_access
         self.minimum_tls_version = minimum_tls_version
+        self.allow_shared_key_access = allow_shared_key_access
 
 
 class StorageSkuListResult(msrest.serialization.Model):
@@ -3291,15 +3313,14 @@ class UsageName(msrest.serialization.Model):
 class VirtualNetworkRule(msrest.serialization.Model):
     """Virtual Network rule.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param virtual_network_resource_id: Required. Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type virtual_network_resource_id: str
-    :ivar action: The action of virtual network rule. Default value: "Allow".
-    :vartype action: str
+    :param action: The action of virtual network rule. The only acceptable values to pass in are
+     None and "Allow". The default value is None.
+    :type action: str
     :param state: Gets the state of virtual network rule. Possible values include: "provisioning",
      "deprovisioning", "succeeded", "failed", "networkSourceDeleted".
     :type state: str or ~azure.mgmt.storage.v2019_04_01.models.State
@@ -3307,7 +3328,6 @@ class VirtualNetworkRule(msrest.serialization.Model):
 
     _validation = {
         'virtual_network_resource_id': {'required': True},
-        'action': {'constant': True},
     }
 
     _attribute_map = {
@@ -3316,15 +3336,15 @@ class VirtualNetworkRule(msrest.serialization.Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    action = "Allow"
-
     def __init__(
         self,
         *,
         virtual_network_resource_id: str,
+        action: Optional[str] = None,
         state: Optional[Union[str, "State"]] = None,
         **kwargs
     ):
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.virtual_network_resource_id = virtual_network_resource_id
+        self.action = action
         self.state = state

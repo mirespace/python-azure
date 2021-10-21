@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -15,11 +15,170 @@ import msrest.serialization
 from ._api_management_client_enums import *
 
 
-class AccessInformationContract(msrest.serialization.Model):
+class AccessInformationCollection(msrest.serialization.Model):
+    """Paged AccessInformation list representation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Page values.
+    :vartype value: list[~azure.mgmt.apimanagement.models.AccessInformationContract]
+    :param count: Total record count number across all pages.
+    :type count: long
+    :ivar next_link: Next page link if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AccessInformationContract]'},
+        'count': {'key': 'count', 'type': 'long'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        count: Optional[int] = None,
+        **kwargs
+    ):
+        super(AccessInformationCollection, self).__init__(**kwargs)
+        self.value = None
+        self.count = count
+        self.next_link = None
+
+
+class Resource(msrest.serialization.Model):
+    """The Resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class AccessInformationContract(Resource):
+    """Tenant Settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param id_properties_id: Access Information type ('access' or 'gitAccess').
+    :type id_properties_id: str
+    :param principal_id: Principal (User) Identifier.
+    :type principal_id: str
+    :param enabled: Determines whether direct access is enabled.
+    :type enabled: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
+        'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id_properties_id: Optional[str] = None,
+        principal_id: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        super(AccessInformationContract, self).__init__(**kwargs)
+        self.id_properties_id = id_properties_id
+        self.principal_id = principal_id
+        self.enabled = enabled
+
+
+class AccessInformationCreateParameters(msrest.serialization.Model):
+    """Tenant access information update parameters.
+
+    :param principal_id: Principal (User) Identifier.
+    :type principal_id: str
+    :param primary_key: Primary access key. This property will not be filled on 'GET' operations!
+     Use '/listSecrets' POST request to get the value.
+    :type primary_key: str
+    :param secondary_key: Secondary access key. This property will not be filled on 'GET'
+     operations! Use '/listSecrets' POST request to get the value.
+    :type secondary_key: str
+    :param enabled: Determines whether direct access is enabled.
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'primary_key': {'key': 'properties.primaryKey', 'type': 'str'},
+        'secondary_key': {'key': 'properties.secondaryKey', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        principal_id: Optional[str] = None,
+        primary_key: Optional[str] = None,
+        secondary_key: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        super(AccessInformationCreateParameters, self).__init__(**kwargs)
+        self.principal_id = principal_id
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
+        self.enabled = enabled
+
+
+class AccessInformationSecretsContract(msrest.serialization.Model):
     """Tenant access information contract of the API Management service.
 
-    :param id: Identifier.
+    :param id: Access Information type ('access' or 'gitAccess').
     :type id: str
+    :param principal_id: Principal (User) Identifier.
+    :type principal_id: str
     :param primary_key: Primary access key. This property will not be filled on 'GET' operations!
      Use '/listSecrets' POST request to get the value.
     :type primary_key: str
@@ -32,6 +191,7 @@ class AccessInformationContract(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
         'primary_key': {'key': 'primaryKey', 'type': 'str'},
         'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
         'enabled': {'key': 'enabled', 'type': 'bool'},
@@ -41,13 +201,15 @@ class AccessInformationContract(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
+        principal_id: Optional[str] = None,
         primary_key: Optional[str] = None,
         secondary_key: Optional[str] = None,
         enabled: Optional[bool] = None,
         **kwargs
     ):
-        super(AccessInformationContract, self).__init__(**kwargs)
+        super(AccessInformationSecretsContract, self).__init__(**kwargs)
         self.id = id
+        self.principal_id = principal_id
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.enabled = enabled
@@ -153,6 +315,8 @@ class ApiCollection(msrest.serialization.Model):
 
     :ivar value: Page values.
     :vartype value: list[~azure.mgmt.apimanagement.models.ApiContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -164,51 +328,20 @@ class ApiCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ApiContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(ApiCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
-
-
-class Resource(msrest.serialization.Model):
-    """The Resource definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type for API Management resource.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
 
 
 class ApiContract(Resource):
@@ -700,8 +833,8 @@ class ApiCreateOrUpdateParameter(msrest.serialization.Model):
     :param value: Content value when Importing an API.
     :type value: str
     :param format: Format of the Content in which the API is getting imported. Possible values
-     include: "wadl-xml", "wadl-link-json", "swagger-json", "swagger-link-json", "wsdl", "wsdl-
-     link", "openapi", "openapi+json", "openapi-link", "openapi+json-link".
+     include: "wadl-xml", "wadl-link-json", "swagger-json", "swagger-link-json", "wsdl",
+     "wsdl-link", "openapi", "openapi+json", "openapi-link", "openapi+json-link".
     :type format: str or ~azure.mgmt.apimanagement.models.ContentFormat
     :param wsdl_selector: Criteria to limit import of WSDL to a subset of the document.
     :type wsdl_selector: ~azure.mgmt.apimanagement.models.ApiCreateOrUpdatePropertiesWsdlSelector
@@ -852,8 +985,8 @@ class ApiCreateOrUpdateProperties(ApiContractProperties):
     :param value: Content value when Importing an API.
     :type value: str
     :param format: Format of the Content in which the API is getting imported. Possible values
-     include: "wadl-xml", "wadl-link-json", "swagger-json", "swagger-link-json", "wsdl", "wsdl-
-     link", "openapi", "openapi+json", "openapi-link", "openapi+json-link".
+     include: "wadl-xml", "wadl-link-json", "swagger-json", "swagger-link-json", "wsdl",
+     "wsdl-link", "openapi", "openapi+json", "openapi-link", "openapi+json-link".
     :type format: str or ~azure.mgmt.apimanagement.models.ContentFormat
     :param wsdl_selector: Criteria to limit import of WSDL to a subset of the document.
     :type wsdl_selector: ~azure.mgmt.apimanagement.models.ApiCreateOrUpdatePropertiesWsdlSelector
@@ -966,8 +1099,8 @@ class ApiExportResult(msrest.serialization.Model):
     :param id: ResourceId of the API which was exported.
     :type id: str
     :param export_result_format: Format in which the Api Details are exported to the Storage Blob
-     with Sas Key valid for 5 minutes. Possible values include: "swagger-link-json", "wsdl-
-     link+xml", "wadl-link-json", "openapi-link".
+     with Sas Key valid for 5 minutes. Possible values include: "swagger-link-json",
+     "wsdl-link+xml", "wadl-link-json", "openapi-link".
     :type export_result_format: str or ~azure.mgmt.apimanagement.models.ExportResultFormat
     :param value: The object defining the schema of the exported Api Detail.
     :type value: ~azure.mgmt.apimanagement.models.ApiExportResultValue
@@ -1288,6 +1421,31 @@ class ApiManagementServiceCheckNameAvailabilityParameters(msrest.serialization.M
     ):
         super(ApiManagementServiceCheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = name
+
+
+class ApiManagementServiceGetDomainOwnershipIdentifierResult(msrest.serialization.Model):
+    """Response of the GetDomainOwnershipIdentifier operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar domain_ownership_identifier: The domain ownership identifier value.
+    :vartype domain_ownership_identifier: str
+    """
+
+    _validation = {
+        'domain_ownership_identifier': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'domain_ownership_identifier': {'key': 'domainOwnershipIdentifier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementServiceGetDomainOwnershipIdentifierResult, self).__init__(**kwargs)
+        self.domain_ownership_identifier = None
 
 
 class ApiManagementServiceGetSsoTokenResult(msrest.serialization.Model):
@@ -2309,6 +2467,375 @@ class ApiManagementServiceUpdateProperties(ApiManagementServiceBaseProperties):
         self.publisher_name = publisher_name
 
 
+class ApiManagementSku(msrest.serialization.Model):
+    """Describes an available ApiManagement SKU.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_type: The type of resource the SKU applies to.
+    :vartype resource_type: str
+    :ivar name: The name of SKU.
+    :vartype name: str
+    :ivar tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br />`
+     Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+     **Basic**.
+    :vartype tier: str
+    :ivar size: The Size of the SKU.
+    :vartype size: str
+    :ivar family: The Family of this particular SKU.
+    :vartype family: str
+    :ivar kind: The Kind of resources that are supported in this SKU.
+    :vartype kind: str
+    :ivar capacity: Specifies the number of virtual machines in the scale set.
+    :vartype capacity: ~azure.mgmt.apimanagement.models.ApiManagementSkuCapacity
+    :ivar locations: The set of locations that the SKU is available.
+    :vartype locations: list[str]
+    :ivar location_info: A list of locations and availability zones in those locations where the
+     SKU is available.
+    :vartype location_info: list[~azure.mgmt.apimanagement.models.ApiManagementSkuLocationInfo]
+    :ivar api_versions: The api versions that support this SKU.
+    :vartype api_versions: list[str]
+    :ivar costs: Metadata for retrieving price info.
+    :vartype costs: list[~azure.mgmt.apimanagement.models.ApiManagementSkuCosts]
+    :ivar capabilities: A name value pair to describe the capability.
+    :vartype capabilities: list[~azure.mgmt.apimanagement.models.ApiManagementSkuCapabilities]
+    :ivar restrictions: The restrictions because of which SKU cannot be used. This is empty if
+     there are no restrictions.
+    :vartype restrictions: list[~azure.mgmt.apimanagement.models.ApiManagementSkuRestrictions]
+    """
+
+    _validation = {
+        'resource_type': {'readonly': True},
+        'name': {'readonly': True},
+        'tier': {'readonly': True},
+        'size': {'readonly': True},
+        'family': {'readonly': True},
+        'kind': {'readonly': True},
+        'capacity': {'readonly': True},
+        'locations': {'readonly': True},
+        'location_info': {'readonly': True},
+        'api_versions': {'readonly': True},
+        'costs': {'readonly': True},
+        'capabilities': {'readonly': True},
+        'restrictions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+        'family': {'key': 'family', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'ApiManagementSkuCapacity'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'location_info': {'key': 'locationInfo', 'type': '[ApiManagementSkuLocationInfo]'},
+        'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'costs': {'key': 'costs', 'type': '[ApiManagementSkuCosts]'},
+        'capabilities': {'key': 'capabilities', 'type': '[ApiManagementSkuCapabilities]'},
+        'restrictions': {'key': 'restrictions', 'type': '[ApiManagementSkuRestrictions]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementSku, self).__init__(**kwargs)
+        self.resource_type = None
+        self.name = None
+        self.tier = None
+        self.size = None
+        self.family = None
+        self.kind = None
+        self.capacity = None
+        self.locations = None
+        self.location_info = None
+        self.api_versions = None
+        self.costs = None
+        self.capabilities = None
+        self.restrictions = None
+
+
+class ApiManagementSkuCapabilities(msrest.serialization.Model):
+    """Describes The SKU capabilities object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: An invariant to describe the feature.
+    :vartype name: str
+    :ivar value: An invariant if the feature is measured by quantity.
+    :vartype value: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementSkuCapabilities, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
+
+
+class ApiManagementSkuCapacity(msrest.serialization.Model):
+    """Describes scaling information of a SKU.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar minimum: The minimum capacity.
+    :vartype minimum: int
+    :ivar maximum: The maximum capacity that can be set.
+    :vartype maximum: int
+    :ivar default: The default capacity.
+    :vartype default: int
+    :ivar scale_type: The scale type applicable to the sku. Possible values include: "Automatic",
+     "Manual", "None".
+    :vartype scale_type: str or ~azure.mgmt.apimanagement.models.ApiManagementSkuCapacityScaleType
+    """
+
+    _validation = {
+        'minimum': {'readonly': True},
+        'maximum': {'readonly': True},
+        'default': {'readonly': True},
+        'scale_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
+        'scale_type': {'key': 'scaleType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementSkuCapacity, self).__init__(**kwargs)
+        self.minimum = None
+        self.maximum = None
+        self.default = None
+        self.scale_type = None
+
+
+class ApiManagementSkuCosts(msrest.serialization.Model):
+    """Describes metadata for retrieving price info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar meter_id: Used for querying price from commerce.
+    :vartype meter_id: str
+    :ivar quantity: The multiplier is needed to extend the base metered cost.
+    :vartype quantity: long
+    :ivar extended_unit: An invariant to show the extended unit.
+    :vartype extended_unit: str
+    """
+
+    _validation = {
+        'meter_id': {'readonly': True},
+        'quantity': {'readonly': True},
+        'extended_unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'meter_id': {'key': 'meterID', 'type': 'str'},
+        'quantity': {'key': 'quantity', 'type': 'long'},
+        'extended_unit': {'key': 'extendedUnit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementSkuCosts, self).__init__(**kwargs)
+        self.meter_id = None
+        self.quantity = None
+        self.extended_unit = None
+
+
+class ApiManagementSkuLocationInfo(msrest.serialization.Model):
+    """ApiManagementSkuLocationInfo.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location: Location of the SKU.
+    :vartype location: str
+    :ivar zones: List of availability zones where the SKU is supported.
+    :vartype zones: list[str]
+    :ivar zone_details: Details of capabilities available to a SKU in specific zones.
+    :vartype zone_details: list[~azure.mgmt.apimanagement.models.ApiManagementSkuZoneDetails]
+    """
+
+    _validation = {
+        'location': {'readonly': True},
+        'zones': {'readonly': True},
+        'zone_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+        'zone_details': {'key': 'zoneDetails', 'type': '[ApiManagementSkuZoneDetails]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementSkuLocationInfo, self).__init__(**kwargs)
+        self.location = None
+        self.zones = None
+        self.zone_details = None
+
+
+class ApiManagementSkuRestrictionInfo(msrest.serialization.Model):
+    """ApiManagementSkuRestrictionInfo.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar locations: Locations where the SKU is restricted.
+    :vartype locations: list[str]
+    :ivar zones: List of availability zones where the SKU is restricted.
+    :vartype zones: list[str]
+    """
+
+    _validation = {
+        'locations': {'readonly': True},
+        'zones': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementSkuRestrictionInfo, self).__init__(**kwargs)
+        self.locations = None
+        self.zones = None
+
+
+class ApiManagementSkuRestrictions(msrest.serialization.Model):
+    """Describes scaling information of a SKU.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The type of restrictions. Possible values include: "Location", "Zone".
+    :vartype type: str or ~azure.mgmt.apimanagement.models.ApiManagementSkuRestrictionsType
+    :ivar values: The value of restrictions. If the restriction type is set to location. This would
+     be different locations where the SKU is restricted.
+    :vartype values: list[str]
+    :ivar restriction_info: The information about the restriction where the SKU cannot be used.
+    :vartype restriction_info: ~azure.mgmt.apimanagement.models.ApiManagementSkuRestrictionInfo
+    :ivar reason_code: The reason for restriction. Possible values include: "QuotaId",
+     "NotAvailableForSubscription".
+    :vartype reason_code: str or
+     ~azure.mgmt.apimanagement.models.ApiManagementSkuRestrictionsReasonCode
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'values': {'readonly': True},
+        'restriction_info': {'readonly': True},
+        'reason_code': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+        'restriction_info': {'key': 'restrictionInfo', 'type': 'ApiManagementSkuRestrictionInfo'},
+        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementSkuRestrictions, self).__init__(**kwargs)
+        self.type = None
+        self.values = None
+        self.restriction_info = None
+        self.reason_code = None
+
+
+class ApiManagementSkusResult(msrest.serialization.Model):
+    """The List Resource Skus operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The list of skus available for the subscription.
+    :type value: list[~azure.mgmt.apimanagement.models.ApiManagementSku]
+    :ivar next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this URI
+     to fetch the next page of Resource Skus.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ApiManagementSku]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["ApiManagementSku"],
+        **kwargs
+    ):
+        super(ApiManagementSkusResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class ApiManagementSkuZoneDetails(msrest.serialization.Model):
+    """Describes The zonal capabilities of a SKU.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The set of zones that the SKU is available in with the specified capabilities.
+    :vartype name: list[str]
+    :ivar capabilities: A list of capabilities that are available for the SKU in the specified list
+     of zones.
+    :vartype capabilities: list[~azure.mgmt.apimanagement.models.ApiManagementSkuCapabilities]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[ApiManagementSkuCapabilities]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ApiManagementSkuZoneDetails, self).__init__(**kwargs)
+        self.name = None
+        self.capabilities = None
+
+
 class ApiReleaseCollection(msrest.serialization.Model):
     """Paged ApiRelease list representation.
 
@@ -2316,6 +2843,8 @@ class ApiReleaseCollection(msrest.serialization.Model):
 
     :ivar value: Page values.
     :vartype value: list[~azure.mgmt.apimanagement.models.ApiReleaseContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -2327,15 +2856,19 @@ class ApiReleaseCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ApiReleaseContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(ApiReleaseCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
 
 
@@ -2400,6 +2933,8 @@ class ApiRevisionCollection(msrest.serialization.Model):
 
     :ivar value: Page values.
     :vartype value: list[~azure.mgmt.apimanagement.models.ApiRevisionContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -2411,15 +2946,19 @@ class ApiRevisionCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ApiRevisionContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(ApiRevisionCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
 
 
@@ -2772,12 +3311,15 @@ class ApiVersionSetCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.ApiVersionSetContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ApiVersionSetContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -2785,11 +3327,13 @@ class ApiVersionSetCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["ApiVersionSetContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(ApiVersionSetCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -2814,7 +3358,7 @@ class ApiVersionSetContract(Resource):
     :type version_header_name: str
     :param display_name: Name of API Version Set.
     :type display_name: str
-    :param versioning_scheme: An value that determines where the API Version identifer will be
+    :param versioning_scheme: An value that determines where the API Version identifier will be
      located in a HTTP request. Possible values include: "Segment", "Query", "Header".
     :type versioning_scheme: str or ~azure.mgmt.apimanagement.models.VersioningScheme
     """
@@ -2867,7 +3411,7 @@ class ApiVersionSetContractDetails(msrest.serialization.Model):
     :type name: str
     :param description: Description of API Version Set.
     :type description: str
-    :param versioning_scheme: An value that determines where the API Version identifer will be
+    :param versioning_scheme: An value that determines where the API Version identifier will be
      located in a HTTP request. Possible values include: "Segment", "Query", "Header".
     :type versioning_scheme: str or
      ~azure.mgmt.apimanagement.models.ApiVersionSetContractDetailsVersioningScheme
@@ -2961,7 +3505,7 @@ class ApiVersionSetContractProperties(ApiVersionSetEntityBase):
     :type version_header_name: str
     :param display_name: Required. Name of API Version Set.
     :type display_name: str
-    :param versioning_scheme: Required. An value that determines where the API Version identifer
+    :param versioning_scheme: Required. An value that determines where the API Version identifier
      will be located in a HTTP request. Possible values include: "Segment", "Query", "Header".
     :type versioning_scheme: str or ~azure.mgmt.apimanagement.models.VersioningScheme
     """
@@ -3009,7 +3553,7 @@ class ApiVersionSetUpdateParameters(msrest.serialization.Model):
     :type version_header_name: str
     :param display_name: Name of API Version Set.
     :type display_name: str
-    :param versioning_scheme: An value that determines where the API Version identifer will be
+    :param versioning_scheme: An value that determines where the API Version identifier will be
      located in a HTTP request. Possible values include: "Segment", "Query", "Header".
     :type versioning_scheme: str or ~azure.mgmt.apimanagement.models.VersioningScheme
     """
@@ -3059,7 +3603,7 @@ class ApiVersionSetUpdateParametersProperties(ApiVersionSetEntityBase):
     :type version_header_name: str
     :param display_name: Name of API Version Set.
     :type display_name: str
-    :param versioning_scheme: An value that determines where the API Version identifer will be
+    :param versioning_scheme: An value that determines where the API Version identifier will be
      located in a HTTP request. Possible values include: "Segment", "Query", "Header".
     :type versioning_scheme: str or ~azure.mgmt.apimanagement.models.VersioningScheme
     """
@@ -3104,15 +3648,15 @@ class AssociationContract(Resource):
     :vartype name: str
     :ivar type: Resource type for API Management resource.
     :vartype type: str
-    :ivar provisioning_state: Provisioning state. Default value: "created".
-    :vartype provisioning_state: str
+    :param provisioning_state: Provisioning state. The only acceptable values to pass in are None
+     and "created". The default value is None.
+    :type provisioning_state: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'provisioning_state': {'constant': True},
     }
 
     _attribute_map = {
@@ -3122,13 +3666,14 @@ class AssociationContract(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    provisioning_state = "created"
-
     def __init__(
         self,
+        *,
+        provisioning_state: Optional[str] = None,
         **kwargs
     ):
         super(AssociationContract, self).__init__(**kwargs)
+        self.provisioning_state = provisioning_state
 
 
 class AuthenticationSettingsContract(msrest.serialization.Model):
@@ -3221,8 +3766,8 @@ class AuthorizationServerContract(Resource):
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3348,8 +3893,8 @@ class AuthorizationServerContractBaseProperties(msrest.serialization.Model):
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3431,8 +3976,8 @@ class AuthorizationServerContractProperties(AuthorizationServerContractBasePrope
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3587,8 +4132,8 @@ class AuthorizationServerUpdateContract(Resource):
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3714,8 +4259,8 @@ class AuthorizationServerUpdateContractProperties(AuthorizationServerContractBas
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3896,12 +4441,15 @@ class BackendCollection(msrest.serialization.Model):
 
     :param value: Backend values.
     :type value: list[~azure.mgmt.apimanagement.models.BackendContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[BackendContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -3909,11 +4457,13 @@ class BackendCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["BackendContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(BackendCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -4069,7 +4619,10 @@ class BackendContractProperties(BackendBaseParameters):
 class BackendCredentialsContract(msrest.serialization.Model):
     """Details of the Credentials used to connect to Backend.
 
-    :param certificate: List of Client Certificate Thumbprint.
+    :param certificate_ids: List of Client Certificate Ids.
+    :type certificate_ids: list[str]
+    :param certificate: List of Client Certificate Thumbprints. Will be ignored if certificatesIds
+     are provided.
     :type certificate: list[str]
     :param query: Query Parameter description.
     :type query: dict[str, list[str]]
@@ -4080,10 +4633,12 @@ class BackendCredentialsContract(msrest.serialization.Model):
     """
 
     _validation = {
+        'certificate_ids': {'max_items': 32, 'min_items': 0},
         'certificate': {'max_items': 32, 'min_items': 0},
     }
 
     _attribute_map = {
+        'certificate_ids': {'key': 'certificateIds', 'type': '[str]'},
         'certificate': {'key': 'certificate', 'type': '[str]'},
         'query': {'key': 'query', 'type': '{[str]}'},
         'header': {'key': 'header', 'type': '{[str]}'},
@@ -4093,6 +4648,7 @@ class BackendCredentialsContract(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        certificate_ids: Optional[List[str]] = None,
         certificate: Optional[List[str]] = None,
         query: Optional[Dict[str, List[str]]] = None,
         header: Optional[Dict[str, List[str]]] = None,
@@ -4100,6 +4656,7 @@ class BackendCredentialsContract(msrest.serialization.Model):
         **kwargs
     ):
         super(BackendCredentialsContract, self).__init__(**kwargs)
+        self.certificate_ids = certificate_ids
         self.certificate = certificate
         self.query = query
         self.header = header
@@ -4210,8 +4767,10 @@ class BackendServiceFabricClusterProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param client_certificatethumbprint: Required. The client certificate thumbprint for the
-     management endpoint.
+    :param client_certificate_id: The client certificate id for the management endpoint.
+    :type client_certificate_id: str
+    :param client_certificatethumbprint: The client certificate thumbprint for the management
+     endpoint. Will be ignored if certificatesIds are provided.
     :type client_certificatethumbprint: str
     :param max_partition_resolution_retries: Maximum number of retries while attempting resolve the
      partition.
@@ -4226,11 +4785,11 @@ class BackendServiceFabricClusterProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'client_certificatethumbprint': {'required': True},
         'management_endpoints': {'required': True},
     }
 
     _attribute_map = {
+        'client_certificate_id': {'key': 'clientCertificateId', 'type': 'str'},
         'client_certificatethumbprint': {'key': 'clientCertificatethumbprint', 'type': 'str'},
         'max_partition_resolution_retries': {'key': 'maxPartitionResolutionRetries', 'type': 'int'},
         'management_endpoints': {'key': 'managementEndpoints', 'type': '[str]'},
@@ -4241,14 +4800,16 @@ class BackendServiceFabricClusterProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        client_certificatethumbprint: str,
         management_endpoints: List[str],
+        client_certificate_id: Optional[str] = None,
+        client_certificatethumbprint: Optional[str] = None,
         max_partition_resolution_retries: Optional[int] = None,
         server_certificate_thumbprints: Optional[List[str]] = None,
         server_x509_names: Optional[List["X509CertificateName"]] = None,
         **kwargs
     ):
         super(BackendServiceFabricClusterProperties, self).__init__(**kwargs)
+        self.client_certificate_id = client_certificate_id
         self.client_certificatethumbprint = client_certificatethumbprint
         self.max_partition_resolution_retries = max_partition_resolution_retries
         self.management_endpoints = management_endpoints
@@ -4445,12 +5006,15 @@ class CacheCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.CacheContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[CacheContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -4458,11 +5022,13 @@ class CacheCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["CacheContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(CacheCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -4573,12 +5139,15 @@ class CertificateCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.CertificateContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[CertificateContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -4586,11 +5155,13 @@ class CertificateCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["CertificateContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(CertificateCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -4896,7 +5467,7 @@ class ContentItemContract(Resource):
     :ivar type: Resource type for API Management resource.
     :vartype type: str
     :param properties: Properties of the content item.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -4915,7 +5486,7 @@ class ContentItemContract(Resource):
     def __init__(
         self,
         *,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(ContentItemContract, self).__init__(**kwargs)
@@ -4970,7 +5541,7 @@ class ContentTypeContract(Resource):
     :param description: Content type description.
     :type description: str
     :param schema: Content type schema.
-    :type schema: object
+    :type schema: any
     :param version: Content type version.
     :type version: str
     """
@@ -4998,7 +5569,7 @@ class ContentTypeContract(Resource):
         id_properties_id: Optional[str] = None,
         name_properties_name: Optional[str] = None,
         description: Optional[str] = None,
-        schema: Optional[object] = None,
+        schema: Optional[Any] = None,
         version: Optional[str] = None,
         **kwargs
     ):
@@ -5181,12 +5752,15 @@ class DiagnosticCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.DiagnosticContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[DiagnosticContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -5194,11 +5768,13 @@ class DiagnosticCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["DiagnosticContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(DiagnosticCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -5290,12 +5866,15 @@ class EmailTemplateCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.EmailTemplateContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[EmailTemplateContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -5303,11 +5882,13 @@ class EmailTemplateCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["EmailTemplateContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(EmailTemplateCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -5557,6 +6138,74 @@ class ErrorResponseBody(msrest.serialization.Model):
         self.details = details
 
 
+class GatewayCertificateAuthorityCollection(msrest.serialization.Model):
+    """Paged Gateway certificate authority list representation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Page values.
+    :vartype value: list[~azure.mgmt.apimanagement.models.GatewayCertificateAuthorityContract]
+    :ivar next_link: Next page link if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[GatewayCertificateAuthorityContract]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GatewayCertificateAuthorityCollection, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class GatewayCertificateAuthorityContract(Resource):
+    """Gateway certificate authority details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param is_trusted: Determines whether certificate authority is trusted.
+    :type is_trusted: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'is_trusted': {'key': 'properties.isTrusted', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        is_trusted: Optional[bool] = None,
+        **kwargs
+    ):
+        super(GatewayCertificateAuthorityContract, self).__init__(**kwargs)
+        self.is_trusted = is_trusted
+
+
 class GatewayCollection(msrest.serialization.Model):
     """Paged Gateway list representation.
 
@@ -5564,6 +6213,8 @@ class GatewayCollection(msrest.serialization.Model):
 
     :ivar value: Page values.
     :vartype value: list[~azure.mgmt.apimanagement.models.GatewayContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -5575,15 +6226,19 @@ class GatewayCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[GatewayContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(GatewayCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
 
 
@@ -5862,12 +6517,15 @@ class GroupCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.GroupContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[GroupContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -5875,11 +6533,13 @@ class GroupCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["GroupContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(GroupCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -6096,7 +6756,7 @@ class HostnameConfiguration(msrest.serialization.Model):
     :type host_name: str
     :param key_vault_id: Url to the KeyVault Secret containing the Ssl Certificate. If absolute Url
      containing version is provided, auto-update of ssl certificate will not work. This requires Api
-     Management service to be configured with MSI. The secret should be of type
+     Management service to be configured with aka.ms/apimmsi. The secret should be of type
      *application/x-pkcs12*.
     :type key_vault_id: str
     :param identity_client_id: System or User Assigned Managed identity clientId as generated by
@@ -6613,12 +7273,15 @@ class IdentityProviderList(msrest.serialization.Model):
 
     :param value: Identity Provider configuration values.
     :type value: list[~azure.mgmt.apimanagement.models.IdentityProviderContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[IdentityProviderContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -6626,11 +7289,13 @@ class IdentityProviderList(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["IdentityProviderContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(IdentityProviderList, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -6797,6 +7462,8 @@ class IssueAttachmentCollection(msrest.serialization.Model):
 
     :ivar value: Issue Attachment values.
     :vartype value: list[~azure.mgmt.apimanagement.models.IssueAttachmentContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -6808,15 +7475,19 @@ class IssueAttachmentCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[IssueAttachmentContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(IssueAttachmentCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
 
 
@@ -6876,6 +7547,8 @@ class IssueCollection(msrest.serialization.Model):
 
     :ivar value: Issue values.
     :vartype value: list[~azure.mgmt.apimanagement.models.IssueContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -6887,15 +7560,19 @@ class IssueCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[IssueContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(IssueCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
 
 
@@ -6906,6 +7583,8 @@ class IssueCommentCollection(msrest.serialization.Model):
 
     :ivar value: Issue Comment values.
     :vartype value: list[~azure.mgmt.apimanagement.models.IssueCommentContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -6917,15 +7596,19 @@ class IssueCommentCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[IssueCommentContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(IssueCommentCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
 
 
@@ -7219,7 +7902,9 @@ class IssueUpdateContractProperties(IssueContractBaseProperties):
 class KeyVaultContractCreateProperties(msrest.serialization.Model):
     """Create keyVault contract details.
 
-    :param secret_identifier: Key vault secret identifier for fetching secret.
+    :param secret_identifier: Key vault secret identifier for fetching secret. Providing a
+     versioned secret will prevent auto-refresh. This requires Api Management service to be
+     configured with aka.ms/apimmsi.
     :type secret_identifier: str
     :param identity_client_id: SystemAssignedIdentity or UserAssignedIdentity Client Id which will
      be used to access key vault secret.
@@ -7246,7 +7931,9 @@ class KeyVaultContractCreateProperties(msrest.serialization.Model):
 class KeyVaultContractProperties(KeyVaultContractCreateProperties):
     """KeyVault contract details.
 
-    :param secret_identifier: Key vault secret identifier for fetching secret.
+    :param secret_identifier: Key vault secret identifier for fetching secret. Providing a
+     versioned secret will prevent auto-refresh. This requires Api Management service to be
+     configured with aka.ms/apimmsi.
     :type secret_identifier: str
     :param identity_client_id: SystemAssignedIdentity or UserAssignedIdentity Client Id which will
      be used to access key vault secret.
@@ -7443,12 +8130,15 @@ class NamedValueCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.NamedValueContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[NamedValueContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -7456,11 +8146,13 @@ class NamedValueCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["NamedValueContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(NamedValueCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -7922,12 +8614,15 @@ class NotificationCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.NotificationContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[NotificationContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -7935,11 +8630,13 @@ class NotificationCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["NotificationContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(NotificationCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -8050,12 +8747,15 @@ class OpenIdConnectProviderCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.OpenidConnectProviderContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[OpenidConnectProviderContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -8063,11 +8763,13 @@ class OpenIdConnectProviderCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["OpenidConnectProviderContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(OpenIdConnectProviderCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -8185,7 +8887,7 @@ class Operation(msrest.serialization.Model):
     :param origin: The operation origin.
     :type origin: str
     :param properties: The operation properties.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -8201,7 +8903,7 @@ class Operation(msrest.serialization.Model):
         name: Optional[str] = None,
         display: Optional["OperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
@@ -8218,6 +8920,8 @@ class OperationCollection(msrest.serialization.Model):
 
     :ivar value: Page values.
     :vartype value: list[~azure.mgmt.apimanagement.models.OperationContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -8229,15 +8933,19 @@ class OperationCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[OperationContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(OperationCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
 
 
@@ -8488,13 +9196,19 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class OperationResultContract(msrest.serialization.Model):
-    """Operation Result.
+class OperationResultContract(Resource):
+    """Long Running Git Operation Results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Operation result identifier.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param id_properties_id: Operation result identifier.
+    :type id_properties_id: str
     :param status: Status of an async operation. Possible values include: "Started", "InProgress",
      "Succeeded", "Failed".
     :type status: str or ~azure.mgmt.apimanagement.models.AsyncOperationStatus
@@ -8515,23 +9229,29 @@ class OperationResultContract(msrest.serialization.Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'action_log': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'started': {'key': 'started', 'type': 'iso-8601'},
-        'updated': {'key': 'updated', 'type': 'iso-8601'},
-        'result_info': {'key': 'resultInfo', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
-        'action_log': {'key': 'actionLog', 'type': '[OperationResultLogItemContract]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'started': {'key': 'properties.started', 'type': 'iso-8601'},
+        'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
+        'result_info': {'key': 'properties.resultInfo', 'type': 'str'},
+        'error': {'key': 'properties.error', 'type': 'ErrorResponseBody'},
+        'action_log': {'key': 'properties.actionLog', 'type': '[OperationResultLogItemContract]'},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id_properties_id: Optional[str] = None,
         status: Optional[Union[str, "AsyncOperationStatus"]] = None,
         started: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
@@ -8540,7 +9260,7 @@ class OperationResultContract(msrest.serialization.Model):
         **kwargs
     ):
         super(OperationResultContract, self).__init__(**kwargs)
-        self.id = id
+        self.id_properties_id = id_properties_id
         self.status = status
         self.started = started
         self.updated = updated
@@ -8850,12 +9570,15 @@ class PolicyCollection(msrest.serialization.Model):
 
     :param value: Policy Contract value.
     :type value: list[~azure.mgmt.apimanagement.models.PolicyContract]
+    :param count: Total record count number.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[PolicyContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -8863,11 +9586,13 @@ class PolicyCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["PolicyContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(PolicyCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -8955,7 +9680,7 @@ class PolicyDescriptionContract(Resource):
     :ivar description: Policy description.
     :vartype description: str
     :ivar scope: Binary OR value of the Snippet scope.
-    :vartype scope: int
+    :vartype scope: long
     """
 
     _validation = {
@@ -8971,7 +9696,7 @@ class PolicyDescriptionContract(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'scope': {'key': 'properties.scope', 'type': 'int'},
+        'scope': {'key': 'properties.scope', 'type': 'long'},
     }
 
     def __init__(
@@ -9036,6 +9761,192 @@ class PortalDelegationSettings(Resource):
         self.validation_key = validation_key
         self.subscriptions = subscriptions
         self.user_registration = user_registration
+
+
+class PortalRevisionCollection(msrest.serialization.Model):
+    """Paged list of portal revisions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Collection of portal revisions.
+    :vartype value: list[~azure.mgmt.apimanagement.models.PortalRevisionContract]
+    :ivar next_link: Next page link, if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PortalRevisionContract]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PortalRevisionCollection, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class PortalRevisionContract(Resource):
+    """Portal revisions contract details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param description: Portal revision description.
+    :type description: str
+    :ivar status_details: Portal revision publishing status details.
+    :vartype status_details: str
+    :ivar status: Portal revision publishing status. Possible values include: "pending",
+     "publishing", "completed", "failed".
+    :vartype status: str or ~azure.mgmt.apimanagement.models.PortalRevisionStatus
+    :param is_current: Indicates if the Portal Revision is public.
+    :type is_current: bool
+    :ivar created_date_time: Portal revision creation date and time.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar updated_date_time: Last updated date and time.
+    :vartype updated_date_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'description': {'max_length': 2000, 'min_length': 0},
+        'status_details': {'readonly': True, 'max_length': 2000, 'min_length': 0},
+        'status': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'updated_date_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'is_current': {'key': 'properties.isCurrent', 'type': 'bool'},
+        'created_date_time': {'key': 'properties.createdDateTime', 'type': 'iso-8601'},
+        'updated_date_time': {'key': 'properties.updatedDateTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        is_current: Optional[bool] = None,
+        **kwargs
+    ):
+        super(PortalRevisionContract, self).__init__(**kwargs)
+        self.description = description
+        self.status_details = None
+        self.status = None
+        self.is_current = is_current
+        self.created_date_time = None
+        self.updated_date_time = None
+
+
+class PortalSettingsCollection(msrest.serialization.Model):
+    """Descriptions of APIM policies.
+
+    :param value: Descriptions of APIM policies.
+    :type value: list[~azure.mgmt.apimanagement.models.PortalSettingsContract]
+    :param count: Total record count number.
+    :type count: long
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PortalSettingsContract]'},
+        'count': {'key': 'count', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PortalSettingsContract"]] = None,
+        count: Optional[int] = None,
+        **kwargs
+    ):
+        super(PortalSettingsCollection, self).__init__(**kwargs)
+        self.value = value
+        self.count = count
+
+
+class PortalSettingsContract(Resource):
+    """Portal Settings for the Developer Portal.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param url: A delegation Url.
+    :type url: str
+    :param validation_key: A base64-encoded validation key to validate, that a request is coming
+     from Azure API Management.
+    :type validation_key: str
+    :param subscriptions: Subscriptions delegation settings.
+    :type subscriptions: ~azure.mgmt.apimanagement.models.SubscriptionsDelegationSettingsProperties
+    :param user_registration: User registration delegation settings.
+    :type user_registration:
+     ~azure.mgmt.apimanagement.models.RegistrationDelegationSettingsProperties
+    :param enabled: Redirect Anonymous users to the Sign-In page.
+    :type enabled: bool
+    :param terms_of_service: Terms of service contract properties.
+    :type terms_of_service: ~azure.mgmt.apimanagement.models.TermsOfServiceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'url': {'key': 'properties.url', 'type': 'str'},
+        'validation_key': {'key': 'properties.validationKey', 'type': 'str'},
+        'subscriptions': {'key': 'properties.subscriptions', 'type': 'SubscriptionsDelegationSettingsProperties'},
+        'user_registration': {'key': 'properties.userRegistration', 'type': 'RegistrationDelegationSettingsProperties'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'terms_of_service': {'key': 'properties.termsOfService', 'type': 'TermsOfServiceProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        url: Optional[str] = None,
+        validation_key: Optional[str] = None,
+        subscriptions: Optional["SubscriptionsDelegationSettingsProperties"] = None,
+        user_registration: Optional["RegistrationDelegationSettingsProperties"] = None,
+        enabled: Optional[bool] = None,
+        terms_of_service: Optional["TermsOfServiceProperties"] = None,
+        **kwargs
+    ):
+        super(PortalSettingsContract, self).__init__(**kwargs)
+        self.url = url
+        self.validation_key = validation_key
+        self.subscriptions = subscriptions
+        self.user_registration = user_registration
+        self.enabled = enabled
+        self.terms_of_service = terms_of_service
 
 
 class PortalSettingValidationKeyContract(msrest.serialization.Model):
@@ -9145,12 +10056,15 @@ class ProductCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.ProductContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ProductContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -9158,11 +10072,13 @@ class ProductCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["ProductContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(ProductCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -9211,7 +10127,7 @@ class ProductContract(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'description': {'max_length': 1000, 'min_length': 1},
+        'description': {'max_length': 1000, 'min_length': 0},
         'display_name': {'max_length': 300, 'min_length': 1},
     }
 
@@ -9282,7 +10198,7 @@ class ProductEntityBaseParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'description': {'max_length': 1000, 'min_length': 1},
+        'description': {'max_length': 1000, 'min_length': 0},
     }
 
     _attribute_map = {
@@ -9350,7 +10266,7 @@ class ProductContractProperties(ProductEntityBaseParameters):
     """
 
     _validation = {
-        'description': {'max_length': 1000, 'min_length': 1},
+        'description': {'max_length': 1000, 'min_length': 0},
         'display_name': {'required': True, 'max_length': 300, 'min_length': 1},
     }
 
@@ -9418,7 +10334,7 @@ class ProductTagResourceContractProperties(ProductEntityBaseParameters):
     """
 
     _validation = {
-        'description': {'max_length': 1000, 'min_length': 1},
+        'description': {'max_length': 1000, 'min_length': 0},
         'name': {'required': True, 'max_length': 300, 'min_length': 1},
     }
 
@@ -9485,7 +10401,7 @@ class ProductUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'description': {'max_length': 1000, 'min_length': 1},
+        'description': {'max_length': 1000, 'min_length': 0},
         'display_name': {'max_length': 300, 'min_length': 1},
     }
 
@@ -9555,7 +10471,7 @@ class ProductUpdateProperties(ProductEntityBaseParameters):
     """
 
     _validation = {
-        'description': {'max_length': 1000, 'min_length': 1},
+        'description': {'max_length': 1000, 'min_length': 0},
         'display_name': {'max_length': 300, 'min_length': 1},
     }
 
@@ -9752,12 +10668,15 @@ class RecipientEmailCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.RecipientEmailContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[RecipientEmailContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -9765,11 +10684,13 @@ class RecipientEmailCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["RecipientEmailContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(RecipientEmailCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -9842,12 +10763,15 @@ class RecipientUserCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.RecipientUserContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[RecipientUserContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -9855,11 +10779,13 @@ class RecipientUserCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["RecipientUserContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(RecipientUserCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -10692,6 +11618,8 @@ class SchemaCollection(msrest.serialization.Model):
 
     :ivar value: Api Schema Contract value.
     :vartype value: list[~azure.mgmt.apimanagement.models.SchemaContract]
+    :param count: Total record count number.
+    :type count: long
     :ivar next_link: Next page link if any.
     :vartype next_link: str
     """
@@ -10703,15 +11631,19 @@ class SchemaCollection(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[SchemaContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        count: Optional[int] = None,
         **kwargs
     ):
         super(SchemaCollection, self).__init__(**kwargs)
         self.value = None
+        self.count = count
         self.next_link = None
 
 
@@ -10737,7 +11669,7 @@ class SchemaContract(Resource):
      schemas other than Swagger/OpenAPI.
     :type value: str
     :param definitions: Types definitions. Used for Swagger/OpenAPI schemas only, null otherwise.
-    :type definitions: object
+    :type definitions: any
     """
 
     _validation = {
@@ -10760,7 +11692,7 @@ class SchemaContract(Resource):
         *,
         content_type: Optional[str] = None,
         value: Optional[str] = None,
-        definitions: Optional[object] = None,
+        definitions: Optional[Any] = None,
         **kwargs
     ):
         super(SchemaContract, self).__init__(**kwargs)
@@ -10774,12 +11706,15 @@ class SubscriptionCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.SubscriptionContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[SubscriptionContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -10787,11 +11722,13 @@ class SubscriptionCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["SubscriptionContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(SubscriptionCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -10832,8 +11769,8 @@ class SubscriptionContract(Resource):
     :type start_date: ~datetime.datetime
     :param expiration_date: Subscription expiration date. The setting is for audit purposes only
      and the subscription is not automatically expired. The subscription lifecycle can be managed by
-     using the ``state`` property. The date conforms to the following format: ``yyyy-MM-
-     ddTHH:mm:ssZ`` as specified by the ISO 8601 standard.
+     using the ``state`` property. The date conforms to the following format:
+     ``yyyy-MM-ddTHH:mm:ssZ`` as specified by the ISO 8601 standard.
     :type expiration_date: ~datetime.datetime
     :param end_date: Date when subscription was cancelled or expired. The setting is for audit
      purposes only and the subscription is not automatically cancelled. The subscription lifecycle
@@ -11073,8 +12010,8 @@ class SubscriptionUpdateParameters(msrest.serialization.Model):
     :type scope: str
     :param expiration_date: Subscription expiration date. The setting is for audit purposes only
      and the subscription is not automatically expired. The subscription lifecycle can be managed by
-     using the ``state`` property. The date conforms to the following format: ``yyyy-MM-
-     ddTHH:mm:ssZ`` as specified by the ISO 8601 standard.
+     using the ``state`` property. The date conforms to the following format:
+     ``yyyy-MM-ddTHH:mm:ssZ`` as specified by the ISO 8601 standard.
     :type expiration_date: ~datetime.datetime
     :param display_name: Subscription name.
     :type display_name: str
@@ -11146,12 +12083,15 @@ class TagCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.TagContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[TagContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -11159,11 +12099,13 @@ class TagCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["TagContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(TagCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -11271,12 +12213,15 @@ class TagDescriptionCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.TagDescriptionContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[TagDescriptionContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -11284,11 +12229,13 @@ class TagDescriptionCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["TagDescriptionContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(TagDescriptionCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -11435,12 +12382,15 @@ class TagResourceCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.TagResourceContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[TagResourceContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -11448,11 +12398,13 @@ class TagResourceCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["TagResourceContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(TagResourceCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 
@@ -11529,7 +12481,7 @@ class TagResourceContractProperties(msrest.serialization.Model):
 
 
 class TenantConfigurationSyncStateContract(msrest.serialization.Model):
-    """Tenant Configuration Synchronization State.
+    """Result of Tenant Configuration Sync State.
 
     :param branch: The name of Git branch.
     :type branch: str
@@ -11549,16 +12501,19 @@ class TenantConfigurationSyncStateContract(msrest.serialization.Model):
      conforms to the following format: ``yyyy-MM-ddTHH:mm:ssZ`` as specified by the ISO 8601
      standard.
     :type configuration_change_date: ~datetime.datetime
+    :param last_operation_id: Most recent tenant configuration operation identifier.
+    :type last_operation_id: str
     """
 
     _attribute_map = {
-        'branch': {'key': 'branch', 'type': 'str'},
-        'commit_id': {'key': 'commitId', 'type': 'str'},
-        'is_export': {'key': 'isExport', 'type': 'bool'},
-        'is_synced': {'key': 'isSynced', 'type': 'bool'},
-        'is_git_enabled': {'key': 'isGitEnabled', 'type': 'bool'},
-        'sync_date': {'key': 'syncDate', 'type': 'iso-8601'},
-        'configuration_change_date': {'key': 'configurationChangeDate', 'type': 'iso-8601'},
+        'branch': {'key': 'properties.branch', 'type': 'str'},
+        'commit_id': {'key': 'properties.commitId', 'type': 'str'},
+        'is_export': {'key': 'properties.isExport', 'type': 'bool'},
+        'is_synced': {'key': 'properties.isSynced', 'type': 'bool'},
+        'is_git_enabled': {'key': 'properties.isGitEnabled', 'type': 'bool'},
+        'sync_date': {'key': 'properties.syncDate', 'type': 'iso-8601'},
+        'configuration_change_date': {'key': 'properties.configurationChangeDate', 'type': 'iso-8601'},
+        'last_operation_id': {'key': 'properties.lastOperationId', 'type': 'str'},
     }
 
     def __init__(
@@ -11571,6 +12526,7 @@ class TenantConfigurationSyncStateContract(msrest.serialization.Model):
         is_git_enabled: Optional[bool] = None,
         sync_date: Optional[datetime.datetime] = None,
         configuration_change_date: Optional[datetime.datetime] = None,
+        last_operation_id: Optional[str] = None,
         **kwargs
     ):
         super(TenantConfigurationSyncStateContract, self).__init__(**kwargs)
@@ -11581,6 +12537,75 @@ class TenantConfigurationSyncStateContract(msrest.serialization.Model):
         self.is_git_enabled = is_git_enabled
         self.sync_date = sync_date
         self.configuration_change_date = configuration_change_date
+        self.last_operation_id = last_operation_id
+
+
+class TenantSettingsCollection(msrest.serialization.Model):
+    """Paged AccessInformation list representation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Page values.
+    :vartype value: list[~azure.mgmt.apimanagement.models.TenantSettingsContract]
+    :ivar next_link: Next page link if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[TenantSettingsContract]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TenantSettingsCollection, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class TenantSettingsContract(Resource):
+    """Tenant Settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param settings: Tenant settings.
+    :type settings: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'settings': {'key': 'properties.settings', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        settings: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        super(TenantSettingsContract, self).__init__(**kwargs)
+        self.settings = settings
 
 
 class TermsOfServiceProperties(msrest.serialization.Model):
@@ -11652,12 +12677,15 @@ class UserCollection(msrest.serialization.Model):
 
     :param value: Page values.
     :type value: list[~azure.mgmt.apimanagement.models.UserContract]
+    :param count: Total record count number across all pages.
+    :type count: long
     :param next_link: Next page link if any.
     :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[UserContract]'},
+        'count': {'key': 'count', 'type': 'long'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -11665,11 +12693,13 @@ class UserCollection(msrest.serialization.Model):
         self,
         *,
         value: Optional[List["UserContract"]] = None,
+        count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         super(UserCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
         self.next_link = next_link
 
 

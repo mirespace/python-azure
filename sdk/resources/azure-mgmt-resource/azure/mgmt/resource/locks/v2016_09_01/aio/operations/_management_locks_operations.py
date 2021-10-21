@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ManagementLocksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         lock_name: str,
-        parameters: "models.ManagementLockObject",
-        **kwargs
-    ) -> "models.ManagementLockObject":
+        parameters: "_models.ManagementLockObject",
+        **kwargs: Any
+    ) -> "_models.ManagementLockObject":
         """Creates or updates a management lock at the resource group level.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
@@ -67,7 +67,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockObject"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockObject"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,7 +121,7 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a management lock at the resource group level.
 
@@ -178,8 +178,8 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         lock_name: str,
-        **kwargs
-    ) -> "models.ManagementLockObject":
+        **kwargs: Any
+    ) -> "_models.ManagementLockObject":
         """Gets a management lock at the resource group level.
 
         :param resource_group_name: The name of the locked resource group.
@@ -191,7 +191,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockObject"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockObject"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -236,9 +236,9 @@ class ManagementLocksOperations:
         self,
         scope: str,
         lock_name: str,
-        parameters: "models.ManagementLockObject",
-        **kwargs
-    ) -> "models.ManagementLockObject":
+        parameters: "_models.ManagementLockObject",
+        **kwargs: Any
+    ) -> "_models.ManagementLockObject":
         """Create or update a management lock by scope.
 
         :param scope: The scope for the lock. When providing a scope for the assignment, use
@@ -256,7 +256,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockObject"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockObject"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -309,7 +309,7 @@ class ManagementLocksOperations:
         self,
         scope: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a management lock by scope.
 
@@ -361,8 +361,8 @@ class ManagementLocksOperations:
         self,
         scope: str,
         lock_name: str,
-        **kwargs
-    ) -> "models.ManagementLockObject":
+        **kwargs: Any
+    ) -> "_models.ManagementLockObject":
         """Get a management lock by scope.
 
         :param scope: The scope for the lock.
@@ -374,7 +374,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockObject"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockObject"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -422,9 +422,9 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         lock_name: str,
-        parameters: "models.ManagementLockObject",
-        **kwargs
-    ) -> "models.ManagementLockObject":
+        parameters: "_models.ManagementLockObject",
+        **kwargs: Any
+    ) -> "_models.ManagementLockObject":
         """Creates or updates a management lock at the resource level or any level below the resource.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
@@ -452,7 +452,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockObject"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockObject"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -514,7 +514,7 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the management lock of a resource or any level below the resource.
 
@@ -589,8 +589,8 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         lock_name: str,
-        **kwargs
-    ) -> "models.ManagementLockObject":
+        **kwargs: Any
+    ) -> "_models.ManagementLockObject":
         """Get the management lock of a resource or any level below resource.
 
         :param resource_group_name: The name of the resource group.
@@ -611,7 +611,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockObject"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockObject"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -659,9 +659,9 @@ class ManagementLocksOperations:
     async def create_or_update_at_subscription_level(
         self,
         lock_name: str,
-        parameters: "models.ManagementLockObject",
-        **kwargs
-    ) -> "models.ManagementLockObject":
+        parameters: "_models.ManagementLockObject",
+        **kwargs: Any
+    ) -> "_models.ManagementLockObject":
         """Creates or updates a management lock at the subscription level.
 
         When you apply a lock at a parent scope, all child resources inherit the same lock. To create
@@ -679,7 +679,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockObject"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockObject"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -731,7 +731,7 @@ class ManagementLocksOperations:
     async def delete_at_subscription_level(
         self,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the management lock at the subscription level.
 
@@ -784,8 +784,8 @@ class ManagementLocksOperations:
     async def get_at_subscription_level(
         self,
         lock_name: str,
-        **kwargs
-    ) -> "models.ManagementLockObject":
+        **kwargs: Any
+    ) -> "_models.ManagementLockObject":
         """Gets a management lock at the subscription level.
 
         :param lock_name: The name of the lock to get.
@@ -795,7 +795,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockObject"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockObject"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -839,8 +839,8 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ManagementLockListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ManagementLockListResult"]:
         """Gets all the management locks for a resource group.
 
         :param resource_group_name: The name of the resource group containing the locks to get.
@@ -852,7 +852,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -918,8 +918,8 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ManagementLockListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ManagementLockListResult"]:
         """Gets all the management locks for a resource or any level below resource.
 
         :param resource_group_name: The name of the resource group containing the locked resource. The
@@ -940,7 +940,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1005,8 +1005,8 @@ class ManagementLocksOperations:
     def list_at_subscription_level(
         self,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ManagementLockListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ManagementLockListResult"]:
         """Gets all the management locks for a subscription.
 
         :param filter: The filter to apply on the operation.
@@ -1016,7 +1016,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1077,8 +1077,8 @@ class ManagementLocksOperations:
         self,
         scope: str,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ManagementLockListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ManagementLockListResult"]:
         """Gets all the management locks for a scope.
 
         :param scope: The scope for the lock. When providing a scope for the assignment, use
@@ -1094,7 +1094,7 @@ class ManagementLocksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementLockListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementLockListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

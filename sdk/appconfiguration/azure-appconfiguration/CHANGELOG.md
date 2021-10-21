@@ -1,10 +1,45 @@
-
 # Release History
 
--------------------
+## 1.3.0 (Unreleased)
 
-## 1.1.2 (Unreleased)
+### Features Added
 
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fix the issue that data was persisted according to an incorrect schema/in an incorrect format ([#20518](https://github.com/Azure/azure-sdk-for-python/issues/20518))
+
+  `SecretReferenceConfigurationSetting` in 1.2.0 used "secret_uri" rather than "uri" as the schema keywords which 
+  broken inter-operation of `SecretReferenceConfigurationSetting` between SDK and the portal. 
+  
+  Please:
+  - Use 1.3.0+ for any `SecretReferenceConfigurationSetting` uses.
+  - Call a get method for existing `SecretReferenceConfigurationSetting`s and set them back to correct the format.
+
+### Other Changes
+
+## 1.2.0 (2021-07-06)
+### Features Added
+* Adds `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting` models
+* `AzureAppConfigurationClient` can now be used as a context manager.
+* Adds `update_sync_token` to update sync tokens from Event Grid notifications.
+
+## 1.2.0b2 (2021-06-08)
+
+### Features
+- Adds context manager functionality to the sync and async `AzureAppConfigurationClient`s.
+
+### Fixes
+- Fixes a deserialization bug for `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting`.
+
+## 1.2.0b1 (2021-04-06)
+
+### Features
+
+- Adds method `update_sync_token` to include sync tokens from EventGrid notifications.
+- Added `SecretReferenceConfigurationSetting` type to represent a configuration setting that references a KeyVault Secret.
+Added `FeatureFlagConfigurationSetting` type to represent a configuration setting that controls a feature flag.
 
 ## 1.1.1 (2020-10-05)
 

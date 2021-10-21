@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import ApiManagementClientConfiguration
 from .operations import ApiOperations
@@ -40,7 +41,7 @@ from .operations import BackendOperations
 from .operations import CacheOperations
 from .operations import CertificateOperations
 from .operations import ContentTypeOperations
-from .operations import ContentTypeContentItemOperations
+from .operations import ContentItemOperations
 from .operations import DeletedServicesOperations
 from .operations import ApiManagementOperationsOperations
 from .operations import ApiManagementServiceSkusOperations
@@ -50,6 +51,7 @@ from .operations import EmailTemplateOperations
 from .operations import GatewayOperations
 from .operations import GatewayHostnameConfigurationOperations
 from .operations import GatewayApiOperations
+from .operations import GatewayCertificateAuthorityOperations
 from .operations import GroupOperations
 from .operations import GroupUserOperations
 from .operations import IdentityProviderOperations
@@ -63,6 +65,8 @@ from .operations import NotificationRecipientEmailOperations
 from .operations import OpenIdConnectProviderOperations
 from .operations import PolicyOperations
 from .operations import PolicyDescriptionOperations
+from .operations import PortalRevisionOperations
+from .operations import PortalSettingsOperations
 from .operations import SignInSettingsOperations
 from .operations import SignUpSettingsOperations
 from .operations import DelegationSettingsOperations
@@ -75,6 +79,8 @@ from .operations import QuotaByCounterKeysOperations
 from .operations import QuotaByPeriodKeysOperations
 from .operations import RegionOperations
 from .operations import ReportsOperations
+from .operations import TenantSettingsOperations
+from .operations import ApiManagementSkusOperations
 from .operations import SubscriptionOperations
 from .operations import TagResourceOperations
 from .operations import TenantAccessOperations
@@ -135,8 +141,8 @@ class ApiManagementClient(object):
     :vartype certificate: azure.mgmt.apimanagement.operations.CertificateOperations
     :ivar content_type: ContentTypeOperations operations
     :vartype content_type: azure.mgmt.apimanagement.operations.ContentTypeOperations
-    :ivar content_type_content_item: ContentTypeContentItemOperations operations
-    :vartype content_type_content_item: azure.mgmt.apimanagement.operations.ContentTypeContentItemOperations
+    :ivar content_item: ContentItemOperations operations
+    :vartype content_item: azure.mgmt.apimanagement.operations.ContentItemOperations
     :ivar deleted_services: DeletedServicesOperations operations
     :vartype deleted_services: azure.mgmt.apimanagement.operations.DeletedServicesOperations
     :ivar api_management_operations: ApiManagementOperationsOperations operations
@@ -155,6 +161,8 @@ class ApiManagementClient(object):
     :vartype gateway_hostname_configuration: azure.mgmt.apimanagement.operations.GatewayHostnameConfigurationOperations
     :ivar gateway_api: GatewayApiOperations operations
     :vartype gateway_api: azure.mgmt.apimanagement.operations.GatewayApiOperations
+    :ivar gateway_certificate_authority: GatewayCertificateAuthorityOperations operations
+    :vartype gateway_certificate_authority: azure.mgmt.apimanagement.operations.GatewayCertificateAuthorityOperations
     :ivar group: GroupOperations operations
     :vartype group: azure.mgmt.apimanagement.operations.GroupOperations
     :ivar group_user: GroupUserOperations operations
@@ -181,6 +189,10 @@ class ApiManagementClient(object):
     :vartype policy: azure.mgmt.apimanagement.operations.PolicyOperations
     :ivar policy_description: PolicyDescriptionOperations operations
     :vartype policy_description: azure.mgmt.apimanagement.operations.PolicyDescriptionOperations
+    :ivar portal_revision: PortalRevisionOperations operations
+    :vartype portal_revision: azure.mgmt.apimanagement.operations.PortalRevisionOperations
+    :ivar portal_settings: PortalSettingsOperations operations
+    :vartype portal_settings: azure.mgmt.apimanagement.operations.PortalSettingsOperations
     :ivar sign_in_settings: SignInSettingsOperations operations
     :vartype sign_in_settings: azure.mgmt.apimanagement.operations.SignInSettingsOperations
     :ivar sign_up_settings: SignUpSettingsOperations operations
@@ -205,6 +217,10 @@ class ApiManagementClient(object):
     :vartype region: azure.mgmt.apimanagement.operations.RegionOperations
     :ivar reports: ReportsOperations operations
     :vartype reports: azure.mgmt.apimanagement.operations.ReportsOperations
+    :ivar tenant_settings: TenantSettingsOperations operations
+    :vartype tenant_settings: azure.mgmt.apimanagement.operations.TenantSettingsOperations
+    :ivar api_management_skus: ApiManagementSkusOperations operations
+    :vartype api_management_skus: azure.mgmt.apimanagement.operations.ApiManagementSkusOperations
     :ivar subscription: SubscriptionOperations operations
     :vartype subscription: azure.mgmt.apimanagement.operations.SubscriptionOperations
     :ivar tag_resource: TagResourceOperations operations
@@ -295,7 +311,7 @@ class ApiManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.content_type = ContentTypeOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.content_type_content_item = ContentTypeContentItemOperations(
+        self.content_item = ContentItemOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.deleted_services = DeletedServicesOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -314,6 +330,8 @@ class ApiManagementClient(object):
         self.gateway_hostname_configuration = GatewayHostnameConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.gateway_api = GatewayApiOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.gateway_certificate_authority = GatewayCertificateAuthorityOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.group = GroupOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -341,6 +359,10 @@ class ApiManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.policy_description = PolicyDescriptionOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.portal_revision = PortalRevisionOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.portal_settings = PortalSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.sign_in_settings = SignInSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.sign_up_settings = SignUpSettingsOperations(
@@ -365,6 +387,10 @@ class ApiManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.reports = ReportsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.tenant_settings = TenantSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.api_management_skus = ApiManagementSkusOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.subscription = SubscriptionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.tag_resource = TagResourceOperations(
@@ -385,6 +411,24 @@ class ApiManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.user_confirmation_password = UserConfirmationPasswordOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

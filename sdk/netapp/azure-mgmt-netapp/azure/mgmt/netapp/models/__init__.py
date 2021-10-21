@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AccountEncryption
     from ._models_py3 import ActiveDirectory
     from ._models_py3 import AuthorizeRequest
     from ._models_py3 import Backup
@@ -15,16 +16,20 @@ try:
     from ._models_py3 import BackupPolicy
     from ._models_py3 import BackupPolicyDetails
     from ._models_py3 import BackupPolicyPatch
+    from ._models_py3 import BackupStatus
     from ._models_py3 import BackupsList
     from ._models_py3 import BreakReplicationRequest
     from ._models_py3 import CapacityPool
     from ._models_py3 import CapacityPoolList
     from ._models_py3 import CapacityPoolPatch
     from ._models_py3 import CheckAvailabilityResponse
+    from ._models_py3 import CloudErrorBody
     from ._models_py3 import DailySchedule
     from ._models_py3 import Dimension
     from ._models_py3 import ExportPolicyRule
+    from ._models_py3 import FilePathAvailabilityRequest
     from ._models_py3 import HourlySchedule
+    from ._models_py3 import LogSpecification
     from ._models_py3 import MetricSpecification
     from ._models_py3 import MonthlySchedule
     from ._models_py3 import MountTarget
@@ -36,10 +41,14 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
     from ._models_py3 import PoolChangeRequest
+    from ._models_py3 import ProxyResource
     from ._models_py3 import QuotaAvailabilityRequest
     from ._models_py3 import ReplicationObject
     from ._models_py3 import ReplicationStatus
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceIdentity
     from ._models_py3 import ResourceNameAvailabilityRequest
+    from ._models_py3 import RestoreStatus
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Snapshot
     from ._models_py3 import SnapshotPoliciesList
@@ -48,6 +57,9 @@ try:
     from ._models_py3 import SnapshotPolicyPatch
     from ._models_py3 import SnapshotPolicyVolumeList
     from ._models_py3 import SnapshotsList
+    from ._models_py3 import SubscriptionQuotaItem
+    from ._models_py3 import SubscriptionQuotaItemList
+    from ._models_py3 import SystemData
     from ._models_py3 import Vault
     from ._models_py3 import VaultList
     from ._models_py3 import Volume
@@ -63,6 +75,7 @@ try:
     from ._models_py3 import VolumeSnapshotProperties
     from ._models_py3 import WeeklySchedule
 except (SyntaxError, ImportError):
+    from ._models import AccountEncryption  # type: ignore
     from ._models import ActiveDirectory  # type: ignore
     from ._models import AuthorizeRequest  # type: ignore
     from ._models import Backup  # type: ignore
@@ -71,16 +84,20 @@ except (SyntaxError, ImportError):
     from ._models import BackupPolicy  # type: ignore
     from ._models import BackupPolicyDetails  # type: ignore
     from ._models import BackupPolicyPatch  # type: ignore
+    from ._models import BackupStatus  # type: ignore
     from ._models import BackupsList  # type: ignore
     from ._models import BreakReplicationRequest  # type: ignore
     from ._models import CapacityPool  # type: ignore
     from ._models import CapacityPoolList  # type: ignore
     from ._models import CapacityPoolPatch  # type: ignore
     from ._models import CheckAvailabilityResponse  # type: ignore
+    from ._models import CloudErrorBody  # type: ignore
     from ._models import DailySchedule  # type: ignore
     from ._models import Dimension  # type: ignore
     from ._models import ExportPolicyRule  # type: ignore
+    from ._models import FilePathAvailabilityRequest  # type: ignore
     from ._models import HourlySchedule  # type: ignore
+    from ._models import LogSpecification  # type: ignore
     from ._models import MetricSpecification  # type: ignore
     from ._models import MonthlySchedule  # type: ignore
     from ._models import MountTarget  # type: ignore
@@ -92,10 +109,14 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import PoolChangeRequest  # type: ignore
+    from ._models import ProxyResource  # type: ignore
     from ._models import QuotaAvailabilityRequest  # type: ignore
     from ._models import ReplicationObject  # type: ignore
     from ._models import ReplicationStatus  # type: ignore
+    from ._models import Resource  # type: ignore
+    from ._models import ResourceIdentity  # type: ignore
     from ._models import ResourceNameAvailabilityRequest  # type: ignore
+    from ._models import RestoreStatus  # type: ignore
     from ._models import ServiceSpecification  # type: ignore
     from ._models import Snapshot  # type: ignore
     from ._models import SnapshotPoliciesList  # type: ignore
@@ -104,6 +125,9 @@ except (SyntaxError, ImportError):
     from ._models import SnapshotPolicyPatch  # type: ignore
     from ._models import SnapshotPolicyVolumeList  # type: ignore
     from ._models import SnapshotsList  # type: ignore
+    from ._models import SubscriptionQuotaItem  # type: ignore
+    from ._models import SubscriptionQuotaItemList  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import Vault  # type: ignore
     from ._models import VaultList  # type: ignore
     from ._models import Volume  # type: ignore
@@ -121,19 +145,28 @@ except (SyntaxError, ImportError):
 
 from ._net_app_management_client_enums import (
     ActiveDirectoryStatus,
+    AvsDataStore,
+    BackupType,
     CheckNameResourceTypes,
     CheckQuotaNameResourceTypes,
+    ChownMode,
+    CreatedByType,
+    EncryptionType,
     EndpointType,
     InAvailabilityReasonType,
+    MetricAggregationType,
     MirrorState,
+    NetworkFeatures,
     QosType,
     RelationshipStatus,
     ReplicationSchedule,
     SecurityStyle,
     ServiceLevel,
+    VolumeStorageToNetworkProximity,
 )
 
 __all__ = [
+    'AccountEncryption',
     'ActiveDirectory',
     'AuthorizeRequest',
     'Backup',
@@ -142,16 +175,20 @@ __all__ = [
     'BackupPolicy',
     'BackupPolicyDetails',
     'BackupPolicyPatch',
+    'BackupStatus',
     'BackupsList',
     'BreakReplicationRequest',
     'CapacityPool',
     'CapacityPoolList',
     'CapacityPoolPatch',
     'CheckAvailabilityResponse',
+    'CloudErrorBody',
     'DailySchedule',
     'Dimension',
     'ExportPolicyRule',
+    'FilePathAvailabilityRequest',
     'HourlySchedule',
+    'LogSpecification',
     'MetricSpecification',
     'MonthlySchedule',
     'MountTarget',
@@ -163,10 +200,14 @@ __all__ = [
     'OperationDisplay',
     'OperationListResult',
     'PoolChangeRequest',
+    'ProxyResource',
     'QuotaAvailabilityRequest',
     'ReplicationObject',
     'ReplicationStatus',
+    'Resource',
+    'ResourceIdentity',
     'ResourceNameAvailabilityRequest',
+    'RestoreStatus',
     'ServiceSpecification',
     'Snapshot',
     'SnapshotPoliciesList',
@@ -175,6 +216,9 @@ __all__ = [
     'SnapshotPolicyPatch',
     'SnapshotPolicyVolumeList',
     'SnapshotsList',
+    'SubscriptionQuotaItem',
+    'SubscriptionQuotaItemList',
+    'SystemData',
     'Vault',
     'VaultList',
     'Volume',
@@ -190,14 +234,22 @@ __all__ = [
     'VolumeSnapshotProperties',
     'WeeklySchedule',
     'ActiveDirectoryStatus',
+    'AvsDataStore',
+    'BackupType',
     'CheckNameResourceTypes',
     'CheckQuotaNameResourceTypes',
+    'ChownMode',
+    'CreatedByType',
+    'EncryptionType',
     'EndpointType',
     'InAvailabilityReasonType',
+    'MetricAggregationType',
     'MirrorState',
+    'NetworkFeatures',
     'QosType',
     'RelationshipStatus',
     'ReplicationSchedule',
     'SecurityStyle',
     'ServiceLevel',
+    'VolumeStorageToNetworkProximity',
 ]

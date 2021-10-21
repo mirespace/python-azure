@@ -8,17 +8,12 @@
 
 from ._compliance_results_operations import ComplianceResultsOperations
 from ._pricings_operations import PricingsOperations
-from ._settings_operations import SettingsOperations
 from ._advanced_threat_protection_operations import AdvancedThreatProtectionOperations
 from ._device_security_groups_operations import DeviceSecurityGroupsOperations
 from ._iot_security_solution_operations import IotSecuritySolutionOperations
 from ._iot_security_solution_analytics_operations import IotSecuritySolutionAnalyticsOperations
 from ._iot_security_solutions_analytics_aggregated_alert_operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
 from ._iot_security_solutions_analytics_recommendation_operations import IotSecuritySolutionsAnalyticsRecommendationOperations
-from ._iot_alert_types_operations import IotAlertTypesOperations
-from ._iot_alerts_operations import IotAlertsOperations
-from ._iot_recommendation_types_operations import IotRecommendationTypesOperations
-from ._iot_recommendations_operations import IotRecommendationsOperations
 from ._locations_operations import LocationsOperations
 from ._operations import Operations
 from ._tasks_operations import TasksOperations
@@ -40,7 +35,6 @@ from ._adaptive_application_controls_operations import AdaptiveApplicationContro
 from ._adaptive_network_hardenings_operations import AdaptiveNetworkHardeningsOperations
 from ._allowed_connections_operations import AllowedConnectionsOperations
 from ._topology_operations import TopologyOperations
-from ._alerts_operations import AlertsOperations
 from ._jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
 from ._discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from ._security_solutions_reference_data_operations import SecuritySolutionsReferenceDataOperations
@@ -50,27 +44,23 @@ from ._secure_score_controls_operations import SecureScoreControlsOperations
 from ._secure_score_control_definitions_operations import SecureScoreControlDefinitionsOperations
 from ._security_solutions_operations import SecuritySolutionsOperations
 from ._connectors_operations import ConnectorsOperations
-from ._iot_defender_settings_operations import IotDefenderSettingsOperations
-from ._iot_sensors_operations import IotSensorsOperations
-from ._devices_for_subscription_operations import DevicesForSubscriptionOperations
-from ._devices_for_hub_operations import DevicesForHubOperations
-from ._device_operations import DeviceOperations
-from ._on_premise_iot_sensors_operations import OnPremiseIotSensorsOperations
+from ._sql_vulnerability_assessment_scans_operations import SqlVulnerabilityAssessmentScansOperations
+from ._sql_vulnerability_assessment_scan_results_operations import SqlVulnerabilityAssessmentScanResultsOperations
+from ._sql_vulnerability_assessment_baseline_rules_operations import SqlVulnerabilityAssessmentBaselineRulesOperations
+from ._alerts_operations import AlertsOperations
+from ._settings_operations import SettingsOperations
+from ._ingestion_settings_operations import IngestionSettingsOperations
+from ._software_inventories_operations import SoftwareInventoriesOperations
 
 __all__ = [
     'ComplianceResultsOperations',
     'PricingsOperations',
-    'SettingsOperations',
     'AdvancedThreatProtectionOperations',
     'DeviceSecurityGroupsOperations',
     'IotSecuritySolutionOperations',
     'IotSecuritySolutionAnalyticsOperations',
     'IotSecuritySolutionsAnalyticsAggregatedAlertOperations',
     'IotSecuritySolutionsAnalyticsRecommendationOperations',
-    'IotAlertTypesOperations',
-    'IotAlertsOperations',
-    'IotRecommendationTypesOperations',
-    'IotRecommendationsOperations',
     'LocationsOperations',
     'Operations',
     'TasksOperations',
@@ -92,7 +82,6 @@ __all__ = [
     'AdaptiveNetworkHardeningsOperations',
     'AllowedConnectionsOperations',
     'TopologyOperations',
-    'AlertsOperations',
     'JitNetworkAccessPoliciesOperations',
     'DiscoveredSecuritySolutionsOperations',
     'SecuritySolutionsReferenceDataOperations',
@@ -102,10 +91,11 @@ __all__ = [
     'SecureScoreControlDefinitionsOperations',
     'SecuritySolutionsOperations',
     'ConnectorsOperations',
-    'IotDefenderSettingsOperations',
-    'IotSensorsOperations',
-    'DevicesForSubscriptionOperations',
-    'DevicesForHubOperations',
-    'DeviceOperations',
-    'OnPremiseIotSensorsOperations',
+    'SqlVulnerabilityAssessmentScansOperations',
+    'SqlVulnerabilityAssessmentScanResultsOperations',
+    'SqlVulnerabilityAssessmentBaselineRulesOperations',
+    'AlertsOperations',
+    'SettingsOperations',
+    'IngestionSettingsOperations',
+    'SoftwareInventoriesOperations',
 ]

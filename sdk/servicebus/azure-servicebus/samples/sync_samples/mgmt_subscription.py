@@ -17,11 +17,13 @@ Example to show managing subscription entities under a ServiceBus Namespace, inc
 # pylint: disable=C0111
 
 import os
+import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-TOPIC_NAME = "sb_mgmt_demo_topic"
-SUBSCRIPTION_NAME = "sb_mgmt_demo_subscription"
+TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
+SUBSCRIPTION_NAME = "sb_mgmt_sub" + str(uuid.uuid4())
+
 
 
 def create_subscription(servicebus_mgmt_client):
@@ -51,8 +53,13 @@ def get_and_update_subscription(servicebus_mgmt_client):
     print("Subscription Name:", subscription_properties.name)
     print("Please refer to SubscriptionDescription for complete available settings.")
     print("")
+    # update by updating the properties in the model
     subscription_properties.max_delivery_count = 5
     servicebus_mgmt_client.update_subscription(TOPIC_NAME, subscription_properties)
+
+    # update by passing keyword arguments
+    subscription_properties = servicebus_mgmt_client.get_subscription(TOPIC_NAME, SUBSCRIPTION_NAME)
+    servicebus_mgmt_client.update_subscription(TOPIC_NAME, subscription_properties, max_delivery_count=3)
 
 
 def get_subscription_runtime_properties(servicebus_mgmt_client):

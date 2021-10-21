@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DataFlowDebugSessionOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,10 +47,10 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: "models.CreateDataFlowDebugSessionRequest",
-        **kwargs
-    ) -> Optional["models.CreateDataFlowDebugSessionResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CreateDataFlowDebugSessionResponse"]]
+        request: "_models.CreateDataFlowDebugSessionRequest",
+        **kwargs: Any
+    ) -> Optional["_models.CreateDataFlowDebugSessionResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CreateDataFlowDebugSessionResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,9 +106,9 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: "models.CreateDataFlowDebugSessionRequest",
-        **kwargs
-    ) -> AsyncLROPoller["models.CreateDataFlowDebugSessionResponse"]:
+        request: "_models.CreateDataFlowDebugSessionRequest",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.CreateDataFlowDebugSessionResponse"]:
         """Creates a data flow debug session.
 
         :param resource_group_name: The resource group name.
@@ -119,8 +119,8 @@ class DataFlowDebugSessionOperations:
         :type request: ~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CreateDataFlowDebugSessionResponse or the result of cls(response)
@@ -128,7 +128,7 @@ class DataFlowDebugSessionOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CreateDataFlowDebugSessionResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CreateDataFlowDebugSessionResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -177,8 +177,8 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.QueryDataFlowDebugSessionsResponse"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.QueryDataFlowDebugSessionsResponse"]:
         """Query all active data flow debug sessions.
 
         :param resource_group_name: The resource group name.
@@ -190,7 +190,7 @@ class DataFlowDebugSessionOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.QueryDataFlowDebugSessionsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QueryDataFlowDebugSessionsResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryDataFlowDebugSessionsResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -251,9 +251,9 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: "models.DataFlowDebugPackage",
-        **kwargs
-    ) -> "models.AddDataFlowToDebugSessionResponse":
+        request: "_models.DataFlowDebugPackage",
+        **kwargs: Any
+    ) -> "_models.AddDataFlowToDebugSessionResponse":
         """Add a data flow into debug session.
 
         :param resource_group_name: The resource group name.
@@ -267,7 +267,7 @@ class DataFlowDebugSessionOperations:
         :rtype: ~azure.mgmt.datafactory.models.AddDataFlowToDebugSessionResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AddDataFlowToDebugSessionResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddDataFlowToDebugSessionResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -317,8 +317,8 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: "models.DeleteDataFlowDebugSessionRequest",
-        **kwargs
+        request: "_models.DeleteDataFlowDebugSessionRequest",
+        **kwargs: Any
     ) -> None:
         """Deletes a data flow debug session.
 
@@ -380,10 +380,10 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: "models.DataFlowDebugCommandRequest",
-        **kwargs
-    ) -> Optional["models.DataFlowDebugCommandResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DataFlowDebugCommandResponse"]]
+        request: "_models.DataFlowDebugCommandRequest",
+        **kwargs: Any
+    ) -> Optional["_models.DataFlowDebugCommandResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DataFlowDebugCommandResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -439,9 +439,9 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: "models.DataFlowDebugCommandRequest",
-        **kwargs
-    ) -> AsyncLROPoller["models.DataFlowDebugCommandResponse"]:
+        request: "_models.DataFlowDebugCommandRequest",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.DataFlowDebugCommandResponse"]:
         """Execute a data flow debug command.
 
         :param resource_group_name: The resource group name.
@@ -452,8 +452,8 @@ class DataFlowDebugSessionOperations:
         :type request: ~azure.mgmt.datafactory.models.DataFlowDebugCommandRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataFlowDebugCommandResponse or the result of cls(response)
@@ -461,7 +461,7 @@ class DataFlowDebugSessionOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowDebugCommandResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowDebugCommandResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval

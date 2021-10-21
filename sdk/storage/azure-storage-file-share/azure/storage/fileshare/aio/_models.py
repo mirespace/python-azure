@@ -7,11 +7,11 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from azure.core.async_paging import AsyncPageIterator
+from azure.core.exceptions import HttpResponseError
 
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
-from .._generated.models import StorageErrorException
 from .._generated.models import DirectoryItem
-from .._models import Handle, ShareProperties
+from .._models import Handle, ShareProperties, DirectoryProperties, FileProperties
 
 
 def _wrap_item(item):
@@ -61,7 +61,7 @@ class SharePropertiesPaged(AsyncPageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
@@ -109,7 +109,7 @@ class HandlesPaged(AsyncPageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
@@ -164,7 +164,7 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
@@ -173,6 +173,6 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [_wrap_item(i) for i in self._response.segment.directory_items]
-        self.current_page.extend([_wrap_item(i) for i in self._response.segment.file_items])
+        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
+        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items]) # pylint: disable = protected-access
         return self._response.next_marker or None, self.current_page

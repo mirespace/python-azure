@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'''
+    body: 'b''{"source": "blob_sas_url"}'''
     headers:
       Accept:
       - application/json
@@ -9,26 +9,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '160'
+      - '223'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyze?language=not%20a%20language
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?language=not%20a%20language&readingOrder=basic
   response:
     body:
       string: '{"error": {"code": "NotSupportedLanguage", "message": "The requested
         operation is not supported in the language specified."}}'
     headers:
       apim-request-id:
-      - a18801d5-1667-4e2b-85a9-728e2d64446a
+      - a792b0aa-376a-459e-be78-e1add28aa429
       content-length:
       - '121'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 19:22:14 GMT
+      - Thu, 23 Sep 2021 22:40:28 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ProvidersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,8 +44,8 @@ class ProvidersOperations:
     async def unregister(
         self,
         resource_provider_namespace: str,
-        **kwargs
-    ) -> "models.Provider":
+        **kwargs: Any
+    ) -> "_models.Provider":
         """Unregisters provider from a subscription.
 
         :param resource_provider_namespace: Namespace of the resource provider.
@@ -55,7 +55,7 @@ class ProvidersOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Provider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Provider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -98,8 +98,8 @@ class ProvidersOperations:
     async def register(
         self,
         resource_provider_namespace: str,
-        **kwargs
-    ) -> "models.Provider":
+        **kwargs: Any
+    ) -> "_models.Provider":
         """Registers provider to be used with a subscription.
 
         :param resource_provider_namespace: Namespace of the resource provider.
@@ -109,7 +109,7 @@ class ProvidersOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Provider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Provider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -153,8 +153,8 @@ class ProvidersOperations:
         self,
         top: Optional[int] = None,
         expand: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ProviderListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ProviderListResult"]:
         """Gets a list of resource providers.
 
         :param top: Query parameters. If null is passed returns all deployments.
@@ -167,7 +167,7 @@ class ProvidersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2016_02_01.models.ProviderListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProviderListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProviderListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -230,8 +230,8 @@ class ProvidersOperations:
         self,
         resource_provider_namespace: str,
         expand: Optional[str] = None,
-        **kwargs
-    ) -> "models.Provider":
+        **kwargs: Any
+    ) -> "_models.Provider":
         """Gets a resource provider.
 
         :param resource_provider_namespace: Namespace of the resource provider.
@@ -244,7 +244,7 @@ class ProvidersOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Provider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Provider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

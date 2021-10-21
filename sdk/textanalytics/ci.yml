@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,7 +15,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -30,7 +30,5 @@ extends:
   parameters:
     ServiceDirectory: textanalytics
     Artifacts:
-    - name: azure_ai_textanalytics
+    - name: azure-ai-textanalytics
       safeName: azureaitextanalytics
-    - name: azure_ai_nspkg
-      safeName: azureainspkg

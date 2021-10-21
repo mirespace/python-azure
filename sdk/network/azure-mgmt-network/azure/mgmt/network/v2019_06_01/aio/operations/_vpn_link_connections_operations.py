@@ -46,7 +46,7 @@ class VpnLinkConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVpnSiteLinkConnectionsResult"]:
         """Retrieves all vpn site link connections for a particular virtual wan vpn gateway vpn
         connection.
@@ -110,7 +110,7 @@ class VpnLinkConnectionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

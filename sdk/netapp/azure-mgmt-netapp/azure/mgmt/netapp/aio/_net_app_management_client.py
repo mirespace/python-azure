@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -18,25 +19,28 @@ if TYPE_CHECKING:
 from ._configuration import NetAppManagementClientConfiguration
 from .operations import Operations
 from .operations import NetAppResourceOperations
+from .operations import NetAppResourceQuotaLimitsOperations
 from .operations import AccountsOperations
 from .operations import PoolsOperations
 from .operations import VolumesOperations
 from .operations import SnapshotsOperations
 from .operations import SnapshotPoliciesOperations
-from .operations import AccountBackupsOperations
 from .operations import BackupsOperations
+from .operations import AccountBackupsOperations
 from .operations import BackupPoliciesOperations
 from .operations import VaultsOperations
 from .. import models
 
 
 class NetAppManagementClient(object):
-    """Microsoft NetApp Azure Resource Provider specification.
+    """Microsoft NetApp Files Azure Resource Provider specification.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.netapp.aio.operations.Operations
     :ivar net_app_resource: NetAppResourceOperations operations
     :vartype net_app_resource: azure.mgmt.netapp.aio.operations.NetAppResourceOperations
+    :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
+    :vartype net_app_resource_quota_limits: azure.mgmt.netapp.aio.operations.NetAppResourceQuotaLimitsOperations
     :ivar accounts: AccountsOperations operations
     :vartype accounts: azure.mgmt.netapp.aio.operations.AccountsOperations
     :ivar pools: PoolsOperations operations
@@ -47,10 +51,10 @@ class NetAppManagementClient(object):
     :vartype snapshots: azure.mgmt.netapp.aio.operations.SnapshotsOperations
     :ivar snapshot_policies: SnapshotPoliciesOperations operations
     :vartype snapshot_policies: azure.mgmt.netapp.aio.operations.SnapshotPoliciesOperations
-    :ivar account_backups: AccountBackupsOperations operations
-    :vartype account_backups: azure.mgmt.netapp.aio.operations.AccountBackupsOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.netapp.aio.operations.BackupsOperations
+    :ivar account_backups: AccountBackupsOperations operations
+    :vartype account_backups: azure.mgmt.netapp.aio.operations.AccountBackupsOperations
     :ivar backup_policies: BackupPoliciesOperations operations
     :vartype backup_policies: azure.mgmt.netapp.aio.operations.BackupPoliciesOperations
     :ivar vaults: VaultsOperations operations
@@ -84,6 +88,8 @@ class NetAppManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.net_app_resource = NetAppResourceOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.accounts = AccountsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.pools = PoolsOperations(
@@ -94,14 +100,31 @@ class NetAppManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.snapshot_policies = SnapshotPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.account_backups = AccountBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.account_backups = AccountBackupsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.backup_policies = BackupPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

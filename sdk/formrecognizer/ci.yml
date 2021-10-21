@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - hotfix/*
     - feature/*
     - release/*
@@ -15,7 +15,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -29,5 +29,5 @@ extends:
   parameters:
     ServiceDirectory: formrecognizer
     Artifacts:
-    - name: azure_ai_formrecognizer
+    - name: azure-ai-formrecognizer
       safeName: azureaiformrecognizer

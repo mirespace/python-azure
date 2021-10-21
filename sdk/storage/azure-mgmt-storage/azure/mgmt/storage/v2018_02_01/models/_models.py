@@ -75,17 +75,17 @@ class AccountSasParameters(msrest.serialization.Model):
 
 
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -112,17 +112,17 @@ class Resource(msrest.serialization.Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an etag.
+    """The resource model definition for an Azure Resource Manager resource with an etag.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -155,13 +155,13 @@ class BlobContainer(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -346,8 +346,8 @@ class Encryption(msrest.serialization.Model):
 
     :param services: List of services which support encryption.
     :type services: ~azure.mgmt.storage.v2018_02_01.models.EncryptionServices
-    :param key_source: Required. The encryption keySource (provider). Possible values (case-
-     insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
+    :param key_source: Required. The encryption keySource (provider). Possible values
+     (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
      "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
     :type key_source: str or ~azure.mgmt.storage.v2018_02_01.models.KeySource
     :param key_vault_properties: Properties provided by key vault.
@@ -505,7 +505,7 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: Required. The identity type. Default value: "SystemAssigned".
+    :ivar type: The identity type. Has constant value: "SystemAssigned".
     :vartype type: str
     """
 
@@ -539,13 +539,13 @@ class ImmutabilityPolicy(AzureEntityResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -628,20 +628,18 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
 class IPRule(msrest.serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
      address is allowed.
     :type ip_address_or_range: str
-    :ivar action: The action of IP ACL rule. Default value: "Allow".
-    :vartype action: str
+    :param action: The action of IP ACL rule. The only acceptable values to pass in are None and
+     "Allow". The default value is None.
+    :type action: str
     """
 
     _validation = {
         'ip_address_or_range': {'required': True},
-        'action': {'constant': True},
     }
 
     _attribute_map = {
@@ -649,14 +647,13 @@ class IPRule(msrest.serialization.Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    action = "Allow"
-
     def __init__(
         self,
         **kwargs
     ):
         super(IPRule, self).__init__(**kwargs)
         self.ip_address_or_range = kwargs['ip_address_or_range']
+        self.action = kwargs.get('action', None)
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -853,13 +850,13 @@ class ListContainerItem(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -1414,19 +1411,19 @@ class SKUCapability(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -1465,13 +1462,13 @@ class StorageAccount(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -1611,7 +1608,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The storage account name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Storage/storageAccounts. Default value:
+    :ivar type: The type of resource, Microsoft.Storage/storageAccounts. Has constant value:
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
@@ -2103,15 +2100,14 @@ class UsageName(msrest.serialization.Model):
 class VirtualNetworkRule(msrest.serialization.Model):
     """Virtual Network rule.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param virtual_network_resource_id: Required. Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type virtual_network_resource_id: str
-    :ivar action: The action of virtual network rule. Default value: "Allow".
-    :vartype action: str
+    :param action: The action of virtual network rule. The only acceptable values to pass in are
+     None and "Allow". The default value is None.
+    :type action: str
     :param state: Gets the state of virtual network rule. Possible values include: "provisioning",
      "deprovisioning", "succeeded", "failed", "networkSourceDeleted".
     :type state: str or ~azure.mgmt.storage.v2018_02_01.models.State
@@ -2119,7 +2115,6 @@ class VirtualNetworkRule(msrest.serialization.Model):
 
     _validation = {
         'virtual_network_resource_id': {'required': True},
-        'action': {'constant': True},
     }
 
     _attribute_map = {
@@ -2128,12 +2123,11 @@ class VirtualNetworkRule(msrest.serialization.Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    action = "Allow"
-
     def __init__(
         self,
         **kwargs
     ):
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.virtual_network_resource_id = kwargs['virtual_network_resource_id']
+        self.action = kwargs.get('action', None)
         self.state = kwargs.get('state', None)

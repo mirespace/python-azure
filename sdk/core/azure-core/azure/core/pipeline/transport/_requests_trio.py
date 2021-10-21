@@ -26,7 +26,9 @@
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType
+from typing import (
+    Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+)
 import trio
 import urllib3
 
@@ -42,8 +44,15 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
+from .._tools import is_rest as _is_rest
+from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
+if TYPE_CHECKING:
+    from ...rest import (
+        HttpRequest as RestHttpRequest,
+        AsyncHttpResponse as RestAsyncHttpResponse,
+    )
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -54,81 +63,60 @@ class TrioStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The response object.
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+        on the *content-encoding* header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        internal_response = response.internal_response
+        if decompress:
+            self.iter_content_func = internal_response.iter_content(self.block_size)
+        else:
+            self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
-        self.downloaded = 0
 
     def __len__(self):
         return self.content_length
 
     async def __anext__(self):
-        retry_active = True
-        retry_total = 3
-        while retry_active:
+        internal_response = self.response.internal_response
+        try:
             try:
-                try:
-                    chunk = await trio.to_thread.run_sync(
-                        _iterate_response_content,
-                        self.iter_content_func,
-                    )
-                except AttributeError:  # trio < 0.12.1
-                    chunk = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
-                        _iterate_response_content,
-                        self.iter_content_func,
-                    )
-                if not chunk:
-                    raise _ResponseStopIteration()
-                self.downloaded += self.block_size
-                return chunk
-            except _ResponseStopIteration:
-                self.response.internal_response.close()
-                raise StopAsyncIteration()
-            except (requests.exceptions.ChunkedEncodingError,
-                    requests.exceptions.ConnectionError):
-                retry_total -= 1
-                if retry_total <= 0:
-                    retry_active = False
-                else:
-                    await trio.sleep(1)
-                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.status_code == 416:
-                        raise
-                    try:
-                        chunk = await trio.to_thread.run_sync(
-                            _iterate_response_content,
-                            self.iter_content_func,
-                        )
-                    except AttributeError:  # trio < 0.12.1
-                        chunk = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
-                            _iterate_response_content,
-                            self.iter_content_func,
-                        )
-                    if not chunk:
-                        raise StopIteration()
-                    self.downloaded += len(chunk)
-                    return chunk
-                continue
-            except requests.exceptions.StreamConsumedError:
-                raise
-            except Exception as err:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.internal_response.close()
-                raise
+                chunk = await trio.to_thread.run_sync(
+                    _iterate_response_content,
+                    self.iter_content_func,
+                )
+            except AttributeError:  # trio < 0.12.1
+                chunk = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
+                    _iterate_response_content,
+                    self.iter_content_func,
+                )
+            if not chunk:
+                raise _ResponseStopIteration()
+            return chunk
+        except _ResponseStopIteration:
+            internal_response.close()
+            raise StopAsyncIteration()
+        except requests.exceptions.StreamConsumedError:
+            raise
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            internal_response.close()
+            raise
 
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:  # type: ignore
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming response data.
         """
-        return TrioStreamDownloadGenerator(pipeline, self)
+        return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
 
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
@@ -153,7 +141,35 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await trio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
+    @overload  # type: ignore
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
+        """Send the request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    @overload  # type: ignore
+    async def send(self, request: "RestHttpRequest", **kwargs: Any) -> "RestAsyncHttpResponse":  # pylint:disable=invalid-overridden-method
+        """Send an `azure.core.rest` request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.rest.HttpRequest
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    async def send(self, request, **kwargs: Any):  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -216,5 +232,15 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
 
         if error:
             raise error
+        if _is_rest(request):
+            from azure.core.rest._requests_trio import RestTrioRequestsTransportResponse
+            retval = RestTrioRequestsTransportResponse(
+                request=request,
+                internal_response=response,
+                block_size=self.connection_config.data_block_size,
+            )
+            if not kwargs.get("stream"):
+                await _handle_no_stream_rest_response(retval)
+            return retval
 
         return TrioRequestsTransportResponse(request, response, self.connection_config.data_block_size)

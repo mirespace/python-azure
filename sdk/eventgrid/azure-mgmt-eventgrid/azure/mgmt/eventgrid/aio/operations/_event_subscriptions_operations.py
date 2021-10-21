@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class EventSubscriptionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,8 +47,8 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        **kwargs
-    ) -> "models.EventSubscription":
+        **kwargs: Any
+    ) -> "_models.EventSubscription":
         """Get an event subscription.
 
         Get properties of an event subscription.
@@ -69,12 +69,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.mgmt.eventgrid.models.EventSubscription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -113,15 +113,15 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_info: "models.EventSubscription",
-        **kwargs
-    ) -> "models.EventSubscription":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscription"]
+        event_subscription_info: "_models.EventSubscription",
+        **kwargs: Any
+    ) -> "_models.EventSubscription":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -165,9 +165,9 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_info: "models.EventSubscription",
-        **kwargs
-    ) -> AsyncLROPoller["models.EventSubscription"]:
+        event_subscription_info: "_models.EventSubscription",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.EventSubscription"]:
         """Create or update an event subscription.
 
         Asynchronously creates a new event subscription or updates an existing event subscription based
@@ -191,8 +191,8 @@ class EventSubscriptionsOperations:
         :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either EventSubscription or the result of cls(response)
@@ -200,7 +200,7 @@ class EventSubscriptionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -225,7 +225,12 @@ class EventSubscriptionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'eventSubscriptionName': self._serialize.url("event_subscription_name", event_subscription_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -243,14 +248,14 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -284,7 +289,7 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete an event subscription.
 
@@ -303,8 +308,8 @@ class EventSubscriptionsOperations:
         :type event_subscription_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -333,7 +338,12 @@ class EventSubscriptionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'eventSubscriptionName': self._serialize.url("event_subscription_name", event_subscription_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -351,15 +361,15 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: "models.EventSubscriptionUpdateParameters",
-        **kwargs
-    ) -> "models.EventSubscription":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscription"]
+        event_subscription_update_parameters: "_models.EventSubscriptionUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.EventSubscription":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -403,9 +413,9 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: "models.EventSubscriptionUpdateParameters",
-        **kwargs
-    ) -> AsyncLROPoller["models.EventSubscription"]:
+        event_subscription_update_parameters: "_models.EventSubscriptionUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.EventSubscription"]:
         """Update an event subscription.
 
         Asynchronously updates an existing event subscription.
@@ -425,8 +435,8 @@ class EventSubscriptionsOperations:
         :type event_subscription_update_parameters: ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either EventSubscription or the result of cls(response)
@@ -434,7 +444,7 @@ class EventSubscriptionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -459,7 +469,12 @@ class EventSubscriptionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'eventSubscriptionName': self._serialize.url("event_subscription_name", event_subscription_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -477,8 +492,8 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        **kwargs
-    ) -> "models.EventSubscriptionFullUrl":
+        **kwargs: Any
+    ) -> "_models.EventSubscriptionFullUrl":
         """Get full URL of an event subscription.
 
         Get the full endpoint URL for an event subscription.
@@ -499,12 +514,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.mgmt.eventgrid.models.EventSubscriptionFullUrl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionFullUrl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionFullUrl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -543,8 +558,8 @@ class EventSubscriptionsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """Get an aggregated list of all global event subscriptions under an Azure subscription.
 
         List all aggregated global event subscriptions under a specific Azure subscription.
@@ -565,12 +580,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -629,8 +644,8 @@ class EventSubscriptionsOperations:
         topic_type_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all global event subscriptions for a topic type.
 
         List all global event subscriptions under an Azure subscription for a topic type.
@@ -653,12 +668,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -718,8 +733,8 @@ class EventSubscriptionsOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all global event subscriptions under an Azure subscription and resource group.
 
         List all global event subscriptions under a specific Azure subscription and resource group.
@@ -742,12 +757,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -808,8 +823,8 @@ class EventSubscriptionsOperations:
         topic_type_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all global event subscriptions under a resource group for a topic type.
 
         List all global event subscriptions under a resource group for a specific topic type.
@@ -834,12 +849,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -900,8 +915,8 @@ class EventSubscriptionsOperations:
         location: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all regional event subscriptions under an Azure subscription.
 
         List all event subscriptions from the given location under a specific Azure subscription.
@@ -924,12 +939,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -990,8 +1005,8 @@ class EventSubscriptionsOperations:
         location: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all regional event subscriptions under an Azure subscription and resource group.
 
         List all event subscriptions from the given location under a specific Azure subscription and
@@ -1017,12 +1032,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1084,8 +1099,8 @@ class EventSubscriptionsOperations:
         topic_type_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all regional event subscriptions under an Azure subscription for a topic type.
 
         List all event subscriptions from the given location under a specific Azure subscription and
@@ -1111,12 +1126,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1179,8 +1194,8 @@ class EventSubscriptionsOperations:
         topic_type_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all regional event subscriptions under an Azure subscription and resource group for a topic type.
 
         List all event subscriptions from the given location under a specific Azure subscription and
@@ -1208,12 +1223,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1278,8 +1293,8 @@ class EventSubscriptionsOperations:
         resource_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all event subscriptions for a specific topic.
 
         List all event subscriptions that have been created for a specific topic.
@@ -1308,12 +1323,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1378,8 +1393,8 @@ class EventSubscriptionsOperations:
         topic_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.EventSubscriptionsListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
         """List all event subscriptions for a specific domain topic.
 
         List all event subscriptions that have been created for a specific domain topic.
@@ -1406,12 +1421,12 @@ class EventSubscriptionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1467,3 +1482,69 @@ class EventSubscriptionsOperations:
             get_next, extract_data
         )
     list_by_domain_topic.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{topicName}/providers/Microsoft.EventGrid/eventSubscriptions'}  # type: ignore
+
+    async def get_delivery_attributes(
+        self,
+        scope: str,
+        event_subscription_name: str,
+        **kwargs: Any
+    ) -> "_models.DeliveryAttributeListResult":
+        """Get delivery attributes for an event subscription.
+
+        Get all delivery attributes for an event subscription.
+
+        :param scope: The scope of the event subscription. The scope can be a subscription, or a
+         resource group, or a top level resource belonging to a resource provider namespace, or an
+         EventGrid topic. For example, use '/subscriptions/{subscriptionId}/' for a subscription,
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for a resource group, and
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}'
+         for a resource, and
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'
+         for an EventGrid topic.
+        :type scope: str
+        :param event_subscription_name: Name of the event subscription.
+        :type event_subscription_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DeliveryAttributeListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.DeliveryAttributeListResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeliveryAttributeListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-10-15-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_delivery_attributes.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'eventSubscriptionName': self._serialize.url("event_subscription_name", event_subscription_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('DeliveryAttributeListResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_delivery_attributes.metadata = {'url': '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}/getDeliveryAttributes'}  # type: ignore

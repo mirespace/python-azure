@@ -14,22 +14,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection","name":"testingpythontestcasenamespacehybridconnection","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespacehybridconnection","createdAt":"2020-11-03T02:03:03.413Z","updatedAt":"2020-11-03T02:20:45.04Z","serviceBusEndpoint":"https://testingpythontestcasenamespacehybridconnection.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespacehybridconnection","createdAt":"2021-09-03T03:08:49.9Z","updatedAt":"2021-09-03T03:08:49.9Z","serviceBusEndpoint":"https://testingpythontestcasenamespacehybridconnection.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '772'
+      - '773'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:20:45 GMT
+      - Fri, 03 Sep 2021 03:08:50 GMT
       expires:
       - '-1'
       pragma:
@@ -62,22 +63,70 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection","name":"testingpythontestcasenamespacehybridconnection","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespacehybridconnection","createdAt":"2020-11-03T02:03:03.413Z","updatedAt":"2020-11-03T02:20:46.8Z","serviceBusEndpoint":"https://testingpythontestcasenamespacehybridconnection.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespacehybridconnection","createdAt":"2021-09-03T03:08:49.9Z","updatedAt":"2021-09-03T03:08:49.9Z","serviceBusEndpoint":"https://testingpythontestcasenamespacehybridconnection.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '768'
+      - '773'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:15 GMT
+      - Fri, 03 Sep 2021 03:09:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection?api-version=2017-04-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection","name":"testingpythontestcasenamespacehybridconnection","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespacehybridconnection","createdAt":"2021-09-03T03:08:49.9Z","updatedAt":"2021-09-03T03:09:34.433Z","serviceBusEndpoint":"https://testingpythontestcasenamespacehybridconnection.servicebus.windows.net:443/","status":"Active"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '773'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 Sep 2021 03:09:50 GMT
       expires:
       - '-1'
       pragma:
@@ -108,22 +157,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection","name":"testingpythontestcasenamespacehybridconnection","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespacehybridconnection","createdAt":"2020-11-03T02:03:03.413Z","updatedAt":"2020-11-03T02:20:46.8Z","serviceBusEndpoint":"https://testingpythontestcasenamespacehybridconnection.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespacehybridconnection","createdAt":"2021-09-03T03:08:49.9Z","updatedAt":"2021-09-03T03:09:34.433Z","serviceBusEndpoint":"https://testingpythontestcasenamespacehybridconnection.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '768'
+      - '773'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:15 GMT
+      - Fri, 03 Sep 2021 03:09:50 GMT
       expires:
       - '-1'
       pragma:
@@ -159,23 +209,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection","name":"testingpythontestcasehybridconnection","type":"Microsoft.Relay/Namespaces/HybridConnections","location":"West
-        US","properties":{"createdAt":"0001-01-01T00:00:00","updatedAt":"0001-01-01T00:00:00","listenerCount":0,"requiresClientAuthorization":true,"userMetadata":"User
+        US","properties":{"createdAt":"2021-09-03T03:09:52.4570713Z","updatedAt":"2021-09-03T03:09:52.4570713Z","listenerCount":0,"requiresClientAuthorization":true,"userMetadata":"User
         data for HybridConnection"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '588'
+      - '611'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:16 GMT
+      - Fri, 03 Sep 2021 03:09:52 GMT
       expires:
       - '-1'
       pragma:
@@ -208,23 +259,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection","name":"testingpythontestcasehybridconnection","type":"Microsoft.Relay/Namespaces/HybridConnections","location":"West
-        US","properties":{"createdAt":"2020-11-03T02:18:30.1009414Z","updatedAt":"2020-11-03T02:21:16.7700008Z","listenerCount":0,"requiresClientAuthorization":true,"userMetadata":"User
+        US","properties":{"createdAt":"2021-09-03T03:09:52.4570713Z","updatedAt":"2021-09-03T03:09:52.4570713Z","listenerCount":0,"requiresClientAuthorization":true,"userMetadata":"User
         data for HybridConnection"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '606'
+      - '611'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:17 GMT
+      - Fri, 03 Sep 2021 03:09:52 GMT
       expires:
       - '-1'
       pragma:
@@ -255,23 +307,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections?api-version=2017-04-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection","name":"testingpythontestcasehybridconnection","type":"Microsoft.Relay/Namespaces/HybridConnections","location":"West
-        US","properties":{"createdAt":"2020-11-03T02:18:30.1009414Z","updatedAt":"2020-11-03T02:21:16.7700008Z","listenerCount":0,"requiresClientAuthorization":true,"userMetadata":"User
+        US","properties":{"createdAt":"2021-09-03T03:09:52.4570713Z","updatedAt":"2021-09-03T03:09:52.4570713Z","listenerCount":0,"requiresClientAuthorization":true,"userMetadata":"User
         data for HybridConnection"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '618'
+      - '623'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:18 GMT
+      - Fri, 03 Sep 2021 03:09:52 GMT
       expires:
       - '-1'
       pragma:
@@ -308,7 +361,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection?api-version=2017-04-01
   response:
@@ -320,11 +374,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '596'
+      - '601'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:18 GMT
+      - Fri, 03 Sep 2021 03:09:53 GMT
       expires:
       - '-1'
       pragma:
@@ -361,7 +415,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -372,11 +427,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '482'
+      - '487'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:19 GMT
+      - Fri, 03 Sep 2021 03:09:53 GMT
       expires:
       - '-1'
       pragma:
@@ -409,7 +464,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -420,11 +476,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '482'
+      - '487'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:20 GMT
+      - Fri, 03 Sep 2021 03:09:53 GMT
       expires:
       - '-1'
       pragma:
@@ -459,7 +515,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -470,11 +527,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '491'
+      - '496'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:20 GMT
+      - Fri, 03 Sep 2021 03:09:54 GMT
       expires:
       - '-1'
       pragma:
@@ -507,7 +564,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection/authorizationRules?api-version=2017-04-01
   response:
@@ -518,11 +576,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '503'
+      - '508'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:21 GMT
+      - Fri, 03 Sep 2021 03:09:54 GMT
       expires:
       - '-1'
       pragma:
@@ -555,12 +613,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection/authorizationRules/testingauthrulepy/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=Kuj0vu/gefo/Er6cP++b2dC26aUzcaLRAI5mLl6H3m4=;EntityPath=testingpythontestcasehybridconnection","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=4n6E2Zr0VLJ+Ik7hXhLNa2Tsh3Cf7C0fYECvRFUOzLo=;EntityPath=testingpythontestcasehybridconnection","primaryKey":"Kuj0vu/gefo/Er6cP++b2dC26aUzcaLRAI5mLl6H3m4=","secondaryKey":"4n6E2Zr0VLJ+Ik7hXhLNa2Tsh3Cf7C0fYECvRFUOzLo=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=O6uOlLxeGWZGidUUA/bSvPPtzOeDkybJyPrvlNm6Yk0=;EntityPath=testingpythontestcasehybridconnection","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=GWZDi4nC8qzqU9qfm32kZzdmKZhBNWoJyWiTNYZdasU=;EntityPath=testingpythontestcasehybridconnection","primaryKey":"O6uOlLxeGWZGidUUA/bSvPPtzOeDkybJyPrvlNm6Yk0=","secondaryKey":"GWZDi4nC8qzqU9qfm32kZzdmKZhBNWoJyWiTNYZdasU=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -569,7 +628,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:21 GMT
+      - Fri, 03 Sep 2021 03:09:55 GMT
       expires:
       - '-1'
       pragma:
@@ -606,12 +665,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=DWhA8XuA5JNQ1VWbi21e6ngpxE3u20RUmdk9+52zDVk=;EntityPath=testingpythontestcasehybridconnection","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=4n6E2Zr0VLJ+Ik7hXhLNa2Tsh3Cf7C0fYECvRFUOzLo=;EntityPath=testingpythontestcasehybridconnection","primaryKey":"DWhA8XuA5JNQ1VWbi21e6ngpxE3u20RUmdk9+52zDVk=","secondaryKey":"4n6E2Zr0VLJ+Ik7hXhLNa2Tsh3Cf7C0fYECvRFUOzLo=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=ok51xI8zpHZDr0/qepA7PKvCL/zPYvCao3j9uN+nfKM=;EntityPath=testingpythontestcasehybridconnection","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=GWZDi4nC8qzqU9qfm32kZzdmKZhBNWoJyWiTNYZdasU=;EntityPath=testingpythontestcasehybridconnection","primaryKey":"ok51xI8zpHZDr0/qepA7PKvCL/zPYvCao3j9uN+nfKM=","secondaryKey":"GWZDi4nC8qzqU9qfm32kZzdmKZhBNWoJyWiTNYZdasU=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -620,7 +680,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:22 GMT
+      - Fri, 03 Sep 2021 03:09:55 GMT
       expires:
       - '-1'
       pragma:
@@ -657,12 +717,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=DWhA8XuA5JNQ1VWbi21e6ngpxE3u20RUmdk9+52zDVk=;EntityPath=testingpythontestcasehybridconnection","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=9KXk6ftflBBZiFu/98rxtlq+bNN/y52/kbizm4I+fLg=;EntityPath=testingpythontestcasehybridconnection","primaryKey":"DWhA8XuA5JNQ1VWbi21e6ngpxE3u20RUmdk9+52zDVk=","secondaryKey":"9KXk6ftflBBZiFu/98rxtlq+bNN/y52/kbizm4I+fLg=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=ok51xI8zpHZDr0/qepA7PKvCL/zPYvCao3j9uN+nfKM=;EntityPath=testingpythontestcasehybridconnection","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespacehybridconnection.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=u4H4VtqJtX9cUyODTAEjZqhfeUg6nCM8NenjbveHsOg=;EntityPath=testingpythontestcasehybridconnection","primaryKey":"ok51xI8zpHZDr0/qepA7PKvCL/zPYvCao3j9uN+nfKM=","secondaryKey":"u4H4VtqJtX9cUyODTAEjZqhfeUg6nCM8NenjbveHsOg=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -671,7 +732,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:21:23 GMT
+      - Fri, 03 Sep 2021 03:09:56 GMT
       expires:
       - '-1'
       pragma:
@@ -706,7 +767,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -718,7 +780,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 02:21:23 GMT
+      - Fri, 03 Sep 2021 03:09:56 GMT
       expires:
       - '-1'
       pragma:
@@ -749,7 +811,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/hybridConnections/testingpythontestcasehybridconnection?api-version=2017-04-01
   response:
@@ -761,7 +824,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 02:21:24 GMT
+      - Fri, 03 Sep 2021 03:09:57 GMT
       expires:
       - '-1'
       pragma:
@@ -792,7 +855,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection?api-version=2017-04-01
   response:
@@ -804,7 +868,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 02:21:25 GMT
+      - Fri, 03 Sep 2021 03:09:58 GMT
       expires:
       - '-1'
       location:
@@ -835,7 +899,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_hybridconnection_test_hybridconnetion_curdc8bc1815/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespacehybridconnection/operationresults/testingpythontestcasenamespacehybridconnection?api-version=2017-04-01
   response:
@@ -847,16 +912,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 02:21:56 GMT
+      - Fri, 03 Sep 2021 03:10:29 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:

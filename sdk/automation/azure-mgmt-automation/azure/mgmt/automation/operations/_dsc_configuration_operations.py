@@ -14,11 +14,11 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -37,7 +37,7 @@ class DscConfigurationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -71,7 +71,7 @@ class DscConfigurationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -98,7 +98,7 @@ class DscConfigurationOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -113,7 +113,7 @@ class DscConfigurationOperations(object):
         configuration_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DscConfiguration"
+        # type: (...) -> "_models.DscConfiguration"
         """Retrieve the configuration identified by configuration name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -127,12 +127,12 @@ class DscConfigurationOperations(object):
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -159,7 +159,7 @@ class DscConfigurationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DscConfiguration', pipeline_response)
@@ -175,10 +175,10 @@ class DscConfigurationOperations(object):
         resource_group_name,  # type: str
         automation_account_name,  # type: str
         configuration_name,  # type: str
-        parameters,  # type: Union[str, "models.DscConfigurationCreateOrUpdateParameters"]
+        parameters,  # type: Union[str, "_models.DscConfigurationCreateOrUpdateParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DscConfiguration"
+        # type: (...) -> "_models.DscConfiguration"
         """Create the configuration identified by configuration name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -196,12 +196,12 @@ class DscConfigurationOperations(object):
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         content_type = kwargs.pop("content_type", "text/plain; charset=utf-8")
         accept = "application/json"
 
@@ -242,7 +242,7 @@ class DscConfigurationOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -262,10 +262,10 @@ class DscConfigurationOperations(object):
         resource_group_name,  # type: str
         automation_account_name,  # type: str
         configuration_name,  # type: str
-        parameters=None,  # type: Optional[Union[str, "models.DscConfigurationUpdateParameters"]]
+        parameters=None,  # type: Optional[Union[str, "_models.DscConfigurationUpdateParameters"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DscConfiguration"
+        # type: (...) -> "_models.DscConfiguration"
         """Create the configuration identified by configuration name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -283,12 +283,12 @@ class DscConfigurationOperations(object):
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         content_type = kwargs.pop("content_type", "text/plain; charset=utf-8")
         accept = "application/json"
 
@@ -332,7 +332,7 @@ class DscConfigurationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DscConfiguration', pipeline_response)
@@ -350,7 +350,7 @@ class DscConfigurationOperations(object):
         configuration_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> IO
+        # type: (...) -> str
         """Retrieve the configuration script identified by configuration name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -360,16 +360,16 @@ class DscConfigurationOperations(object):
         :param configuration_name: The configuration name.
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IO, or the result of cls(response)
-        :rtype: IO
+        :return: str, or the result of cls(response)
+        :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "text/powershell"
 
         # Construct URL
@@ -398,7 +398,7 @@ class DscConfigurationOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('IO', pipeline_response)
+        deserialized = self._deserialize('str', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -416,7 +416,7 @@ class DscConfigurationOperations(object):
         inlinecount=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DscConfigurationListResult"]
+        # type: (...) -> Iterable["_models.DscConfigurationListResult"]
         """Retrieve a list of configurations.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -436,12 +436,12 @@ class DscConfigurationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.automation.models.DscConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -491,7 +491,7 @@ class DscConfigurationOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

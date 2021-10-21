@@ -32,6 +32,12 @@ class AccessPolicyUpdateKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     REPLACE = "replace"
     REMOVE = "remove"
 
+class ActionsRequired(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """A message indicating if changes on the service provider require any updates on the consumer.
+    """
+
+    NONE = "None"
+
 class CertificatePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     GET = "get"
@@ -57,6 +63,57 @@ class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     RECOVER = "recover"
     DEFAULT = "default"
+
+class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The deletion recovery level currently in effect for the object. If it contains 'Purgeable',
+    then the object can be permanently deleted by a privileged user; otherwise, only the system can
+    purge the object at the end of the retention interval.
+    """
+
+    PURGEABLE = "Purgeable"
+    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
+    RECOVERABLE = "Recoverable"
+    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
+
+class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class JsonWebKeyCurveName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The elliptic curve name. For valid values, see JsonWebKeyCurveName.
+    """
+
+    P256 = "P-256"
+    P384 = "P-384"
+    P521 = "P-521"
+    P256_K = "P-256K"
+
+class JsonWebKeyOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The permitted JSON web key operations of the key. For more information, see
+    JsonWebKeyOperation.
+    """
+
+    ENCRYPT = "encrypt"
+    DECRYPT = "decrypt"
+    SIGN = "sign"
+    VERIFY = "verify"
+    WRAP_KEY = "wrapKey"
+    UNWRAP_KEY = "unwrapKey"
+    IMPORT_ENUM = "import"
+
+class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the key. For valid values, see JsonWebKeyType.
+    """
+
+    EC = "EC"
+    EC_HSM = "EC-HSM"
+    RSA = "RSA"
+    RSA_HSM = "RSA-HSM"
 
 class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -130,14 +187,22 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state.
     """
 
-    SUCCEEDED = "Succeeded"  #: The managed HSM Pool has been full provisioned.
-    PROVISIONING = "Provisioning"  #: The managed HSM Pool is currently being provisioned.
-    FAILED = "Failed"  #: Provisioning of the managed HSM Pool has failed.
-    UPDATING = "Updating"  #: The managed HSM Pool is currently being updated.
-    DELETING = "Deleting"  #: The managed HSM Pool is currently being deleted.
-    ACTIVATED = "Activated"  #: The managed HSM pool is ready for normal use.
-    SECURITY_DOMAIN_RESTORE = "SecurityDomainRestore"  #: The managed HSM pool is waiting for a security domain restore action.
-    RESTORING = "Restoring"  #: The managed HSM pool is being restored from full HSM backup.
+    #: The managed HSM Pool has been full provisioned.
+    SUCCEEDED = "Succeeded"
+    #: The managed HSM Pool is currently being provisioned.
+    PROVISIONING = "Provisioning"
+    #: Provisioning of the managed HSM Pool has failed.
+    FAILED = "Failed"
+    #: The managed HSM Pool is currently being updated.
+    UPDATING = "Updating"
+    #: The managed HSM Pool is currently being deleted.
+    DELETING = "Deleting"
+    #: The managed HSM pool is ready for normal use.
+    ACTIVATED = "Activated"
+    #: The managed HSM pool is waiting for a security domain restore action.
+    SECURITY_DOMAIN_RESTORE = "SecurityDomainRestore"
+    #: The managed HSM pool is being restored from full HSM backup.
+    RESTORING = "Restoring"
 
 class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The reason that a vault name could not be used. The Reason element is only returned if
@@ -187,3 +252,10 @@ class StoragePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LISTSAS = "listsas"
     GETSAS = "getsas"
     DELETESAS = "deletesas"
+
+class VaultProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of the vault.
+    """
+
+    SUCCEEDED = "Succeeded"
+    REGISTERING_DNS = "RegisteringDns"

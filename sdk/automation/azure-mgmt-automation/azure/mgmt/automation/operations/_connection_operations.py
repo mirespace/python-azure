@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ConnectionOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class ConnectionOperations(object):
         connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Connection"]
+        # type: (...) -> None
         """Delete the connection.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -62,16 +62,16 @@ class ConnectionOperations(object):
         :param connection_name: The name of connection.
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Connection, or the result of cls(response)
-        :rtype: ~azure.mgmt.automation.models.Connection or None
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Connection"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -98,17 +98,12 @@ class ConnectionOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Connection', pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, None, {})
 
-        return deserialized
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/connections/{connectionName}'}  # type: ignore
 
     def get(
@@ -118,7 +113,7 @@ class ConnectionOperations(object):
         connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Connection"
+        # type: (...) -> "_models.Connection"
         """Retrieve the connection identified by connection name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -132,12 +127,12 @@ class ConnectionOperations(object):
         :rtype: ~azure.mgmt.automation.models.Connection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Connection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Connection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -164,7 +159,7 @@ class ConnectionOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Connection', pipeline_response)
@@ -180,10 +175,10 @@ class ConnectionOperations(object):
         resource_group_name,  # type: str
         automation_account_name,  # type: str
         connection_name,  # type: str
-        parameters,  # type: "models.ConnectionCreateOrUpdateParameters"
+        parameters,  # type: "_models.ConnectionCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Connection"
+        # type: (...) -> "_models.Connection"
         """Create or update a connection.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -199,12 +194,12 @@ class ConnectionOperations(object):
         :rtype: ~azure.mgmt.automation.models.Connection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Connection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Connection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -236,7 +231,7 @@ class ConnectionOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -256,10 +251,10 @@ class ConnectionOperations(object):
         resource_group_name,  # type: str
         automation_account_name,  # type: str
         connection_name,  # type: str
-        parameters,  # type: "models.ConnectionUpdateParameters"
+        parameters,  # type: "_models.ConnectionUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Connection"
+        # type: (...) -> "_models.Connection"
         """Update a connection.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -275,12 +270,12 @@ class ConnectionOperations(object):
         :rtype: ~azure.mgmt.automation.models.Connection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Connection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Connection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -312,7 +307,7 @@ class ConnectionOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Connection', pipeline_response)
@@ -329,7 +324,7 @@ class ConnectionOperations(object):
         automation_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ConnectionListResult"]
+        # type: (...) -> Iterable["_models.ConnectionListResult"]
         """Retrieve a list of connections.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -341,12 +336,12 @@ class ConnectionOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.automation.models.ConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -388,7 +383,7 @@ class ConnectionOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
