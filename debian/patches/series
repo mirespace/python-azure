@@ -1,3 +1,2 @@
 0002-docs-repro.patch
-duplicated-named-function.patch
-resources-16.0.0.patch
+removing-azure-monitor-folder.patch
