@@ -1,0 +1,15 @@
+Tests: python3-tests
+Depends:
+ @builddeps@,
+ python3-azure,
+ python3-azure-storage,
+ python3-dotenv,
+ python3-httpretty,
+ python3-mock,
+ python3-openssl,
+ python3-pytest,
+ python3-pytest-asyncio,
+ python3-pytest-cov,
+ python3-trio,
+Restrictions:
+ needs-internet,

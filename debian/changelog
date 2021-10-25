@@ -1,0 +1,223 @@
+python-azure (20211025+git-0ubuntu1) impish; urgency=medium
+
+  * New upstream release
+  * Removed the following patches since they have been
+    applied by upstream:
+    - d/p/duplicated-named-function.patch
+    - resources-16.0.0.patch
+  * d/p/removing-azure-monitor-folder.patch: It's
+    deprecated and avoiding BFS.
+
+ -- Miriam España Acebal <miriam.espana@canonical.com>  Mon, 25 Oct 2021 11:47:39 +0200
+
+python-azure (20201208+git-6) unstable; urgency=medium
+
+  * Skip test_mgmt_compute_vmss.py::MgmtComputeTest::test_compute_vmss_rol
+    ling_upgrades
+
+ -- Luca Boccassi <bluca@debian.org>  Wed, 21 Apr 2021 10:56:09 +0100
+
+python-azure (20201208+git-5) unstable; urgency=medium
+
+  * Skip test_mgmt_resource_managed_application.py::MgmtResourceLinksTest:
+    :test_application (Closes: #984894)
+
+ -- Luca Boccassi <bluca@debian.org>  Tue, 20 Apr 2021 20:56:52 +0100
+
+python-azure (20201208+git-4) unstable; urgency=high
+
+  * Update azure-mgmt-resources to 16.0.0 (Closes: #981318)
+
+ -- Luca Boccassi <bluca@debian.org>  Tue, 02 Mar 2021 21:29:31 +0000
+
+python-azure (20201208+git-3) unstable; urgency=medium
+
+  * Deselect tests that need a working remote connection from autopkgtest
+    run (Closes: #978960)
+
+ -- Luca Boccassi <bluca@debian.org>  Fri, 01 Jan 2021 14:18:01 +0000
+
+python-azure (20201208+git-2) unstable; urgency=medium
+
+  * Drop revert-batch.patch, it is now declared stable
+
+ -- Luca Boccassi <bluca@debian.org>  Tue, 29 Dec 2020 19:53:32 +0000
+
+python-azure (20201208+git-1) unstable; urgency=medium
+
+  * New upstream version 20201208+git
+  * Drop 0003-mgmt-resource-revert.patch, not needed anymore
+  * Bump Standards-Version to 4.5.1, no changes
+  * Bump debhelper-compat to 13
+  * Add duplicated-named-function.patch to fix syntax error
+  * Add new build-dependency on python3-dotenv for tests
+  * Revert azure-batch to version 9
+
+ -- Luca Boccassi <bluca@debian.org>  Fri, 11 Dec 2020 19:32:09 +0000
+
+python-azure (20201118+git-1) unstable; urgency=medium
+
+  * New upstream version 20201118+git
+
+ -- Luca Boccassi <bluca@debian.org>  Wed, 18 Nov 2020 18:51:06 +0000
+
+python-azure (20201028+git-1) unstable; urgency=medium
+
+  * New upstream version 20201028+git
+    (Closes: #973020)
+  * Disable new tests that need functioning network
+
+ -- Luca Boccassi <bluca@debian.org>  Thu, 29 Oct 2020 10:58:58 +0000
+
+python-azure (20200927+git-1) unstable; urgency=medium
+
+  * New upstream version 20200927+git
+  * Manually depend on python3-avro, dh_python cannot figure it out
+  * Revert azure-mgmt-resource to version 10
+
+ -- Luca Boccassi <bluca@debian.org>  Fri, 09 Oct 2020 17:07:23 +0100
+
+python-azure (20200921+git-1) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * d/control: Update Maintainer field with new Debian Python Team
+    contact address.
+  * d/control: Update Vcs-* fields with new Debian Python Team Salsa
+    layout.
+
+  [ Luca Boccassi ]
+  * New upstream version 20200921+git
+  * Refresh 0002-docs-repro.patch to remove fuzz
+  * Add new dependencies
+  * Autopkgtest: always install build-deps
+  * Autopkgtest: skip avro tests
+
+ -- Luca Boccassi <bluca@debian.org>  Fri, 25 Sep 2020 14:19:04 +0100
+
+python-azure (20200721+git-1) unstable; urgency=medium
+
+  * New upstream version 20200721+git
+  * autopkgtest: add new failing tests that require subscription to ignore
+    list
+
+ -- Luca Boccassi <bluca@debian.org>  Fri, 07 Aug 2020 13:50:00 +0100
+
+python-azure (20200519+git-1) unstable; urgency=medium
+
+  * Update upstream source from tag 'upstream/20200519+git'
+  * Refresh patches for new upstream import
+  * Don't install azure-mgmt/azure-storage/azure, deprecated stubs
+  * Autopkgtest: add new dependencies and ignore tests that fail due to
+    the network
+  * Autopkgtest: add needs-internet restriction (Closes: #958569)
+
+ -- Luca Boccassi <bluca@debian.org>  Wed, 20 May 2020 15:47:42 +0100
+
+python-azure (20200130+git-3) unstable; urgency=medium
+
+  * Sort modules when acting on them in d/rules, and use LC_ALL=C when
+    sorting pydist
+  * Add 0002-docs-repro.patch and build-depend on python3-doc for
+    reproducibility
+  * autopkgtest: remove patch and copy root conftest.py
+  * Update d/copyright paths for new source layout
+  * Bump debhelper-compat to 12
+  * Take over python3-azure-storage from src:python-azure-storage (Closes:
+    #954922)
+  * Override Lintian warning intra-source-package-circular-dependency
+
+ -- Luca Boccassi <bluca@debian.org>  Tue, 14 Apr 2020 14:51:28 +0100
+
+python-azure (20200130+git-2) unstable; urgency=medium
+
+  * Mark python-azure-doc with <!nodoc> profile.
+  * Fix autopkgtest script to account for new source layout.
+  * Backport patch to correctly skip some tests that require a working
+    endpoint.
+
+ -- Luca Boccassi <bluca@debian.org>  Sat, 29 Feb 2020 11:46:23 +0000
+
+python-azure (20200130+git-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #949763)
+    - based on upstream commit 00aaee5fd23006b15c5ba3a220ed9e81f3f0839a
+  * d/rules: refactor for new doc directory layout.
+  * d/rules: refactor to accommodate new upstream source layout.
+  * Bump Standards-Version to 4.5.0, no changes.
+  * Sort pydist to make the build reproducible.
+  * Do not vendor azure-cosmos, shipped as a separate package now.
+  * Do not vendor azure-storage-blob and -queue, shipped as a separate
+    package now.
+  * Add dependencies on new packages required by the new version.
+  * Do not ship opentelemetry and opencensus, missing dependencies in
+    Debian.
+  * Add myself to Uploaders.
+
+ -- Luca Boccassi <bluca@debian.org>  Wed, 26 Feb 2020 20:47:05 +0000
+
+python-azure (20181112+git-3) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Ondřej Nový ]
+  * Use 'python3 -m sphinx' instead of sphinx-build for building docs.
+  * Rename d/tests/control.autodep8 to d/tests/control.
+  * Use debhelper-compat instead of debian/compat.
+
+  [ Andrey Rahmatullin ]
+  * Drop Python 2 support.
+  * Add a workaround for pybuild now generating Depends:
+    python3-azure-storage.
+
+ -- Andrey Rahmatullin <wrar@debian.org>  Sun, 18 Aug 2019 00:19:52 +0500
+
+python-azure (20181112+git-2) unstable; urgency=medium
+
+  * Update autopkgtests to not output on stderr
+
+ -- Nicolas Dandrimont <olasd@debian.org>  Fri, 16 Nov 2018 10:56:04 +0100
+
+python-azure (20181112+git-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #875963, #904364)
+    - based on upstream commit 77f90d501cdb559978e5acfd99cd4ec4c5c59148
+  * Adopt package within the Debian Python Modules Team (Closes: #889084,
+    #899666)
+    - Thanks to Iain R. Learmonth for his past work on the package!
+  * Make python3-azure recommend python3-azure-storage instead of
+    python-azure-storage (Closes: #906076)
+  * Completely overhaul debian/rules to use dh-python/pybuild and be generic
+    to any number of submodules.
+  * Update debhelper compat level to 11
+  * Update Standards-Version to 4.2.1 (No further changes)
+  * Set Rules-Requires-Root: no
+  * Add autopkgtests
+
+ -- Nicolas Dandrimont <olasd@debian.org>  Thu, 15 Nov 2018 16:31:11 +0100
+
+python-azure (20170915+git-1) unstable; urgency=medium
+
+  * New upstream version 20170915+git
+  * debian/py{,3}dist-overrides:
+   - Fixed auto-dependency generation for azure-common and msrestazure
+  * debian/rules:
+   - Disabled tests temporarily; python-vcr needs update
+  * debian/patches:
+   - Removed documentation patch; no longer applies
+  * debian/control:
+   - Synchronised build dependencies with python packages
+   - Fixed auto-dependency generation for Python 3 (Closes: #867420)
+
+ -- Iain R. Learmonth <irl@debian.org>  Fri, 15 Sep 2017 08:18:37 +0100
+
+python-azure (2.0.0~rc6+dfsg-2) unstable; urgency=medium
+
+  * Fixes for package dependencies.
+
+ -- Iain R. Learmonth <irl@debian.org>  Fri, 23 Sep 2016 14:45:15 +0100
+
+python-azure (2.0.0~rc6+dfsg-1) unstable; urgency=medium
+
+  * Initial release. (Closes: #838101)
+
+ -- Iain R. Learmonth <irl@debian.org>  Fri, 23 Sep 2016 13:23:00 +0100

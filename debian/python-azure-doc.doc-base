@@ -1,0 +1,11 @@
+Document: python-azure
+Title: Debian python-azure Manual
+Author: Microsoft Corporation
+Abstract:
+ This manual describes how to use the python-azure library in order to
+ interface with the Microsoft Azure service.
+Section: Programming/Python
+
+Format: HTML
+Index: /usr/share/doc/python3-azure/html/index.html
+Files: /usr/share/doc/python3-azure/html/*.html

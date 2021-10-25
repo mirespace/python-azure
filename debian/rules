@@ -1,0 +1,93 @@
+#!/usr/bin/make -f
+
+# Package all submodules except azure-sdk-tools, azure-devtools, *nspkg
+MODULES = $(sort $(filter-out sdk/core/azure sdk/core/azure-mgmt sdk/storage/azure-storage sdk/core/azure-core-tracing-opencensus sdk/core/azure-core-tracing-opentelemetry sdk/cosmos/azure-cosmos %-nspkg tools/azure-devtools tools/azure-sdk-tools tools/azure-sdk-tools/packaging_tools tools/azure-sdk-tools/devtools_testutils,$(subst /setup.py,,$(wildcard */*/*/setup.py))))
+
+# rules with wildcards do not like '/', so we have to escape. Use three dots as it's unlikely to be used in a name.
+MODULES_ESCAPE = $(subst /,...,$(MODULES))
+
+ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS))$(filter nodoc,$(DEB_BUILD_PROFILES)))
+	HELPERS = python3,sphinxdoc
+else
+	HELPERS = python3
+endif
+
+%:
+	dh $@ --with $(HELPERS) --buildsystem=pybuild
+
+
+override_dh_auto_clean:
+	dh_auto_clean
+	set -e; $(foreach module, $(MODULES), \
+	if [ -f $(module)/setup.py.orig ]; then \
+		mv $(module)/setup.py.orig $(module)/setup.py; \
+	fi;)
+
+
+# dh_auto_configure overrides
+
+dh_auto_configure-sdk...storage...azure-storage-%:
+	cp sdk/storage/azure-storage-$*/setup.py sdk/storage/azure-storage-$*/setup.py.orig
+	sed 's/~=/>=/g' sdk/storage/azure-storage-$*/setup.py.orig > sdk/storage/azure-storage-$*/setup.py
+	PYBUILD_NAME=$(notdir $(subst -,_,sdk/storage/azure-storage-$*)) dh_auto_configure --sourcedirectory=sdk/storage/azure-storage-$*
+	echo $(notdir sdk/storage/azure-storage-$*) python3-azure-storage >> debian/python3-azure-storage.pydist
+	echo $(notdir sdk/storage/azure-storage-$*) python3-azure-storage >> debian/py3dist-overrides
+
+dh_auto_configure-%:
+	cp $(subst ...,/,$*)/setup.py $(subst ...,/,$*)/setup.py.orig
+	sed 's/~=/>=/g' $(subst ...,/,$*)/setup.py.orig > $(subst ...,/,$*)/setup.py
+	PYBUILD_NAME=$(notdir $(subst -,_,$(subst ...,/,$*))) dh_auto_configure --sourcedirectory=$(subst ...,/,$*)
+	echo $(notdir $(subst ...,/,$*)) python3-azure >> debian/python3-azure.pydist
+	echo $(notdir $(subst ...,/,$*)) python3-azure >> debian/py3dist-overrides
+
+override_dh_auto_configure: $(foreach pyvermodule, $(MODULES_ESCAPE), dh_auto_configure-$(pyvermodule))
+
+
+# dh_auto_build overrides
+
+dh_auto_build-%:
+	PYBUILD_NAME=$(notdir $(subst -,_,$(subst ...,/,$*))) dh_auto_build --sourcedirectory=$(subst ...,/,$*)
+
+override_dh_auto_build: $(foreach pyvermodule, $(MODULES_ESCAPE), dh_auto_build-$(pyvermodule))
+ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS))$(filter nodoc,$(DEB_BUILD_PROFILES)))
+	PYTHONPATH=. http_proxy='127.0.0.1:9' python3 -m sphinx -N -bhtml doc/sphinx doc/sphinx/_build/html # HTML generator
+endif
+
+
+# dh_auto_install overrides
+
+$(CURDIR)/debian/python3-azure-storage:
+	mkdir -p $@
+
+dh_auto_install-sdk...storage...azure-storage-%: $(CURDIR)/debian/python3-azure-storage
+	PYBUILD_NAME=$(subst -,_,azure-storage-$*) dh_auto_install --sourcedirectory=sdk/storage/azure-storage-$*
+
+	cp -rv $(CURDIR)/debian/python3-azure-storage-$*/usr $(CURDIR)/debian/python3-azure-storage
+	rm -r $(CURDIR)/debian/python3-azure-storage-$*
+
+$(CURDIR)/debian/python3-azure:
+	mkdir -p $@
+
+dh_auto_install-%: $(CURDIR)/debian/python3-azure
+	PYBUILD_NAME=$(notdir $(subst -,_,$(subst ...,/,$*))) dh_auto_install --sourcedirectory=$(subst ...,/,$*)
+
+	cp -rv $(CURDIR)/debian/python3-$(notdir $(subst ...,/,$*))/usr $(CURDIR)/debian/python3-azure
+	rm -r $(CURDIR)/debian/python3-$(notdir $(subst ...,/,$*))
+
+dh_auto_install-sdk...core...azure:
+	PYBUILD_NAME=azure dh_auto_install --sourcedirectory=sdk/core/azure
+	# Make the build reproducible
+	LC_ALL=C sort --stable -o debian/python3-azure.pydist debian/python3-azure.pydist
+	LC_ALL=C sort --stable -o debian/python3-azure-storage.pydist debian/python3-azure-storage.pydist
+
+override_dh_auto_install: $(foreach pyvermodule, $(MODULES_ESCAPE), dh_auto_install-$(pyvermodule))
+	# For some reason the __init__ is not picked up
+	mkdir -p $(CURDIR)/debian/python3-azure-storage/usr/lib/python3/dist-packages/azure/storage/
+	cp -v sdk/storage/azure-storage-blob/azure/__init__.py \
+		$(CURDIR)/debian/python3-azure-storage/usr/lib/python3/dist-packages/azure/storage/
+
+# dh_auto_test overrides
+
+override_dh_auto_test:
+# Don't test at build time: the circular dependency on python-azure-storage
+# makes this way too messy

@@ -1,0 +1,77 @@
+Source: python-azure
+Maintainer: Debian Python Team <team+python@tracker.debian.org>
+Uploaders: Nicolas Dandrimont <olasd@debian.org>,
+           Luca Boccassi <bluca@debian.org>,
+Section: python
+Priority: optional
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-adal,
+               python3-all,
+               python3-avro (>= 1.10.0~),
+               python3-azure-devtools (>= 1.1.0),
+               python3-azure-cosmos,
+               python3-azure-cosmosdb-table,
+               python3-azure-datalake-store,
+               python3-doc <!nodoc>,
+               python3-flask,
+               python3-isodate,
+               python3-keyring,
+               python3-msal,
+               python3-msal-extensions,
+               python3-msrest (>= 0.5~),
+               python3-msrestazure (>= 0.5~),
+               python3-recommonmark,
+               python3-requests,
+               python3-setuptools,
+               python3-sphinx <!nodoc>,
+               python3-sphinx-rtd-theme <!nodoc>,
+               python3-typing-extensions,
+               python3-uamqp,
+Standards-Version: 4.5.1
+Testsuite: autopkgtest-pkg-python
+Rules-Requires-Root: no
+Vcs-Browser: https://salsa.debian.org/python-team/packages/python-azure
+Vcs-Git: https://salsa.debian.org/python-team/packages/python-azure.git
+Homepage: https://github.com/Azure/azure-sdk-for-python
+
+Package: python3-azure
+Architecture: all
+Depends: python3-msrest,
+         python3-msrestazure,
+         python3-requests,
+         python3-avro (>= 1.10.0~),
+         ${misc:Depends},
+         ${python3:Depends}
+Suggests: python-azure-doc
+Description: Microsoft Azure SDK for Python 3.x
+ The Azure SDK provides a set of Python packages that make it easy to access
+ the Microsoft Azure components such as ServiceManagement, Storage, and
+ ServiceBug.
+ .
+ This package contains the Python 3.x modules.
+
+Package: python-azure-doc
+Section: doc
+Architecture: all
+Build-Profiles: <!nodoc>
+Depends: ${misc:Depends}, ${sphinxdoc:Depends}
+Description: Microsoft Azure SDK for Python - Documentation
+ The Azure SDK provides a set of Python packages that make it easy to access
+ the Microsoft Azure components such as ServiceManagement, Storage, and
+ ServiceBug.
+ .
+ This package contains the HTML documentation.
+
+Package: python3-azure-storage
+Architecture: all
+Depends: python3-cryptography (>= 1.1~),
+         ${misc:Depends},
+         ${python3:Depends}
+Breaks: python3-azure (<< 20200130+git-3~)
+Replaces: python3-azure (<< 20200130+git-3~)
+Description: Microsoft Azure Storage Library for Python 3.x
+ This Python module provides an API for consuming Microsoft Azure Storage
+ services including Blob, Queue, Table and Files.
+ .
+ This is the Python 3 version of the package.
