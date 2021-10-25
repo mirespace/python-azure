@@ -60,7 +60,11 @@ class ActionStatus(msrest.serialization.Model):
     :vartype status: str
     :ivar targets: The array of targets.
     :vartype targets:
+<<<<<<< HEAD
      list[~microsoft_azure_chaos.models.ExperimentExecutionActionTargetDetailsProperties]
+=======
+     list[~chaos_management_client.models.ExperimentExecutionActionTargetDetailsProperties]
+>>>>>>> main
     """
 
     _validation = {
@@ -96,7 +100,11 @@ class Branch(msrest.serialization.Model):
     :param name: Required. String of the branch name.
     :type name: str
     :param actions: Required. List of actions.
+<<<<<<< HEAD
     :type actions: list[~microsoft_azure_chaos.models.Action]
+=======
+    :type actions: list[~chaos_management_client.models.Action]
+>>>>>>> main
     """
 
     _validation = {
@@ -130,7 +138,11 @@ class BranchStatus(msrest.serialization.Model):
     :ivar status: The status of the branch.
     :vartype status: str
     :ivar actions: The array of actions.
+<<<<<<< HEAD
     :vartype actions: list[~microsoft_azure_chaos.models.ActionStatus]
+=======
+    :vartype actions: list[~chaos_management_client.models.ActionStatus]
+>>>>>>> main
     """
 
     _validation = {
@@ -209,7 +221,11 @@ class Capability(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The standard system metadata of a resource type.
+<<<<<<< HEAD
     :vartype system_data: ~microsoft_azure_chaos.models.SystemData
+=======
+    :vartype system_data: ~chaos_management_client.models.SystemData
+>>>>>>> main
     :ivar publisher: String of the Publisher that this Capability extends.
     :vartype publisher: str
     :ivar target_type: String of the Target Type that this Capability extends.
@@ -265,7 +281,11 @@ class CapabilityListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Capability resources.
+<<<<<<< HEAD
     :vartype value: list[~microsoft_azure_chaos.models.Capability]
+=======
+    :vartype value: list[~chaos_management_client.models.Capability]
+>>>>>>> main
     :ivar next_link: URL to retrieve the next page of Capability resources.
     :vartype next_link: str
     """
@@ -303,7 +323,11 @@ class CapabilityType(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata properties of the capability type resource.
+<<<<<<< HEAD
     :vartype system_data: ~microsoft_azure_chaos.models.SystemData
+=======
+    :vartype system_data: ~chaos_management_client.models.SystemData
+>>>>>>> main
     :param location: Location of the Capability Type resource.
     :type location: str
     :ivar publisher: String of the Publisher that this Capability Type extends.
@@ -368,7 +392,11 @@ class CapabilityTypeListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Capability Type resources.
+<<<<<<< HEAD
     :vartype value: list[~microsoft_azure_chaos.models.CapabilityType]
+=======
+    :vartype value: list[~chaos_management_client.models.CapabilityType]
+>>>>>>> main
     :ivar next_link: URL to retrieve the next page of Capability Type resources.
     :vartype next_link: str
     """
@@ -404,7 +432,11 @@ class ContinuousAction(Action):
     :param duration: Required. ISO8601 formatted string that represents a duration.
     :type duration: str
     :param parameters: Required. List of key value pairs.
+<<<<<<< HEAD
     :type parameters: list[~microsoft_azure_chaos.models.KeyValuePair]
+=======
+    :type parameters: list[~chaos_management_client.models.KeyValuePair]
+>>>>>>> main
     :param selector_id: Required. String that represents a selector.
     :type selector_id: str
     """
@@ -480,7 +512,11 @@ class DiscreteAction(Action):
     :param name: Required. String that represents a Capability URN.
     :type name: str
     :param parameters: Required. List of key value pairs.
+<<<<<<< HEAD
     :type parameters: list[~microsoft_azure_chaos.models.KeyValuePair]
+=======
+    :type parameters: list[~chaos_management_client.models.KeyValuePair]
+>>>>>>> main
     :param selector_id: Required. String that represents a selector.
     :type selector_id: str
     """
@@ -551,9 +587,15 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
+<<<<<<< HEAD
     :vartype details: list[~microsoft_azure_chaos.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info: list[~microsoft_azure_chaos.models.ErrorAdditionalInfo]
+=======
+    :vartype details: list[~chaos_management_client.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~chaos_management_client.models.ErrorAdditionalInfo]
+>>>>>>> main
     """
 
     _validation = {
@@ -588,7 +630,11 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :param error: The error object.
+<<<<<<< HEAD
     :type error: ~microsoft_azure_chaos.models.ErrorDetail
+=======
+    :type error: ~chaos_management_client.models.ErrorDetail
+>>>>>>> main
     """
 
     _attribute_map = {
@@ -668,6 +714,7 @@ class Experiment(TrackedResource):
     :param location: Required. The geo-location where the resource lives.
     :type location: str
     :ivar system_data: The system metadata of the experiment resource.
+<<<<<<< HEAD
     :vartype system_data: ~microsoft_azure_chaos.models.SystemData
     :param identity: The identity of the experiment resource.
     :type identity: ~microsoft_azure_chaos.models.ResourceIdentity
@@ -675,6 +722,15 @@ class Experiment(TrackedResource):
     :type steps: list[~microsoft_azure_chaos.models.Step]
     :param selectors: Required. List of selectors.
     :type selectors: list[~microsoft_azure_chaos.models.Selector]
+=======
+    :vartype system_data: ~chaos_management_client.models.SystemData
+    :param identity: The identity of the experiment resource.
+    :type identity: ~chaos_management_client.models.ResourceIdentity
+    :param steps: Required. List of steps.
+    :type steps: list[~chaos_management_client.models.Step]
+    :param selectors: Required. List of selectors.
+    :type selectors: list[~chaos_management_client.models.Selector]
+>>>>>>> main
     :param start_on_creation: A boolean value that indicates if experiment should be started on
      creation or not.
     :type start_on_creation: bool
@@ -789,7 +845,11 @@ class ExperimentExecutionActionTargetDetailsProperties(msrest.serialization.Mode
     :ivar completed_date_utc: String that represents the completed date time.
     :vartype completed_date_utc: ~datetime.datetime
     :ivar error: The error of the action.
+<<<<<<< HEAD
     :vartype error: ~microsoft_azure_chaos.models.ExperimentExecutionActionTargetDetailsError
+=======
+    :vartype error: ~chaos_management_client.models.ExperimentExecutionActionTargetDetailsError
+>>>>>>> main
     """
 
     _validation = {
@@ -847,7 +907,11 @@ class ExperimentExecutionDetails(msrest.serialization.Model):
     :vartype stop_date_utc: ~datetime.datetime
     :ivar run_information: The information of the experiment run.
     :vartype run_information:
+<<<<<<< HEAD
      ~microsoft_azure_chaos.models.ExperimentExecutionDetailsPropertiesRunInformation
+=======
+     ~chaos_management_client.models.ExperimentExecutionDetailsPropertiesRunInformation
+>>>>>>> main
     """
 
     _validation = {
@@ -902,7 +966,11 @@ class ExperimentExecutionDetailsListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Experiment execution details.
+<<<<<<< HEAD
     :vartype value: list[~microsoft_azure_chaos.models.ExperimentExecutionDetails]
+=======
+    :vartype value: list[~chaos_management_client.models.ExperimentExecutionDetails]
+>>>>>>> main
     :ivar next_link: URL to retrieve the next page of Experiment execution details.
     :vartype next_link: str
     """
@@ -932,7 +1000,11 @@ class ExperimentExecutionDetailsPropertiesRunInformation(msrest.serialization.Mo
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar steps: The steps of the experiment run.
+<<<<<<< HEAD
     :vartype steps: list[~microsoft_azure_chaos.models.StepStatus]
+=======
+    :vartype steps: list[~chaos_management_client.models.StepStatus]
+>>>>>>> main
     """
 
     _validation = {
@@ -957,7 +1029,11 @@ class ExperimentListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Experiment resources.
+<<<<<<< HEAD
     :vartype value: list[~microsoft_azure_chaos.models.Experiment]
+=======
+    :vartype value: list[~chaos_management_client.models.Experiment]
+>>>>>>> main
     :ivar next_link: URL to retrieve the next page of Experiment resources.
     :vartype next_link: str
     """
@@ -1067,7 +1143,11 @@ class ExperimentStatusListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Experiment statuses.
+<<<<<<< HEAD
     :vartype value: list[~microsoft_azure_chaos.models.ExperimentStatus]
+=======
+    :vartype value: list[~chaos_management_client.models.ExperimentStatus]
+>>>>>>> main
     :ivar next_link: URL to retrieve the next page of Experiment statuses.
     :vartype next_link: str
     """
@@ -1133,6 +1213,7 @@ class Operation(msrest.serialization.Model):
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :param display: Localized display information for this particular operation.
+<<<<<<< HEAD
     :type display: ~microsoft_azure_chaos.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
@@ -1141,6 +1222,16 @@ class Operation(msrest.serialization.Model):
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
      internal only APIs. Possible values include: "Internal".
     :vartype action_type: str or ~microsoft_azure_chaos.models.ActionType
+=======
+    :type display: ~chaos_management_client.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
+     "system", "user,system".
+    :vartype origin: str or ~chaos_management_client.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. Possible values include: "Internal".
+    :vartype action_type: str or ~chaos_management_client.models.ActionType
+>>>>>>> main
     """
 
     _validation = {
@@ -1220,7 +1311,11 @@ class OperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
+<<<<<<< HEAD
     :vartype value: list[~microsoft_azure_chaos.models.Operation]
+=======
+    :vartype value: list[~chaos_management_client.models.Operation]
+>>>>>>> main
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
@@ -1253,7 +1348,11 @@ class ResourceIdentity(msrest.serialization.Model):
 
     :param type: Required. String of the resource identity type. Possible values include: "None",
      "SystemAssigned".
+<<<<<<< HEAD
     :type type: str or ~microsoft_azure_chaos.models.ResourceIdentityType
+=======
+    :type type: str or ~chaos_management_client.models.ResourceIdentityType
+>>>>>>> main
     :ivar principal_id: GUID that represents the principal ID of this resource identity.
     :vartype principal_id: str
     :ivar tenant_id: GUID that represents the tenant ID of this resource identity.
@@ -1289,11 +1388,19 @@ class Selector(msrest.serialization.Model):
 
     :param type: Required. Enum of the selector type. Possible values include: "Percent", "Random",
      "Tag", "List".
+<<<<<<< HEAD
     :type type: str or ~microsoft_azure_chaos.models.SelectorType
     :param id: Required. String of the selector ID.
     :type id: str
     :param targets: Required. List of Target references.
     :type targets: list[~microsoft_azure_chaos.models.TargetReference]
+=======
+    :type type: str or ~chaos_management_client.models.SelectorType
+    :param id: Required. String of the selector ID.
+    :type id: str
+    :param targets: Required. List of Target references.
+    :type targets: list[~chaos_management_client.models.TargetReference]
+>>>>>>> main
     """
 
     _validation = {
@@ -1326,7 +1433,11 @@ class Step(msrest.serialization.Model):
     :param name: Required. String of the step name.
     :type name: str
     :param branches: Required. List of branches.
+<<<<<<< HEAD
     :type branches: list[~microsoft_azure_chaos.models.Branch]
+=======
+    :type branches: list[~chaos_management_client.models.Branch]
+>>>>>>> main
     """
 
     _validation = {
@@ -1360,7 +1471,11 @@ class StepStatus(msrest.serialization.Model):
     :ivar status: The value of the status of the step.
     :vartype status: str
     :ivar branches: The array of branches.
+<<<<<<< HEAD
     :vartype branches: list[~microsoft_azure_chaos.models.BranchStatus]
+=======
+    :vartype branches: list[~chaos_management_client.models.BranchStatus]
+>>>>>>> main
     """
 
     _validation = {
@@ -1395,14 +1510,22 @@ class SystemData(msrest.serialization.Model):
     :type created_by: str
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
+<<<<<<< HEAD
     :type created_by_type: str or ~microsoft_azure_chaos.models.CreatedByType
+=======
+    :type created_by_type: str or ~chaos_management_client.models.CreatedByType
+>>>>>>> main
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
     :type last_modified_by: str
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
+<<<<<<< HEAD
     :type last_modified_by_type: str or ~microsoft_azure_chaos.models.CreatedByType
+=======
+    :type last_modified_by_type: str or ~chaos_management_client.models.CreatedByType
+>>>>>>> main
     :param last_modified_at: The timestamp of resource last modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
@@ -1445,7 +1568,11 @@ class Target(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata of the target resource.
+<<<<<<< HEAD
     :vartype system_data: ~microsoft_azure_chaos.models.SystemData
+=======
+    :vartype system_data: ~chaos_management_client.models.SystemData
+>>>>>>> main
     :param location: Location of the target resource.
     :type location: str
     :param properties: Required. The properties of the target resource.
@@ -1485,7 +1612,11 @@ class TargetListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Target resources.
+<<<<<<< HEAD
     :vartype value: list[~microsoft_azure_chaos.models.Target]
+=======
+    :vartype value: list[~chaos_management_client.models.Target]
+>>>>>>> main
     :ivar next_link: URL to retrieve the next page of Target resources.
     :vartype next_link: str
     """
@@ -1516,7 +1647,11 @@ class TargetReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+<<<<<<< HEAD
     :ivar type: Enum of the Target reference type. Has constant value: "ResourceId".
+=======
+    :ivar type: Enum of the Target reference type. Has constant value: "ChaosTarget".
+>>>>>>> main
     :vartype type: str
     :param id: Required. String of the resource ID of a Target resource.
     :type id: str
@@ -1532,7 +1667,11 @@ class TargetReference(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
+<<<<<<< HEAD
     type = "ResourceId"
+=======
+    type = "ChaosTarget"
+>>>>>>> main
 
     def __init__(
         self,
@@ -1556,7 +1695,11 @@ class TargetType(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata properties of the target type resource.
+<<<<<<< HEAD
     :vartype system_data: ~microsoft_azure_chaos.models.SystemData
+=======
+    :vartype system_data: ~chaos_management_client.models.SystemData
+>>>>>>> main
     :param location: Location of the Target Type resource.
     :type location: str
     :ivar display_name: Localized string of the display name.
@@ -1611,7 +1754,11 @@ class TargetTypeListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Target Type resources.
+<<<<<<< HEAD
     :vartype value: list[~microsoft_azure_chaos.models.TargetType]
+=======
+    :vartype value: list[~chaos_management_client.models.TargetType]
+>>>>>>> main
     :ivar next_link: URL to retrieve the next page of Target Type resources.
     :vartype next_link: str
     """

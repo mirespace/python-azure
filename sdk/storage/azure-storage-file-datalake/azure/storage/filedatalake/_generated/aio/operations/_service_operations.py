@@ -47,7 +47,11 @@ class ServiceOperations:
         max_results: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
+<<<<<<< HEAD
         **kwargs
+=======
+        **kwargs: Any
+>>>>>>> main
     ) -> AsyncIterable["_models.FileSystemList"]:
         """List FileSystems.
 
@@ -68,8 +72,14 @@ class ServiceOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
+<<<<<<< HEAD
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+=======
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
+>>>>>>> main
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FileSystemList or the result of cls(response)

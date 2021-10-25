@@ -6,10 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+<<<<<<< HEAD
 from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
+=======
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+import warnings
+
+>>>>>>> main
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
@@ -46,7 +52,11 @@ class FileSystemOperations:
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
         properties: Optional[str] = None,
+<<<<<<< HEAD
         **kwargs
+=======
+        **kwargs: Any
+>>>>>>> main
     ) -> None:
         """Create FileSystem.
 
@@ -57,8 +67,14 @@ class FileSystemOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
+<<<<<<< HEAD
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+=======
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
+>>>>>>> main
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
@@ -130,21 +146,35 @@ class FileSystemOperations:
         timeout: Optional[int] = None,
         properties: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+<<<<<<< HEAD
         **kwargs
+=======
+        **kwargs: Any
+>>>>>>> main
     ) -> None:
         """Set FileSystem Properties.
 
         Set properties for the FileSystem.  This operation supports conditional HTTP requests.  For
         more information, see `Specifying Conditional Headers for Blob Service Operations
+<<<<<<< HEAD
         <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-
         blob-service-operations>`_.
+=======
+        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+>>>>>>> main
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
+<<<<<<< HEAD
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+=======
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
+>>>>>>> main
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
@@ -225,7 +255,11 @@ class FileSystemOperations:
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
+<<<<<<< HEAD
         **kwargs
+=======
+        **kwargs: Any
+>>>>>>> main
     ) -> None:
         """Get FileSystem Properties.
 
@@ -235,8 +269,14 @@ class FileSystemOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
+<<<<<<< HEAD
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+=======
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
+>>>>>>> main
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -298,7 +338,11 @@ class FileSystemOperations:
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+<<<<<<< HEAD
         **kwargs
+=======
+        **kwargs: Any
+>>>>>>> main
     ) -> None:
         """Delete FileSystem.
 
@@ -310,15 +354,25 @@ class FileSystemOperations:
         directories within the filesystem, will fail with status code 404 (Not Found) while the
         filesystem is being deleted. This operation supports conditional HTTP requests.  For more
         information, see `Specifying Conditional Headers for Blob Service Operations
+<<<<<<< HEAD
         <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-
         blob-service-operations>`_.
+=======
+        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+>>>>>>> main
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
+<<<<<<< HEAD
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+=======
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
+>>>>>>> main
         :type timeout: int
         :param modified_access_conditions: Parameter group.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
@@ -383,7 +437,11 @@ class FileSystemOperations:
 
     delete.metadata = {'url': '/{filesystem}'}  # type: ignore
 
+<<<<<<< HEAD
     def list_paths(
+=======
+    async def list_paths(
+>>>>>>> main
         self,
         recursive: bool,
         request_id_parameter: Optional[str] = None,
@@ -392,8 +450,13 @@ class FileSystemOperations:
         path: Optional[str] = None,
         max_results: Optional[int] = None,
         upn: Optional[bool] = None,
+<<<<<<< HEAD
         **kwargs
     ) -> AsyncIterable["_models.PathList"]:
+=======
+        **kwargs: Any
+    ) -> "_models.PathList":
+>>>>>>> main
         """List Paths.
 
         List FileSystem paths and their properties.
@@ -404,8 +467,14 @@ class FileSystemOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
+<<<<<<< HEAD
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+=======
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
+>>>>>>> main
         :type timeout: int
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
          with each invocation is limited.  If the number of paths to be deleted exceeds this limit, a
@@ -427,8 +496,13 @@ class FileSystemOperations:
          unique friendly names.
         :type upn: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
+<<<<<<< HEAD
         :return: An iterator like instance of either PathList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.filedatalake.models.PathList]
+=======
+        :return: PathList, or the result of cls(response)
+        :rtype: ~azure.storage.filedatalake.models.PathList
+>>>>>>> main
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PathList"]
@@ -438,6 +512,7 @@ class FileSystemOperations:
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
 
+<<<<<<< HEAD
         # TODO: change this once continuation/next_link autorest PR is merged
         def prepare_request(next_link=None, cont_token=None):
             # Construct headers
@@ -514,6 +589,59 @@ class FileSystemOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
+=======
+        # Construct URL
+        url = self.list_paths.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if continuation is not None:
+            query_parameters['continuation'] = self._serialize.query("continuation", continuation, 'str')
+        if path is not None:
+            query_parameters['directory'] = self._serialize.query("path", path, 'str')
+        query_parameters['recursive'] = self._serialize.query("recursive", recursive, 'bool')
+        if max_results is not None:
+            query_parameters['maxResults'] = self._serialize.query("max_results", max_results, 'int', minimum=1)
+        if upn is not None:
+            query_parameters['upn'] = self._serialize.query("upn", upn, 'bool')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['x-ms-continuation']=self._deserialize('str', response.headers.get('x-ms-continuation'))
+        deserialized = self._deserialize('PathList', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+>>>>>>> main
     list_paths.metadata = {'url': '/{filesystem}'}  # type: ignore
 
     async def list_blob_hierarchy_segment(
@@ -526,7 +654,11 @@ class FileSystemOperations:
         showonly: Optional[str] = "deleted",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
+<<<<<<< HEAD
         **kwargs
+=======
+        **kwargs: Any
+>>>>>>> main
     ) -> "_models.ListBlobsHierarchySegmentResponse":
         """The List Blobs operation returns a list of the blobs under the specified container.
 
@@ -554,8 +686,14 @@ class FileSystemOperations:
          response.
         :type showonly: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
+<<<<<<< HEAD
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+=======
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
+>>>>>>> main
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.

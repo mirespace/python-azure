@@ -21,8 +21,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
+<<<<<<< HEAD
 class MicrosoftAzureChaosConfiguration(Configuration):
     """Configuration for MicrosoftAzureChaos.
+=======
+class ChaosManagementClientConfiguration(Configuration):
+    """Configuration for ChaosManagementClient.
+>>>>>>> main
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -44,7 +49,11 @@ class MicrosoftAzureChaosConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+<<<<<<< HEAD
         super(MicrosoftAzureChaosConfiguration, self).__init__(**kwargs)
+=======
+        super(ChaosManagementClientConfiguration, self).__init__(**kwargs)
+>>>>>>> main
 
         self.credential = credential
         self.subscription_id = subscription_id

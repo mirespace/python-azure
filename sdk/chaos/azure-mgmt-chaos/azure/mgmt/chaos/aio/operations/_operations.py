@@ -26,7 +26,11 @@ class Operations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
+<<<<<<< HEAD
     :type models: ~microsoft_azure_chaos.models
+=======
+    :type models: ~chaos_management_client.models
+>>>>>>> main
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -49,7 +53,11 @@ class Operations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OperationListResult or the result of cls(response)
+<<<<<<< HEAD
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_azure_chaos.models.OperationListResult]
+=======
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~chaos_management_client.models.OperationListResult]
+>>>>>>> main
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]

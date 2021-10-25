@@ -40,7 +40,11 @@ from ._models import (
     AnalyzeResult,
     AnalyzedDocument,
     BoundingRegion,
+<<<<<<< HEAD
     DocumentElement,
+=======
+    DocumentContentElement,
+>>>>>>> main
     DocumentEntity,
     DocumentField,
     DocumentKeyValuePair,
@@ -100,7 +104,11 @@ __all__ = [
     "AnalyzeResult",
     "AnalyzedDocument",
     "BoundingRegion",
+<<<<<<< HEAD
     "DocumentElement",
+=======
+    "DocumentContentElement",
+>>>>>>> main
     "DocumentEntity",
     "DocumentField",
     "DocumentKeyValueElement",

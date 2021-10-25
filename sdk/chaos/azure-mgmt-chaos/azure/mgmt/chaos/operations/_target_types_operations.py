@@ -30,7 +30,11 @@ class TargetTypesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
+<<<<<<< HEAD
     :type models: ~microsoft_azure_chaos.models
+=======
+    :type models: ~chaos_management_client.models
+>>>>>>> main
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -60,7 +64,11 @@ class TargetTypesOperations(object):
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TargetTypeListResult or the result of cls(response)
+<<<<<<< HEAD
         :rtype: ~azure.core.paging.ItemPaged[~microsoft_azure_chaos.models.TargetTypeListResult]
+=======
+        :rtype: ~azure.core.paging.ItemPaged[~chaos_management_client.models.TargetTypeListResult]
+>>>>>>> main
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TargetTypeListResult"]
@@ -137,7 +145,11 @@ class TargetTypesOperations(object):
         :type target_type_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TargetType, or the result of cls(response)
+<<<<<<< HEAD
         :rtype: ~microsoft_azure_chaos.models.TargetType
+=======
+        :rtype: ~chaos_management_client.models.TargetType
+>>>>>>> main
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TargetType"]

@@ -27,13 +27,20 @@ from .._generated.models import ListBlobsIncludeItem
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_lease_async import DataLakeLeaseClient
+<<<<<<< HEAD
 from .._deserialize import deserialize_path_properties
+=======
+>>>>>>> main
 from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties, DeletedPathProperties
+<<<<<<< HEAD
 from ._list_paths_helper import DeletedPathPropertiesPaged
+=======
+from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
+>>>>>>> main
 
 
 if TYPE_CHECKING:
@@ -473,6 +480,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: List the blobs in the file system.
         """
         timeout = kwargs.pop('timeout', None)
+<<<<<<< HEAD
         return self._client.file_system.list_paths(
             recursive=recursive,
             max_results=max_results,
@@ -480,6 +488,16 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             timeout=timeout,
             cls=deserialize_path_properties,
             **kwargs)
+=======
+        command = functools.partial(
+            self._client.file_system.list_paths,
+            path=path,
+            timeout=timeout,
+            **kwargs)
+        return AsyncItemPaged(
+            command, recursive, path=path, max_results=max_results,
+            page_iterator_class=PathPropertiesPaged, **kwargs)
+>>>>>>> main
 
     @distributed_trace_async
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]

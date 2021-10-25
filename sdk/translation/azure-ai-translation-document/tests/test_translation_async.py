@@ -352,7 +352,11 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
         async for doc in result:
             assert doc.status == "Failed"
+<<<<<<< HEAD
             assert doc.error.code == "WrongDocumentEncoding"
+=======
+            assert doc.error.code == "NoTranslatableText"
+>>>>>>> main
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

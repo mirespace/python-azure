@@ -147,8 +147,13 @@ def bounding_region(bounding_box):
 
 @pytest.fixture
 def document_element(bounding_box):
+<<<<<<< HEAD
     model = _models.DocumentElement(content="content", kind="word", bounding_box=bounding_box[0])
     model_repr = "DocumentElement(content=content, bounding_box={}, kind=word)".format(bounding_box[1])
+=======
+    model = _models.DocumentContentElement(content="content", kind="word", bounding_box=bounding_box[0])
+    model_repr = "DocumentContentElement(content=content, bounding_box={}, kind=word)".format(bounding_box[1])
+>>>>>>> main
     assert repr(model) == model_repr
     return model, model_repr
 

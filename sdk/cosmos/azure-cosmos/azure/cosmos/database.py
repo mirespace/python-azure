@@ -341,6 +341,10 @@ class DatabaseProxy(object):
 
         :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
             or a dict representing the properties of the container to be retrieved.
+<<<<<<< HEAD
+=======
+        :returns: A `ContainerProxy` instance representing the retrieved database.
+>>>>>>> main
         :rtype: ~azure.cosmos.ContainerProxy
 
         .. admonition:: Example:
@@ -571,7 +575,10 @@ class DatabaseProxy(object):
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be retrieved.
         :returns: A `UserProxy` instance representing the retrieved user.
+<<<<<<< HEAD
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
+=======
+>>>>>>> main
         :rtype: ~azure.cosmos.UserProxy
         """
         if isinstance(user, UserProxy):

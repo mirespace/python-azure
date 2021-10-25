@@ -6,4 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+<<<<<<< HEAD
 VERSION = "19.1.0"
+=======
+VERSION = "19.2.0"
+>>>>>>> main

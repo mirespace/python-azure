@@ -4,6 +4,11 @@
 
 ### Features Added
 
+<<<<<<< HEAD
+=======
+- Async version of `AvroSerializer` has been added under `azure.schemaregistry.serializer.avroserializer.aio`.
+
+>>>>>>> main
 ### Breaking Changes
 
 ### Bugs Fixed

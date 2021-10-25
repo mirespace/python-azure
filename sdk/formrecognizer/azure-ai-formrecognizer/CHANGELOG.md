@@ -5,6 +5,10 @@
 ### Features Added
 
 ### Breaking Changes
+<<<<<<< HEAD
+=======
+- Renamed `DocumentElement` to `DocumentContentElement`.
+>>>>>>> main
 
 ### Bugs Fixed
 

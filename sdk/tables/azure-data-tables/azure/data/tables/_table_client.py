@@ -5,7 +5,11 @@
 # --------------------------------------------------------------------------
 
 import functools
+<<<<<<< HEAD
 from typing import Optional, Any, TYPE_CHECKING, Union, List, Tuple, Dict, Mapping, Iterable, overload, cast
+=======
+from typing import Optional, Any, TYPE_CHECKING, Union, List, Dict, Mapping, Iterable, overload, cast
+>>>>>>> main
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -34,11 +38,16 @@ from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized
+<<<<<<< HEAD
 from ._table_batch import TableBatchOperations
+=======
+from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
+>>>>>>> main
 from ._models import (
     TableEntityPropertiesPaged,
     UpdateMode,
     TableAccessPolicy,
+<<<<<<< HEAD
     TransactionOperation,
     TableItem
 )
@@ -47,6 +56,11 @@ EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
 TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
+=======
+    TableItem
+)
+
+>>>>>>> main
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
@@ -691,10 +705,21 @@ class TableClient(TablesBaseClient):
 
         If any one of these operations fails, the entire transaction will be rejected.
 
+<<<<<<< HEAD
         :param operations: The list of operations to commit in a transaction. This should be a list of
          tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
          kwargs for that operation.
         :type operations: Iterable[Tuple[str, EntityType]]
+=======
+        :param operations: The list of operations to commit in a transaction. This should be an iterable of
+         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
+         kwargs for that operation. For example::
+
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
+
+        :type operations: Iterable[Tuple[str, TableEntity, Mapping[str, Any]]]
+>>>>>>> main
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
         :raises: :class:`~azure.data.tables.TableTransactionError`
@@ -717,6 +742,7 @@ class TableClient(TablesBaseClient):
             is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
+<<<<<<< HEAD
         for operation in operations:
             try:
                 operation_kwargs = operation[2]  # type: ignore
@@ -726,4 +752,14 @@ class TableClient(TablesBaseClient):
                 getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
             except AttributeError:
                 raise ValueError("Unrecognized operation: {}".format(operation[0]))
+=======
+        try:
+            for operation in operations:
+                batched_requests.add_operation(operation)
+        except TypeError:
+            raise TypeError(
+                "The value of 'operations' must be an iterator "
+                "of Tuples. Please check documentation for correct Tuple format."
+            )
+>>>>>>> main
         return self._batch_send(*batched_requests.requests, **kwargs)  # type: ignore

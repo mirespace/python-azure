@@ -206,7 +206,13 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   return $true
 }
 
+<<<<<<< HEAD
 $PackageExclusions = @{ 
+=======
+$PackageExclusions = @{
+  'azure-mgmt-quota' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21366';
+  'azure-mgmt-webpubsub' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/21346';
+>>>>>>> main
   'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
   'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';

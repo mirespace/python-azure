@@ -60,9 +60,34 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+<<<<<<< HEAD
             'firewall_policy_rule_groups': '2020-04-01',
             'interface_endpoints': '2019-02-01',
             'p2_svpn_server_configurations': '2019-07-01',
+=======
+            'active_connectivity_configurations': '2021-02-01-preview',
+            'active_security_admin_rules': '2021-02-01-preview',
+            'active_security_user_rules': '2021-02-01-preview',
+            'admin_rule_collections': '2021-02-01-preview',
+            'admin_rules': '2021-02-01-preview',
+            'connectivity_configurations': '2021-02-01-preview',
+            'effective_connectivity_configurations': '2021-02-01-preview',
+            'effective_virtual_networks': '2021-02-01-preview',
+            'firewall_policy_rule_groups': '2020-04-01',
+            'interface_endpoints': '2019-02-01',
+            'network_groups': '2021-02-01-preview',
+            'network_manager_commits': '2021-02-01-preview',
+            'network_manager_deployment_status': '2021-02-01-preview',
+            'network_manager_effective_security_admin_rules': '2021-02-01-preview',
+            'network_managers': '2021-02-01-preview',
+            'network_security_perimeters': '2021-02-01-preview',
+            'p2_svpn_server_configurations': '2019-07-01',
+            'perimeter_associable_resource_types': '2021-02-01-preview',
+            'security_admin_configurations': '2021-02-01-preview',
+            'security_user_configurations': '2021-02-01-preview',
+            'user_rule_collections': '2021-02-01-preview',
+            'user_rules': '2021-02-01-preview',
+>>>>>>> main
         }},
         _PROFILE_TAG + " latest"
     )
@@ -98,7 +123,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.network.v2016_12_01.models>`
            * 2017-03-01: :mod:`v2017_03_01.models<azure.mgmt.network.v2017_03_01.models>`
            * 2017-06-01: :mod:`v2017_06_01.models<azure.mgmt.network.v2017_06_01.models>`
+<<<<<<< HEAD
            * 2017-08-01: :mod:`v2017_08_01.models<azure.mgmt.network.v2017_08_01.models>`
+=======
+>>>>>>> main
            * 2017-09-01: :mod:`v2017_09_01.models<azure.mgmt.network.v2017_09_01.models>`
            * 2017-10-01: :mod:`v2017_10_01.models<azure.mgmt.network.v2017_10_01.models>`
            * 2017-11-01: :mod:`v2017_11_01.models<azure.mgmt.network.v2017_11_01.models>`
@@ -127,6 +155,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :mod:`v2020_08_01.models<azure.mgmt.network.v2020_08_01.models>`
            * 2020-11-01: :mod:`v2020_11_01.models<azure.mgmt.network.v2020_11_01.models>`
            * 2021-02-01: :mod:`v2021_02_01.models<azure.mgmt.network.v2021_02_01.models>`
+<<<<<<< HEAD
+=======
+           * 2021-02-01-preview: :mod:`v2021_02_01_preview.models<azure.mgmt.network.v2021_02_01_preview.models>`
+>>>>>>> main
            * 2021-03-01: :mod:`v2021_03_01.models<azure.mgmt.network.v2021_03_01.models>`
         """
         if api_version == '2015-06-15':
@@ -144,9 +176,12 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2017-06-01':
             from ..v2017_06_01 import models
             return models
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01 import models
             return models
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01 import models
             return models
@@ -231,12 +266,86 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2021-02-01':
             from ..v2021_02_01 import models
             return models
+<<<<<<< HEAD
+=======
+        elif api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview import models
+            return models
+>>>>>>> main
         elif api_version == '2021-03-01':
             from ..v2021_03_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
+<<<<<<< HEAD
+=======
+    def active_connectivity_configurations(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`ActiveConnectivityConfigurationsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.ActiveConnectivityConfigurationsOperations>`
+        """
+        api_version = self._get_api_version('active_connectivity_configurations')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import ActiveConnectivityConfigurationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'active_connectivity_configurations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def active_security_admin_rules(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`ActiveSecurityAdminRulesOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.ActiveSecurityAdminRulesOperations>`
+        """
+        api_version = self._get_api_version('active_security_admin_rules')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import ActiveSecurityAdminRulesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'active_security_admin_rules'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def active_security_user_rules(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`ActiveSecurityUserRulesOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.ActiveSecurityUserRulesOperations>`
+        """
+        api_version = self._get_api_version('active_security_user_rules')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import ActiveSecurityUserRulesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'active_security_user_rules'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def admin_rule_collections(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`AdminRuleCollectionsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.AdminRuleCollectionsOperations>`
+        """
+        api_version = self._get_api_version('admin_rule_collections')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import AdminRuleCollectionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'admin_rule_collections'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def admin_rules(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`AdminRulesOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.AdminRulesOperations>`
+        """
+        api_version = self._get_api_version('admin_rules')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import AdminRulesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'admin_rules'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def application_gateway_private_endpoint_connections(self):
         """Instance depends on the API version:
 
@@ -307,7 +416,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2016_12_01.aio.operations.ApplicationGatewaysOperations>`
            * 2017-03-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_03_01.aio.operations.ApplicationGatewaysOperations>`
            * 2017-06-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_06_01.aio.operations.ApplicationGatewaysOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_08_01.aio.operations.ApplicationGatewaysOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_09_01.aio.operations.ApplicationGatewaysOperations>`
            * 2017-10-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_10_01.aio.operations.ApplicationGatewaysOperations>`
            * 2017-11-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_11_01.aio.operations.ApplicationGatewaysOperations>`
@@ -349,8 +461,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import ApplicationGatewaysOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import ApplicationGatewaysOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import ApplicationGatewaysOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import ApplicationGatewaysOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -588,7 +703,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2017_06_01.aio.operations.AvailableEndpointServicesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2017_08_01.aio.operations.AvailableEndpointServicesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2017_09_01.aio.operations.AvailableEndpointServicesOperations>`
            * 2017-10-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2017_10_01.aio.operations.AvailableEndpointServicesOperations>`
            * 2017-11-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2017_11_01.aio.operations.AvailableEndpointServicesOperations>`
@@ -622,8 +740,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('available_endpoint_services')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import AvailableEndpointServicesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import AvailableEndpointServicesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import AvailableEndpointServicesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -1086,7 +1207,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2016_12_01.aio.operations.BgpServiceCommunitiesOperations>`
            * 2017-03-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_03_01.aio.operations.BgpServiceCommunitiesOperations>`
            * 2017-06-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_06_01.aio.operations.BgpServiceCommunitiesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_08_01.aio.operations.BgpServiceCommunitiesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_09_01.aio.operations.BgpServiceCommunitiesOperations>`
            * 2017-10-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_10_01.aio.operations.BgpServiceCommunitiesOperations>`
            * 2017-11-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_11_01.aio.operations.BgpServiceCommunitiesOperations>`
@@ -1124,8 +1248,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import BgpServiceCommunitiesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import BgpServiceCommunitiesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import BgpServiceCommunitiesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import BgpServiceCommunitiesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -1283,6 +1410,22 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def connectivity_configurations(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`ConnectivityConfigurationsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.ConnectivityConfigurationsOperations>`
+        """
+        api_version = self._get_api_version('connectivity_configurations')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import ConnectivityConfigurationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'connectivity_configurations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def custom_ip_prefixes(self):
         """Instance depends on the API version:
 
@@ -1467,7 +1610,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_06_01.aio.operations.DefaultSecurityRulesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_08_01.aio.operations.DefaultSecurityRulesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_09_01.aio.operations.DefaultSecurityRulesOperations>`
            * 2017-10-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_10_01.aio.operations.DefaultSecurityRulesOperations>`
            * 2017-11-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_11_01.aio.operations.DefaultSecurityRulesOperations>`
@@ -1501,8 +1647,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('default_security_rules')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import DefaultSecurityRulesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import DefaultSecurityRulesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import DefaultSecurityRulesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -1594,6 +1743,35 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def effective_connectivity_configurations(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`EffectiveConnectivityConfigurationsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.EffectiveConnectivityConfigurationsOperations>`
+        """
+        api_version = self._get_api_version('effective_connectivity_configurations')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import EffectiveConnectivityConfigurationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'effective_connectivity_configurations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def effective_virtual_networks(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`EffectiveVirtualNetworksOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.EffectiveVirtualNetworksOperations>`
+        """
+        api_version = self._get_api_version('effective_virtual_networks')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import EffectiveVirtualNetworksOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'effective_virtual_networks'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def express_route_circuit_authorizations(self):
         """Instance depends on the API version:
 
@@ -1602,7 +1780,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2016_12_01.aio.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2017-03-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_03_01.aio.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2017-06-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_06_01.aio.operations.ExpressRouteCircuitAuthorizationsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_08_01.aio.operations.ExpressRouteCircuitAuthorizationsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_09_01.aio.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2017-10-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_10_01.aio.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2017-11-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_11_01.aio.operations.ExpressRouteCircuitAuthorizationsOperations>`
@@ -1644,8 +1825,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -1802,7 +1986,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2016_12_01.aio.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2017-03-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_03_01.aio.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2017-06-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_06_01.aio.operations.ExpressRouteCircuitPeeringsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_08_01.aio.operations.ExpressRouteCircuitPeeringsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_09_01.aio.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2017-10-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_10_01.aio.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2017-11-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_11_01.aio.operations.ExpressRouteCircuitPeeringsOperations>`
@@ -1844,8 +2031,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -1917,7 +2107,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2016_12_01.aio.operations.ExpressRouteCircuitsOperations>`
            * 2017-03-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_03_01.aio.operations.ExpressRouteCircuitsOperations>`
            * 2017-06-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_06_01.aio.operations.ExpressRouteCircuitsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_08_01.aio.operations.ExpressRouteCircuitsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_09_01.aio.operations.ExpressRouteCircuitsOperations>`
            * 2017-10-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_10_01.aio.operations.ExpressRouteCircuitsOperations>`
            * 2017-11-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_11_01.aio.operations.ExpressRouteCircuitsOperations>`
@@ -1959,8 +2152,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import ExpressRouteCircuitsOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import ExpressRouteCircuitsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import ExpressRouteCircuitsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import ExpressRouteCircuitsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -2567,7 +2763,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2016_12_01.aio.operations.ExpressRouteServiceProvidersOperations>`
            * 2017-03-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_03_01.aio.operations.ExpressRouteServiceProvidersOperations>`
            * 2017-06-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_06_01.aio.operations.ExpressRouteServiceProvidersOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_08_01.aio.operations.ExpressRouteServiceProvidersOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_09_01.aio.operations.ExpressRouteServiceProvidersOperations>`
            * 2017-10-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_10_01.aio.operations.ExpressRouteServiceProvidersOperations>`
            * 2017-11-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_11_01.aio.operations.ExpressRouteServiceProvidersOperations>`
@@ -2609,8 +2808,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import ExpressRouteServiceProvidersOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import ExpressRouteServiceProvidersOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import ExpressRouteServiceProvidersOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import ExpressRouteServiceProvidersOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -2957,7 +3159,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_06_01.aio.operations.InboundNatRulesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_08_01.aio.operations.InboundNatRulesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_09_01.aio.operations.InboundNatRulesOperations>`
            * 2017-10-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_10_01.aio.operations.InboundNatRulesOperations>`
            * 2017-11-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_11_01.aio.operations.InboundNatRulesOperations>`
@@ -2991,8 +3196,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('inbound_nat_rules')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import InboundNatRulesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import InboundNatRulesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import InboundNatRulesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -3196,7 +3404,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2017_06_01.aio.operations.LoadBalancerBackendAddressPoolsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2017_08_01.aio.operations.LoadBalancerBackendAddressPoolsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2017_09_01.aio.operations.LoadBalancerBackendAddressPoolsOperations>`
            * 2017-10-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2017_10_01.aio.operations.LoadBalancerBackendAddressPoolsOperations>`
            * 2017-11-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2017_11_01.aio.operations.LoadBalancerBackendAddressPoolsOperations>`
@@ -3230,8 +3441,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('load_balancer_backend_address_pools')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -3299,7 +3513,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2017_06_01.aio.operations.LoadBalancerFrontendIPConfigurationsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2017_08_01.aio.operations.LoadBalancerFrontendIPConfigurationsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2017_09_01.aio.operations.LoadBalancerFrontendIPConfigurationsOperations>`
            * 2017-10-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2017_10_01.aio.operations.LoadBalancerFrontendIPConfigurationsOperations>`
            * 2017-11-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2017_11_01.aio.operations.LoadBalancerFrontendIPConfigurationsOperations>`
@@ -3333,8 +3550,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('load_balancer_frontend_ip_configurations')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -3402,7 +3622,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2017_06_01.aio.operations.LoadBalancerLoadBalancingRulesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2017_08_01.aio.operations.LoadBalancerLoadBalancingRulesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2017_09_01.aio.operations.LoadBalancerLoadBalancingRulesOperations>`
            * 2017-10-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2017_10_01.aio.operations.LoadBalancerLoadBalancingRulesOperations>`
            * 2017-11-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2017_11_01.aio.operations.LoadBalancerLoadBalancingRulesOperations>`
@@ -3436,8 +3659,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('load_balancer_load_balancing_rules')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -3505,7 +3731,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2017_06_01.aio.operations.LoadBalancerNetworkInterfacesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2017_08_01.aio.operations.LoadBalancerNetworkInterfacesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2017_09_01.aio.operations.LoadBalancerNetworkInterfacesOperations>`
            * 2017-10-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2017_10_01.aio.operations.LoadBalancerNetworkInterfacesOperations>`
            * 2017-11-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2017_11_01.aio.operations.LoadBalancerNetworkInterfacesOperations>`
@@ -3539,8 +3768,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('load_balancer_network_interfaces')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -3681,7 +3913,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2017_06_01.aio.operations.LoadBalancerProbesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2017_08_01.aio.operations.LoadBalancerProbesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2017_09_01.aio.operations.LoadBalancerProbesOperations>`
            * 2017-10-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2017_10_01.aio.operations.LoadBalancerProbesOperations>`
            * 2017-11-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2017_11_01.aio.operations.LoadBalancerProbesOperations>`
@@ -3715,8 +3950,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('load_balancer_probes')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import LoadBalancerProbesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import LoadBalancerProbesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import LoadBalancerProbesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -3788,7 +4026,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2016_12_01.aio.operations.LoadBalancersOperations>`
            * 2017-03-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_03_01.aio.operations.LoadBalancersOperations>`
            * 2017-06-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_06_01.aio.operations.LoadBalancersOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_08_01.aio.operations.LoadBalancersOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_09_01.aio.operations.LoadBalancersOperations>`
            * 2017-10-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_10_01.aio.operations.LoadBalancersOperations>`
            * 2017-11-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_11_01.aio.operations.LoadBalancersOperations>`
@@ -3830,8 +4071,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import LoadBalancersOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import LoadBalancersOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import LoadBalancersOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import LoadBalancersOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -3903,7 +4147,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2016_12_01.aio.operations.LocalNetworkGatewaysOperations>`
            * 2017-03-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_03_01.aio.operations.LocalNetworkGatewaysOperations>`
            * 2017-06-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_06_01.aio.operations.LocalNetworkGatewaysOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_08_01.aio.operations.LocalNetworkGatewaysOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_09_01.aio.operations.LocalNetworkGatewaysOperations>`
            * 2017-10-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_10_01.aio.operations.LocalNetworkGatewaysOperations>`
            * 2017-11-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_11_01.aio.operations.LocalNetworkGatewaysOperations>`
@@ -3945,8 +4192,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import LocalNetworkGatewaysOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import LocalNetworkGatewaysOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import LocalNetworkGatewaysOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import LocalNetworkGatewaysOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -4093,11 +4343,30 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def network_groups(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NetworkGroupsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.NetworkGroupsOperations>`
+        """
+        api_version = self._get_api_version('network_groups')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import NetworkGroupsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'network_groups'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def network_interface_ip_configurations(self):
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2017_06_01.aio.operations.NetworkInterfaceIPConfigurationsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2017_08_01.aio.operations.NetworkInterfaceIPConfigurationsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2017_09_01.aio.operations.NetworkInterfaceIPConfigurationsOperations>`
            * 2017-10-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2017_10_01.aio.operations.NetworkInterfaceIPConfigurationsOperations>`
            * 2017-11-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2017_11_01.aio.operations.NetworkInterfaceIPConfigurationsOperations>`
@@ -4131,8 +4400,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('network_interface_ip_configurations')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -4200,7 +4472,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2017_06_01.aio.operations.NetworkInterfaceLoadBalancersOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2017_08_01.aio.operations.NetworkInterfaceLoadBalancersOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2017_09_01.aio.operations.NetworkInterfaceLoadBalancersOperations>`
            * 2017-10-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2017_10_01.aio.operations.NetworkInterfaceLoadBalancersOperations>`
            * 2017-11-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2017_11_01.aio.operations.NetworkInterfaceLoadBalancersOperations>`
@@ -4234,8 +4509,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         api_version = self._get_api_version('network_interface_load_balancers')
         if api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -4380,7 +4658,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2016_12_01.aio.operations.NetworkInterfacesOperations>`
            * 2017-03-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_03_01.aio.operations.NetworkInterfacesOperations>`
            * 2017-06-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_06_01.aio.operations.NetworkInterfacesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_08_01.aio.operations.NetworkInterfacesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_09_01.aio.operations.NetworkInterfacesOperations>`
            * 2017-10-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_10_01.aio.operations.NetworkInterfacesOperations>`
            * 2017-11-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_11_01.aio.operations.NetworkInterfacesOperations>`
@@ -4422,8 +4703,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import NetworkInterfacesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import NetworkInterfacesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import NetworkInterfacesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import NetworkInterfacesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -4487,6 +4771,61 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def network_manager_commits(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NetworkManagerCommitsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.NetworkManagerCommitsOperations>`
+        """
+        api_version = self._get_api_version('network_manager_commits')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import NetworkManagerCommitsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'network_manager_commits'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def network_manager_deployment_status(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NetworkManagerDeploymentStatusOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.NetworkManagerDeploymentStatusOperations>`
+        """
+        api_version = self._get_api_version('network_manager_deployment_status')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import NetworkManagerDeploymentStatusOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'network_manager_deployment_status'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def network_manager_effective_security_admin_rules(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NetworkManagerEffectiveSecurityAdminRulesOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.NetworkManagerEffectiveSecurityAdminRulesOperations>`
+        """
+        api_version = self._get_api_version('network_manager_effective_security_admin_rules')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import NetworkManagerEffectiveSecurityAdminRulesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'network_manager_effective_security_admin_rules'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def network_managers(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NetworkManagersOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.NetworkManagersOperations>`
+        """
+        api_version = self._get_api_version('network_managers')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import NetworkManagersOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'network_managers'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def network_profiles(self):
         """Instance depends on the API version:
 
@@ -4568,7 +4907,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2016_12_01.aio.operations.NetworkSecurityGroupsOperations>`
            * 2017-03-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_03_01.aio.operations.NetworkSecurityGroupsOperations>`
            * 2017-06-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_06_01.aio.operations.NetworkSecurityGroupsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_08_01.aio.operations.NetworkSecurityGroupsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_09_01.aio.operations.NetworkSecurityGroupsOperations>`
            * 2017-10-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_10_01.aio.operations.NetworkSecurityGroupsOperations>`
            * 2017-11-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_11_01.aio.operations.NetworkSecurityGroupsOperations>`
@@ -4610,8 +4952,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import NetworkSecurityGroupsOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import NetworkSecurityGroupsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import NetworkSecurityGroupsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import NetworkSecurityGroupsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -4675,6 +5020,22 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def network_security_perimeters(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NetworkSecurityPerimetersOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.NetworkSecurityPerimetersOperations>`
+        """
+        api_version = self._get_api_version('network_security_perimeters')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import NetworkSecurityPerimetersOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'network_security_perimeters'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def network_virtual_appliances(self):
         """Instance depends on the API version:
 
@@ -4722,7 +5083,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2016_12_01.aio.operations.NetworkWatchersOperations>`
            * 2017-03-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_03_01.aio.operations.NetworkWatchersOperations>`
            * 2017-06-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_06_01.aio.operations.NetworkWatchersOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_08_01.aio.operations.NetworkWatchersOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_09_01.aio.operations.NetworkWatchersOperations>`
            * 2017-10-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_10_01.aio.operations.NetworkWatchersOperations>`
            * 2017-11-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_11_01.aio.operations.NetworkWatchersOperations>`
@@ -4762,8 +5126,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import NetworkWatchersOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import NetworkWatchersOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import NetworkWatchersOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import NetworkWatchersOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -5038,7 +5405,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2016_12_01.aio.operations.PacketCapturesOperations>`
            * 2017-03-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_03_01.aio.operations.PacketCapturesOperations>`
            * 2017-06-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_06_01.aio.operations.PacketCapturesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_08_01.aio.operations.PacketCapturesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_09_01.aio.operations.PacketCapturesOperations>`
            * 2017-10-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_10_01.aio.operations.PacketCapturesOperations>`
            * 2017-11-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_11_01.aio.operations.PacketCapturesOperations>`
@@ -5078,8 +5448,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import PacketCapturesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import PacketCapturesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import PacketCapturesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import PacketCapturesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -5207,6 +5580,22 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def perimeter_associable_resource_types(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`PerimeterAssociableResourceTypesOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.PerimeterAssociableResourceTypesOperations>`
+        """
+        api_version = self._get_api_version('perimeter_associable_resource_types')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import PerimeterAssociableResourceTypesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'perimeter_associable_resource_types'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def private_dns_zone_groups(self):
         """Instance depends on the API version:
 
@@ -5368,7 +5757,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2016_12_01.aio.operations.PublicIPAddressesOperations>`
            * 2017-03-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_03_01.aio.operations.PublicIPAddressesOperations>`
            * 2017-06-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_06_01.aio.operations.PublicIPAddressesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_08_01.aio.operations.PublicIPAddressesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_09_01.aio.operations.PublicIPAddressesOperations>`
            * 2017-10-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_10_01.aio.operations.PublicIPAddressesOperations>`
            * 2017-11-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_11_01.aio.operations.PublicIPAddressesOperations>`
@@ -5410,8 +5802,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import PublicIPAddressesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import PublicIPAddressesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import PublicIPAddressesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import PublicIPAddressesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -5618,7 +6013,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2016_12_01.aio.operations.RouteFilterRulesOperations>`
            * 2017-03-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_03_01.aio.operations.RouteFilterRulesOperations>`
            * 2017-06-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_06_01.aio.operations.RouteFilterRulesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_08_01.aio.operations.RouteFilterRulesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_09_01.aio.operations.RouteFilterRulesOperations>`
            * 2017-10-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_10_01.aio.operations.RouteFilterRulesOperations>`
            * 2017-11-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_11_01.aio.operations.RouteFilterRulesOperations>`
@@ -5656,8 +6054,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import RouteFilterRulesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import RouteFilterRulesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import RouteFilterRulesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import RouteFilterRulesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -5727,7 +6128,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2016_12_01.aio.operations.RouteFiltersOperations>`
            * 2017-03-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_03_01.aio.operations.RouteFiltersOperations>`
            * 2017-06-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_06_01.aio.operations.RouteFiltersOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_08_01.aio.operations.RouteFiltersOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_09_01.aio.operations.RouteFiltersOperations>`
            * 2017-10-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_10_01.aio.operations.RouteFiltersOperations>`
            * 2017-11-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_11_01.aio.operations.RouteFiltersOperations>`
@@ -5765,8 +6169,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import RouteFiltersOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import RouteFiltersOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import RouteFiltersOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import RouteFiltersOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -5838,7 +6245,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`RouteTablesOperations<azure.mgmt.network.v2016_12_01.aio.operations.RouteTablesOperations>`
            * 2017-03-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_03_01.aio.operations.RouteTablesOperations>`
            * 2017-06-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_06_01.aio.operations.RouteTablesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_08_01.aio.operations.RouteTablesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_09_01.aio.operations.RouteTablesOperations>`
            * 2017-10-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_10_01.aio.operations.RouteTablesOperations>`
            * 2017-11-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_11_01.aio.operations.RouteTablesOperations>`
@@ -5880,8 +6290,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import RouteTablesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import RouteTablesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import RouteTablesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import RouteTablesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -5953,7 +6366,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`RoutesOperations<azure.mgmt.network.v2016_12_01.aio.operations.RoutesOperations>`
            * 2017-03-01: :class:`RoutesOperations<azure.mgmt.network.v2017_03_01.aio.operations.RoutesOperations>`
            * 2017-06-01: :class:`RoutesOperations<azure.mgmt.network.v2017_06_01.aio.operations.RoutesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`RoutesOperations<azure.mgmt.network.v2017_08_01.aio.operations.RoutesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`RoutesOperations<azure.mgmt.network.v2017_09_01.aio.operations.RoutesOperations>`
            * 2017-10-01: :class:`RoutesOperations<azure.mgmt.network.v2017_10_01.aio.operations.RoutesOperations>`
            * 2017-11-01: :class:`RoutesOperations<azure.mgmt.network.v2017_11_01.aio.operations.RoutesOperations>`
@@ -5995,8 +6411,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import RoutesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import RoutesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import RoutesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import RoutesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -6060,6 +6479,22 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def security_admin_configurations(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`SecurityAdminConfigurationsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.SecurityAdminConfigurationsOperations>`
+        """
+        api_version = self._get_api_version('security_admin_configurations')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import SecurityAdminConfigurationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'security_admin_configurations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def security_partner_providers(self):
         """Instance depends on the API version:
 
@@ -6105,7 +6540,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2016_12_01.aio.operations.SecurityRulesOperations>`
            * 2017-03-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_03_01.aio.operations.SecurityRulesOperations>`
            * 2017-06-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_06_01.aio.operations.SecurityRulesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_08_01.aio.operations.SecurityRulesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_09_01.aio.operations.SecurityRulesOperations>`
            * 2017-10-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_10_01.aio.operations.SecurityRulesOperations>`
            * 2017-11-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_11_01.aio.operations.SecurityRulesOperations>`
@@ -6147,8 +6585,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import SecurityRulesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import SecurityRulesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import SecurityRulesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import SecurityRulesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -6212,6 +6653,22 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def security_user_configurations(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`SecurityUserConfigurationsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.SecurityUserConfigurationsOperations>`
+        """
+        api_version = self._get_api_version('security_user_configurations')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import SecurityUserConfigurationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'security_user_configurations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def service_association_links(self):
         """Instance depends on the API version:
 
@@ -6504,7 +6961,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`SubnetsOperations<azure.mgmt.network.v2016_12_01.aio.operations.SubnetsOperations>`
            * 2017-03-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_03_01.aio.operations.SubnetsOperations>`
            * 2017-06-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_06_01.aio.operations.SubnetsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_08_01.aio.operations.SubnetsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_09_01.aio.operations.SubnetsOperations>`
            * 2017-10-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_10_01.aio.operations.SubnetsOperations>`
            * 2017-11-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_11_01.aio.operations.SubnetsOperations>`
@@ -6546,8 +7006,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import SubnetsOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import SubnetsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import SubnetsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import SubnetsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -6619,7 +7082,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`UsagesOperations<azure.mgmt.network.v2016_12_01.aio.operations.UsagesOperations>`
            * 2017-03-01: :class:`UsagesOperations<azure.mgmt.network.v2017_03_01.aio.operations.UsagesOperations>`
            * 2017-06-01: :class:`UsagesOperations<azure.mgmt.network.v2017_06_01.aio.operations.UsagesOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`UsagesOperations<azure.mgmt.network.v2017_08_01.aio.operations.UsagesOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`UsagesOperations<azure.mgmt.network.v2017_09_01.aio.operations.UsagesOperations>`
            * 2017-10-01: :class:`UsagesOperations<azure.mgmt.network.v2017_10_01.aio.operations.UsagesOperations>`
            * 2017-11-01: :class:`UsagesOperations<azure.mgmt.network.v2017_11_01.aio.operations.UsagesOperations>`
@@ -6661,8 +7127,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import UsagesOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import UsagesOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import UsagesOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import UsagesOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -6726,6 +7195,35 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+<<<<<<< HEAD
+=======
+    def user_rule_collections(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`UserRuleCollectionsOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.UserRuleCollectionsOperations>`
+        """
+        api_version = self._get_api_version('user_rule_collections')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import UserRuleCollectionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'user_rule_collections'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def user_rules(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`UserRulesOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.UserRulesOperations>`
+        """
+        api_version = self._get_api_version('user_rules')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import UserRulesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'user_rules'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+>>>>>>> main
     def virtual_appliance_sites(self):
         """Instance depends on the API version:
 
@@ -7017,7 +7515,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2016_12_01.aio.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2017-03-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_03_01.aio.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2017-06-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_06_01.aio.operations.VirtualNetworkGatewayConnectionsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_08_01.aio.operations.VirtualNetworkGatewayConnectionsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_09_01.aio.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2017-10-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_10_01.aio.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2017-11-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_11_01.aio.operations.VirtualNetworkGatewayConnectionsOperations>`
@@ -7059,8 +7560,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -7148,7 +7652,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2016_12_01.aio.operations.VirtualNetworkGatewaysOperations>`
            * 2017-03-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_03_01.aio.operations.VirtualNetworkGatewaysOperations>`
            * 2017-06-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_06_01.aio.operations.VirtualNetworkGatewaysOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_08_01.aio.operations.VirtualNetworkGatewaysOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_09_01.aio.operations.VirtualNetworkGatewaysOperations>`
            * 2017-10-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_10_01.aio.operations.VirtualNetworkGatewaysOperations>`
            * 2017-11-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_11_01.aio.operations.VirtualNetworkGatewaysOperations>`
@@ -7190,8 +7697,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import VirtualNetworkGatewaysOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import VirtualNetworkGatewaysOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import VirtualNetworkGatewaysOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import VirtualNetworkGatewaysOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -7262,7 +7772,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2016_12_01.aio.operations.VirtualNetworkPeeringsOperations>`
            * 2017-03-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_03_01.aio.operations.VirtualNetworkPeeringsOperations>`
            * 2017-06-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_06_01.aio.operations.VirtualNetworkPeeringsOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_08_01.aio.operations.VirtualNetworkPeeringsOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_09_01.aio.operations.VirtualNetworkPeeringsOperations>`
            * 2017-10-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_10_01.aio.operations.VirtualNetworkPeeringsOperations>`
            * 2017-11-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_11_01.aio.operations.VirtualNetworkPeeringsOperations>`
@@ -7302,8 +7815,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import VirtualNetworkPeeringsOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import VirtualNetworkPeeringsOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import VirtualNetworkPeeringsOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import VirtualNetworkPeeringsOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -7448,7 +7964,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2016-12-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2016_12_01.aio.operations.VirtualNetworksOperations>`
            * 2017-03-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_03_01.aio.operations.VirtualNetworksOperations>`
            * 2017-06-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_06_01.aio.operations.VirtualNetworksOperations>`
+<<<<<<< HEAD
            * 2017-08-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_08_01.aio.operations.VirtualNetworksOperations>`
+=======
+>>>>>>> main
            * 2017-09-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_09_01.aio.operations.VirtualNetworksOperations>`
            * 2017-10-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_10_01.aio.operations.VirtualNetworksOperations>`
            * 2017-11-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_11_01.aio.operations.VirtualNetworksOperations>`
@@ -7490,8 +8009,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2017_03_01.aio.operations import VirtualNetworksOperations as OperationClass
         elif api_version == '2017-06-01':
             from ..v2017_06_01.aio.operations import VirtualNetworksOperations as OperationClass
+<<<<<<< HEAD
         elif api_version == '2017-08-01':
             from ..v2017_08_01.aio.operations import VirtualNetworksOperations as OperationClass
+=======
+>>>>>>> main
         elif api_version == '2017-09-01':
             from ..v2017_09_01.aio.operations import VirtualNetworksOperations as OperationClass
         elif api_version == '2017-10-01':

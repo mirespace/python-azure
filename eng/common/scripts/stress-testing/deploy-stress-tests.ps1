@@ -76,9 +76,15 @@ function DeployStressTests(
     [string]$environment = 'test',
     [string]$repository = 'images',
     [boolean]$pushImages = $false,
+<<<<<<< HEAD
     [string]$clusterGroup = 'rg-stress-test-cluster-',
     [string]$deployId = 'local',
     [string]$subscription = 'Azure SDK Test Resources'
+=======
+    [string]$clusterGroup = 'rg-stress-cluster-test',
+    [string]$deployId = 'local',
+    [string]$subscription = 'Azure SDK Developer Playground'
+>>>>>>> main
 ) {
     if ($PSCmdlet.ParameterSetName -eq 'DoLogin') {
         Login $subscription $clusterGroup $pushImages

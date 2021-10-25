@@ -23,7 +23,11 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+<<<<<<< HEAD
     :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+=======
+    :param url: The URL of the service account, container, or blob that is the target of the desired operation.
+>>>>>>> main
     :type url: str
     """
 

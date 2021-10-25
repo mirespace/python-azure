@@ -6,5 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+<<<<<<< HEAD
 from ._microsoft_azure_chaos import MicrosoftAzureChaos
 __all__ = ['MicrosoftAzureChaos']
+=======
+from ._chaos_management_client import ChaosManagementClient
+__all__ = ['ChaosManagementClient']
+>>>>>>> main

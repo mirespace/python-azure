@@ -7,4 +7,8 @@
 from .v2019_02_01.models import *
 from .v2019_07_01.models import *
 from .v2020_04_01.models import *
+<<<<<<< HEAD
+=======
+from .v2021_02_01_preview.models import *
+>>>>>>> main
 from .v2021_03_01.models import *

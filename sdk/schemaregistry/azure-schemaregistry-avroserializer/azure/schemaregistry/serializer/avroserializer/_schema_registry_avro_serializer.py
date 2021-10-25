@@ -29,10 +29,17 @@ except ImportError:
     from backports.functools_lru_cache import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Mapping
+<<<<<<< HEAD
 import avro
 
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 from ._avro_serializer import AvroObjectSerializer
+=======
+
+from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
+from ._avro_serializer import AvroObjectSerializer
+from ._utils import parse_schema
+>>>>>>> main
 
 
 class AvroSerializer(object):
@@ -45,7 +52,11 @@ class AvroSerializer(object):
     :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
     :keyword str group_name: Required. Schema group under which schema should be registered.
     :keyword bool auto_register_schemas: When true, register new schemas passed to serialize.
+<<<<<<< HEAD
      Otherwise, and by default, fail if it has not been pre-registered in the registry.
+=======
+     Otherwise, and by default, serialization will fail if the schema has not been pre-registered in the registry.
+>>>>>>> main
 
     """
 
@@ -89,8 +100,12 @@ class AvroSerializer(object):
 
         :param schema_name: Name of the schema
         :type schema_name: str
+<<<<<<< HEAD
         :param schema: Schema object
         :type schema: avro.schema.Schema
+=======
+        :param str schema_str: Schema string
+>>>>>>> main
         :return: Schema Id
         :rtype: str
         """
@@ -114,11 +129,14 @@ class AvroSerializer(object):
         ).schema_definition
         return schema_str
 
+<<<<<<< HEAD
     @classmethod
     @lru_cache(maxsize=128)
     def _parse_schema(cls, schema):
         return avro.schema.parse(schema)
 
+=======
+>>>>>>> main
     def serialize(self, value, **kwargs):
         # type: (Mapping[str, Any], Any) -> bytes
         """
@@ -137,7 +155,11 @@ class AvroSerializer(object):
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
 
+<<<<<<< HEAD
         cached_schema = AvroSerializer._parse_schema(raw_input_schema)
+=======
+        cached_schema = parse_schema(raw_input_schema)
+>>>>>>> main
         record_format_identifier = b"\0\0\0\0"
         schema_id = self._get_schema_id(cached_schema.fullname, str(cached_schema), **kwargs)
         data_bytes = self._avro_serializer.serialize(value, cached_schema)

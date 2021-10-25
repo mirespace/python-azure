@@ -2125,8 +2125,13 @@ class BoundingRegion(object):
         )
 
 
+<<<<<<< HEAD
 class DocumentElement(object):
     """A DocumentElement.
+=======
+class DocumentContentElement(object):
+    """A DocumentContentElement.
+>>>>>>> main
 
     :ivar content: Text content of the word.
     :vartype content: str
@@ -2143,13 +2148,21 @@ class DocumentElement(object):
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
+<<<<<<< HEAD
         return "DocumentElement(content={}, bounding_box={}, kind={})".format(
+=======
+        return "DocumentContentElement(content={}, bounding_box={}, kind={})".format(
+>>>>>>> main
             self.content, self.bounding_box, self.kind
         )
 
     def to_dict(self):
         # type: () -> dict
+<<<<<<< HEAD
         """Returns a dict representation of DocumentElement.
+=======
+        """Returns a dict representation of DocumentContentElement.
+>>>>>>> main
 
         :return: dict
         :rtype: dict
@@ -2164,12 +2177,21 @@ class DocumentElement(object):
 
     @classmethod
     def from_dict(cls, data):
+<<<<<<< HEAD
         # type: (dict) -> DocumentElement
         """Converts a dict in the shape of a DocumentElement to the model itself.
 
         :param dict data: A dictionary in the shape of DocumentElement.
         :return: DocumentElement
         :rtype: DocumentElement
+=======
+        # type: (dict) -> DocumentContentElement
+        """Converts a dict in the shape of a DocumentContentElement to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentContentElement.
+        :return: DocumentContentElement
+        :rtype: DocumentContentElement
+>>>>>>> main
         """
         return cls(
             content=data.get("content", None),
@@ -2844,7 +2866,11 @@ class DocumentPage(object):
         )
 
 
+<<<<<<< HEAD
 class DocumentSelectionMark(DocumentElement):
+=======
+class DocumentSelectionMark(DocumentContentElement):
+>>>>>>> main
     """A selection mark object representing check boxes, radio buttons, and other elements indicating a selection.
 
     :ivar state: State of the selection mark. Possible values include: "selected",
@@ -3408,7 +3434,11 @@ class ModelOperation(ModelOperationInfo):
         )
 
 
+<<<<<<< HEAD
 class DocumentWord(DocumentElement):
+=======
+class DocumentWord(DocumentContentElement):
+>>>>>>> main
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
 

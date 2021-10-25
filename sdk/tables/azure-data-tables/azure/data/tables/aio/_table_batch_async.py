@@ -11,7 +11,11 @@ from azure.core import MatchConditions
 from .._common_conversion import _transform_patch_to_cosmos_post
 from .._models import UpdateMode
 from .._entity import TableEntity
+<<<<<<< HEAD
 from .._table_batch import EntityType
+=======
+from .._table_batch import EntityType, TransactionOperationType
+>>>>>>> main
 from .._serialize import (
     _prepare_key,
     _get_match_headers,
@@ -68,6 +72,20 @@ class TableBatchOperations(object):
         elif entity["PartitionKey"] != self._partition_key:
             raise ValueError("Partition Keys must all be the same")
 
+<<<<<<< HEAD
+=======
+    def add_operation(self, operation: TransactionOperationType) -> None:
+        """Add a single operation to a batch."""
+        try:
+            operation_type, entity, kwargs = operation  # type: ignore
+        except ValueError:
+            operation_type, entity, kwargs = *operation, {}  # type: ignore
+        try:
+            getattr(self, operation_type.lower())(entity, **kwargs)
+        except AttributeError:
+            raise ValueError("Unrecognized operation: {}".format(operation))
+
+>>>>>>> main
     def create(
         self,
         entity: EntityType,

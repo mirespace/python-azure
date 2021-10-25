@@ -1,12 +1,23 @@
 # Release History
 
+<<<<<<< HEAD
 ## 12.1.1 (2021-09-08)
+=======
+## 12.1.1 (Unreleased)
+>>>>>>> main
 
 ### Bugs Fixed
 
 - Resolved bug where strings couldn't be used instead of enum value for entity Update Mode (#20247).
 - Resolved bug where single quote characters in Partition and Row keys were not escaped correctly (#20301).
 
+<<<<<<< HEAD
+=======
+### Features Added
+
+- Added support for async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
+
+>>>>>>> main
 ### Other Changes
 
 - Bumped dependency on `msrest` to `>=0.6.21`
