@@ -1,3 +1,9 @@
+python-azure (20211021+gitubuntu2) impish; urgency=medium
+
+  * New Upstream release for azure-mgmt-chaos 1.0.0b2 
+
+ -- Miriam España Acebal <miriam.espana@canonical.com>  Mon, 25 Oct 2021 11:02:16 +0200
+
 python-azure (20211021+gitubuntu1) impish; urgency=medium
 
   * New upstream version 20211021+git.
